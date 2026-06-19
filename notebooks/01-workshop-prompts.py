@@ -205,15 +205,13 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC Open its URL and confirm it loads.
 # MAGIC
-# MAGIC Optional: restyle the LCE branding in the app source:
-# MAGIC - logo branding/lce/logo.svg
-# MAGIC - primary #FF671B
+# MAGIC Optional: give it Little Caesars branding:
+# MAGIC - copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it
+# MAGIC - primary color #FF671B
 # MAGIC - dark navbar
 # MAGIC - title "Command Center | LCE"
 # MAGIC
 # MAGIC Then redeploy.
-# MAGIC
-# MAGIC Do not change the app's resources or scopes.
 # MAGIC ```
 
 # COMMAND ----------

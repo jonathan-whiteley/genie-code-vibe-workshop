@@ -26,7 +26,7 @@ Times are relative; facilitator sets the wall clock.
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
 | 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
 | 1:05-1:15 | Break | |
-| 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify wiring + optional branding tweaks |
+| 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:25 | Module 5: Embed | Genie + dashboard live in the app |
 | 2:25-2:50 | Module 6 (BONUS): Job | Scheduled refresh job |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
