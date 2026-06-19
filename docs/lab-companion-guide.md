@@ -196,13 +196,21 @@ My app <initials>-command-center is already deployed (the setup notebook created
 
 Open its URL and confirm it loads.
 
-If you want, give it Little Caesars branding:
-- copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it
-- primary color #FF671B
-- dark navbar
-- title "Command Center | LCE"
+Now give it Little Caesars branding and make it pop:
+- copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it in the header
+- use LCE orange (#FF671B) as the accent throughout: buttons, links, active tabs, and KPI highlights
+- add a bold hero header on the Today tab with the logo and the store name
+- give the tiles and cards rounded corners, soft shadows, and a subtle hover lift
+- add a thin LCE-orange top accent bar and a dark navbar
+- title the app "Command Center | LCE"
 
 Then redeploy.
+```
+
+**Follow-up: dark mode for the Today tab.** Give the home (Today) tab a sleek dark theme while keeping the LCE accents.
+
+```text
+Restyle the Today tab in dark mode: a deep dark background with light text, and keep the LCE orange (#FF671B) accents popping against it. Leave the other tabs as they are. Then redeploy.
 ```
 
 ---

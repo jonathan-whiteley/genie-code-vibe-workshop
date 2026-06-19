@@ -240,13 +240,29 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC Open its URL and confirm it loads.
 # MAGIC
-# MAGIC Optional: give it Little Caesars branding:
-# MAGIC - copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it
-# MAGIC - primary color #FF671B
-# MAGIC - dark navbar
-# MAGIC - title "Command Center | LCE"
+# MAGIC Now give it Little Caesars branding and make it pop:
+# MAGIC - copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it in the header
+# MAGIC - use LCE orange (#FF671B) as the accent throughout: buttons, links, active tabs, and KPI highlights
+# MAGIC - add a bold hero header on the Today tab with the logo and the store name
+# MAGIC - give the tiles and cards rounded corners, soft shadows, and a subtle hover lift
+# MAGIC - add a thin LCE-orange top accent bar and a dark navbar
+# MAGIC - title the app "Command Center | LCE"
 # MAGIC
 # MAGIC Then redeploy.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### Module 4 follow-up: dark mode for the Today tab 🌙
+# MAGIC
+# MAGIC Give the home (Today) tab a sleek dark theme while keeping the LCE accents.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Restyle the Today tab in dark mode: a deep dark background with light text, and keep the LCE orange (#FF671B) accents popping against it. Leave the other tabs as they are. Then redeploy.
 # MAGIC ```
 
 # COMMAND ----------
