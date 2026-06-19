@@ -224,3 +224,13 @@ Pre-filled values used throughout the workshop. The **Session setup** prompt at 
 - [Metric Views (Unity Catalog)](https://docs.databricks.com/aws/en/sql/user/sql-ai-functions/metric-views)
 - [Foundation Model APIs](https://docs.databricks.com/aws/en/machine-learning/foundation-models)
 - [Databricks Asset Bundles](https://docs.databricks.com/aws/en/dev-tools/bundles)
+
+---
+
+## Companion Documents
+
+| | |
+|---|---|
+| **Facilitator Plan** (deploy checklist, agenda, troubleshooting) | [`docs/facilitator-plan.md`](facilitator-plan.md) |
+| **Operational runbook** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md) |
+| **Repo** | https://github.com/jonathan-whiteley/genie-code-vibe-workshop |

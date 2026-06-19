@@ -355,8 +355,8 @@ The script will not touch the catalog itself or anything outside the workshop's 
 
 | | |
 |---|---|
-| **Lab Companion Guide** (attendee-facing) | [`docs/lab-companion-guide.md`](lab-companion-guide.md) |
-| **Workshop Design** | [`docs/superpowers/specs/2026-06-18-genie-code-vibe-workshop-design.md`](superpowers/specs/2026-06-18-genie-code-vibe-workshop-design.md) |
+| **Lab Companion Guide** (attendee-facing: setup, prompts, tips) | [`docs/lab-companion-guide.md`](lab-companion-guide.md) |
+| **README** (repo overview, quick start, schema) | [`README.md`](../README.md) |
 | **Operational runbook** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md): source of truth for ops |
 | **Metric view definition** | [`metric-views/command_center_metrics.yaml`](../metric-views/command_center_metrics.yaml) |
 | **Repo** | https://github.com/jonathan-whiteley/genie-code-vibe-workshop |

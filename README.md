@@ -6,7 +6,7 @@
 ![Workshop](https://img.shields.io/badge/format-3%20hr%20workshop-FF671B)
 ![Status](https://img.shields.io/badge/state-deployed-2272B4)
 
-> A 3-hour workshop where each attendee uses **Genie Code** — the in-workspace Databricks agent — to build a working Databricks app end-to-end, **no local install**. One Metric View governs the KPIs; every downstream surface (Genie space, AI/BI dashboard, embedded App) reuses the same governed measures.
+> A 3-hour workshop where each attendee uses **Genie Code** (the in-workspace Databricks agent) to build a working Databricks app end-to-end, **no local install**. One Metric View governs the KPIs; every downstream surface (Genie space, AI/BI dashboard, embedded App) reuses the same governed measures.
 
 The reference build is **Command Center**, a store-operations console for a single-store operator. It surfaces analytics and AI insights across three pillars: **Labor**, **Inventory**, and **Guest Feedback**, over an LCE-flavored synthetic dataset. Drop in a different schema and the same format works for any domain.
 
@@ -30,7 +30,7 @@ The reference build is **Command Center**, a store-operations console for a sing
 No local install required. All workshop modules run entirely inside the Databricks Workspace:
 
 1. Open **Genie Code** in your Databricks Workspace.
-2. Run the **ai-dev-kit skills installer notebook** (`install_genie_code_skills.py`) — this loads the metric-views, genie, dashboard, apps, and jobs skills into your user workspace.
+2. Run the **ai-dev-kit skills installer notebook** (`install_genie_code_skills.py`): this loads the metric-views, genie, dashboard, apps, and jobs skills into your user workspace.
 3. Open a **new Agent-mode chat** in Genie Code (new thread + hard refresh if skills do not appear).
 
 Full attendee setup and module-by-module prompts: [`docs/lab-companion-guide.md`](docs/lab-companion-guide.md).
@@ -122,7 +122,7 @@ The workshop is architected around a single governed Metric View at `store x dat
 
 The metric view joins `facts_sales_daypart`, `facts_labor_daypart`, `facts_sales_inventory_daily`, and `facts_customer_feedback`, all rolled up to daily per store, with `dims_stores` providing region and store attributes.
 
-Every downstream surface — the Genie space, the AI/BI dashboard, and the embedded App — draws from these same governed measures. Raw source tables remain in the schema so Genie can drill into daypart, role, or SKU detail when a question requires finer grain.
+Every downstream surface (the Genie space, the AI/BI dashboard, and the embedded App) draws from these same governed measures. Raw source tables remain in the schema so Genie can drill into daypart, role, or SKU detail when a question requires finer grain.
 
 Authored in YAML at `metric-views/command_center_metrics.yaml` and created via the ai-dev-kit metric-views skill in Module 1.
 
@@ -143,7 +143,7 @@ Authored in YAML at `metric-views/command_center_metrics.yaml` and created via t
 | `facts_purchase_orders` | po line | ~250 | Pre-staged POs with vendor info |
 | `facts_customer_feedback` | feedback | 1,000 | Reviews with pre-staged `sentiment_label`, `theme`, `ai_drafted_reply` |
 
-60 days of history, anchored to **2026-06-22**. Item catalog + store roster driven by a `company` config in the generator — defaults to `lce`. Add a new entry in `COMPANY_CONFIGS` to re-skin for another customer.
+60 days of history, anchored to **2026-06-22**. Item catalog + store roster driven by a `company` config in the generator (defaults to `lce`). Add a new entry in `COMPANY_CONFIGS` to re-skin for another customer.
 
 Column-level detail: [`data/README.md`](data/README.md).
 
@@ -157,7 +157,7 @@ Column-level detail: [`data/README.md`](data/README.md).
 | `command_center_dash` AI/BI dashboard | 4 KPI widgets on the metric view: labor % of sales (line), revenue by region (bar), days of cover (stacked bar), net sentiment (line) |
 | `command-center-dev` Databricks App | FastAPI + Homebase UI; the reference template attendees extend in Module 4 |
 
-The App's catalog, schema, and Genie space ID are published to `/Workspace/Shared/command-center/config.json` by the setup job and read by the App at startup — same `app.yaml` ships dev and prod with no hand-edits.
+The App's catalog, schema, and Genie space ID are published to `/Workspace/Shared/command-center/config.json` by the setup job and read by the App at startup; the same `app.yaml` ships dev and prod with no hand-edits.
 
 ---
 
@@ -167,3 +167,15 @@ The App's catalog, schema, and Genie space ID are published to `/Workspace/Share
 2. Drop logo + colors into `branding/<customer>/`
 3. Deploy with `--var company=<key>` (e.g. `databricks bundle deploy -t prod --var company=acme`)
 4. The metric view measures, Genie space questions, dashboard widgets, and App structure stay constant; brand surface is the only delta
+
+---
+
+## Companion Documents
+
+| | |
+|---|---|
+| **Facilitator Plan** (deploy checklist, agenda, troubleshooting) | [`docs/facilitator-plan.md`](docs/facilitator-plan.md) |
+| **Lab Companion Guide** (attendee-facing: setup, prompts, tips) | [`docs/lab-companion-guide.md`](docs/lab-companion-guide.md) |
+| **Operational runbook** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](dab/README.md) |
+| **Metric view definition** | [`metric-views/command_center_metrics.yaml`](metric-views/command_center_metrics.yaml) |
+| **Repo** | https://github.com/jonathan-whiteley/genie-code-vibe-workshop |
