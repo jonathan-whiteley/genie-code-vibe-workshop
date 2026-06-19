@@ -121,12 +121,23 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create my Command Center metric view over the workshop tables at store x date
-# MAGIC grain. Use the metric view name from my session setup. Measures: revenue, labor
-# MAGIC cost, labor % of sales, days of cover, sell-through %, net sentiment. Dimensions:
-# MAGIC store, region, date, day-of-week. Put all the joins and rollups inside the metric
-# MAGIC view's own source query; do not create any intermediary or base view, only the
-# MAGIC single metric view. Then run a SELECT to confirm it returns rows.
+# MAGIC Create my Command Center metric view over the workshop tables at store x date grain.
+# MAGIC
+# MAGIC Use the metric view name from my session setup.
+# MAGIC
+# MAGIC Measures:
+# MAGIC - revenue
+# MAGIC - labor cost
+# MAGIC - labor % of sales
+# MAGIC - days of cover
+# MAGIC - sell-through %
+# MAGIC - net sentiment
+# MAGIC
+# MAGIC Dimensions: store, region, date, day-of-week.
+# MAGIC
+# MAGIC Put all the joins and rollups inside the metric view's own source query; do not create any intermediary or base view, only the single metric view.
+# MAGIC
+# MAGIC Then run a SELECT to confirm it returns rows.
 # MAGIC ```
 
 # COMMAND ----------
@@ -141,9 +152,11 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create a Genie space on my metric view. Add 6 sample questions, 2 per pillar
-# MAGIC (Labor / Inventory / Guest Feedback), grounded in the metric view measures. Ask
-# MAGIC one question per pillar to test it, then tell me the space ID.
+# MAGIC Create a Genie space on my metric view.
+# MAGIC
+# MAGIC Add 6 sample questions, 2 per pillar (Labor / Inventory / Guest Feedback), grounded in the metric view measures.
+# MAGIC
+# MAGIC Ask one question per pillar to test it, then tell me the space ID.
 # MAGIC ```
 
 # COMMAND ----------
@@ -158,9 +171,19 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create an AI/BI dashboard on my metric view with 4 widgets: labor % of sales
-# MAGIC (30-day line), revenue by region (bar), days of cover / stock health (bar), net
-# MAGIC sentiment timeline (line). Publish it and tell me the dashboard ID.
+# MAGIC Create an AI/BI dashboard on my metric view with 4 widgets:
+# MAGIC - labor % of sales (30-day line)
+# MAGIC - revenue by region (bar)
+# MAGIC - days of cover / stock health (bar)
+# MAGIC - net sentiment timeline (line)
+# MAGIC
+# MAGIC Give it Little Caesars branding and make it pop:
+# MAGIC - use the LCE orange (#FF671B) as the primary accent across the charts
+# MAGIC - set a bold, cool dashboard background color
+# MAGIC - use vibrant, high-contrast colors so the charts really stand out
+# MAGIC - add a title with the Little Caesars feel
+# MAGIC
+# MAGIC Publish it and tell me the dashboard ID.
 # MAGIC ```
 
 # COMMAND ----------
@@ -178,10 +201,19 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC My Command Center app is already deployed (Lab 00 created it). Open its URL and
-# MAGIC confirm it loads. Optional: restyle the LCE branding in the app
-# MAGIC source (logo branding/lce/logo.svg, primary #FF671B, dark navbar, title
-# MAGIC "Command Center | LCE") and redeploy. Do not change the app's resources or scopes.
+# MAGIC My Command Center app is already deployed (Lab 00 created it).
+# MAGIC
+# MAGIC Open its URL and confirm it loads.
+# MAGIC
+# MAGIC Optional: restyle the LCE branding in the app source:
+# MAGIC - logo branding/lce/logo.svg
+# MAGIC - primary #FF671B
+# MAGIC - dark navbar
+# MAGIC - title "Command Center | LCE"
+# MAGIC
+# MAGIC Then redeploy.
+# MAGIC
+# MAGIC Do not change the app's resources or scopes.
 # MAGIC ```
 
 # COMMAND ----------
@@ -199,14 +231,11 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Update my app to embed my Genie space (the ID from the Genie step) and my dashboard
-# MAGIC (the ID from the dashboard step), then redeploy:
-# MAGIC   - Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token
-# MAGIC     header (OBO), not the app service principal, so it uses my access to my space.
-# MAGIC   - Embed my published dashboard by its ID, rendered as the signed-in user.
-# MAGIC   - Support multi-turn: start-conversation on the first ask, then post to the
-# MAGIC     conversation messages endpoint; poll until COMPLETED; return the answer and
-# MAGIC     the SQL Genie generated.
+# MAGIC Update my app to embed my Genie space (the ID from the Genie step) and my dashboard (the ID from the dashboard step), then redeploy:
+# MAGIC
+# MAGIC - Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token header (OBO), not the app service principal, so it uses my access to my space.
+# MAGIC - Embed my published dashboard by its ID, rendered as the signed-in user.
+# MAGIC - Support multi-turn: start-conversation on the first ask, then post to the conversation messages endpoint; poll until COMPLETED; return the answer and the SQL Genie generated.
 # MAGIC ```
 
 # COMMAND ----------
@@ -220,8 +249,11 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create my daily refresh job at 6am ET that refreshes my metric view's source
-# MAGIC rollups and redeploys my app. The job runs as me, so no extra permissions are needed.
+# MAGIC Create my daily refresh job at 6am ET with these steps:
+# MAGIC - refresh my metric view's source rollups
+# MAGIC - redeploy my app
+# MAGIC
+# MAGIC The job runs as me, so no extra permissions are needed.
 # MAGIC ```
 
 # COMMAND ----------
