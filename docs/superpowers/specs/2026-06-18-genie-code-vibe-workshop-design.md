@@ -1,4 +1,4 @@
-# Genie Code Vibe Workshop: Operator Command Center — Design
+# Genie Code Vibe Workshop: Operator Command Center (Design)
 
 **Status:** approved-for-planning
 **Date:** 2026-06-18
@@ -10,7 +10,7 @@
 ## 1. Summary
 
 A 3-hour, hands-on workshop where each attendee builds a working Databricks
-App end-to-end **entirely inside the Databricks Workspace using Genie Code** —
+App end-to-end **entirely inside the Databricks Workspace using Genie Code**:
 no local install of `uv`, Node, the Databricks CLI, `ucode`, Claude Code, or
 Codex. The reference build is the same **Command Center** store-operations
 console (Labor / Inventory / Guest Feedback) over the LCE-flavored synthetic
@@ -41,7 +41,7 @@ AI/BI dashboard) are carried over so the asset is proven.
 
 **Non-goals**
 - Not changing the business domain (store-ops is reused, per decision).
-- Not teaching local agent setup (ucode / Claude Code / Codex) — explicitly
+- Not teaching local agent setup (ucode / Claude Code / Codex), explicitly
   removed.
 - Not building net-new synthetic data; the tables are "already landed" before
   the workshop.
@@ -55,7 +55,7 @@ AI/BI dashboard) are carried over so the asset is proven.
 | 1 | Dataset / domain | Reuse store-ops 8-table schema (`ioc_sandbox.vibe_workshop`) |
 | 2 | Deliverable scope | Plan + both guides + new repo scaffold |
 | 3 | ai-dev-kit → Genie Code install path | **Attendees run the notebook installer** (`install_genie_code_skills.py`) |
-| 4 | Metric View architecture | **A — single unified metric view at `store × date` grain** |
+| 4 | Metric View architecture | **A: single unified metric view at `store × date` grain** |
 | 5 | Repo location | `~/Desktop/Projects/genie-code-vibe-workshop` |
 | 6 | Branding | Keep store-ops "Command Center" + LCE branding |
 
@@ -76,7 +76,7 @@ mode**; they can also be invoked with `@skill-name`.
 **Caveats to bake into the guides:**
 - Skills only work in **Agent mode**; after install, attendees must open a
   **new chat thread** (sometimes a hard browser refresh) for skills to register.
-- `databricks aitools` does NOT support Genie Code — that CLI path is for local
+- `databricks aitools` does NOT support Genie Code; that CLI path is for local
   IDEs only, so it is not used here.
 - Skill parity is not 1:1 with local ai-dev-kit; some skills reference
   capabilities Genie Code lacks. The 6 build steps were chosen to use skills
@@ -113,12 +113,12 @@ rolled up to daily per store, left-joined to daily rollups of
 **Dimensions:** store, region, date, day-of-week (+ store attributes).
 
 **Measures (the governed KPIs reused everywhere):**
-- `revenue` — sum of actual revenue
-- `labor_cost` — sum of actual labor cost
-- `labor_pct_of_sales` — labor cost ÷ revenue
-- `days_of_cover` — on-hand ÷ avg daily units sold
-- `sell_through_pct` — units sold ÷ (units sold + on-hand)
-- `net_sentiment` — positive − negative feedback, normalized
+- `revenue`: sum of actual revenue
+- `labor_cost`: sum of actual labor cost
+- `labor_pct_of_sales`: labor cost ÷ revenue
+- `days_of_cover`: on-hand ÷ avg daily units sold
+- `sell_through_pct`: units sold ÷ (units sold + on-hand)
+- `net_sentiment`: positive - negative feedback, normalized
 
 **Why approach A:** a single metric view makes the "define metrics once,
 governed; everything downstream reuses them" lesson land. Daypart/role/sku
@@ -161,7 +161,7 @@ over from the original guide's pattern).
    > print the URL.
 
 5. **Embed Genie + Dashboard into the App**
-   > Embed my Genie space and my AI/BI dashboard into my app — dashboard tiles
+   > Embed my Genie space and my AI/BI dashboard into my app: dashboard tiles
    > per pillar tab, plus an "Ask Genie" panel. Make the embed work cleanly:
    >  - Use **OBO (on-behalf-of-user) auth** for Genie, NOT the app service
    >    principal (Genie spaces are user-permissioned; the user token is in the

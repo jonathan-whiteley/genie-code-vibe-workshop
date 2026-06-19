@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- **No em dashes or en dashes** in any prose/docs — use colons, semicolons, commas, or parentheses (hyphens only for ranges).
+- **No em dashes or en dashes** in any prose/docs: use colons, semicolons, commas, or parentheses (hyphens only for ranges).
 - **No local install** is required of attendees anywhere in the guides: no `uv`, Node, Databricks CLI, `ucode`, Claude Code, or Codex. The only pre-work is running the ai-dev-kit notebook installer in the workspace.
 - **Metric View is the spine:** the Genie space (step 2) and dashboard (step 3) bind to the metric view, not raw tables.
 - Shared catalog.schema: `ioc_sandbox.vibe_workshop` (dev mirror `jdub_demo.vibe_workshop`).
@@ -222,12 +222,12 @@ git commit -m "Add command_center_metrics metric view (store x date spine)"
 
 ---
 
-### Task 4: DAB scaffold — bundle config + resources
+### Task 4: DAB scaffold: bundle config + resources
 
 **Files:**
 - Create: `dab/databricks.yml`
 - Create: `dab/resources/metric_view.yml`
-- Create: `dab/resources/genie.yml` (job-driven; see Task 5 — the genie space is created by a notebook task, so this file is the dashboard + app + job + metric-view bundling)
+- Create: `dab/resources/genie.yml` (job-driven; see Task 5: the genie space is created by a notebook task, so this file is the dashboard + app + job + metric-view bundling)
 - Create: `dab/resources/dashboard.yml`
 - Create: `dab/resources/app.yml`
 - Create: `dab/resources/job.yml`
@@ -391,7 +391,7 @@ display(spark.sql(f"SELECT * FROM {fqn} LIMIT 5"))
 
 Copy the source notebook, then change `data_sources` to the metric view and update title/instructions:
 - `TITLE = "Command Center reference"`
-- `TABLES = [f"{CATALOG}.{SCHEMA}.command_center_metrics"]` (the metric view is the single data source; raw fact tables MAY be added as secondary sources for daypart/sku drill-downs — keep the metric view first).
+- `TABLES = [f"{CATALOG}.{SCHEMA}.command_center_metrics"]` (the metric view is the single data source; raw fact tables MAY be added as secondary sources for daypart/sku drill-downs; keep the metric view first).
 - Update `INSTRUCTIONS` to say the primary source is the `command_center_metrics` metric view whose governed measures are labor_pct_of_sales, days_of_cover, sell_through_pct, net_sentiment, revenue, labor_cost at store×date grain; anchor "today" to MAX(date).
 - Rewrite `SAMPLE_QUESTIONS` to be answerable from the metric view measures (2 per pillar):
   - "Which 5 stores had the highest labor % of sales last week?"
@@ -448,7 +448,7 @@ Expected: `OK`
 - [ ] **Step 3: Verify no stray `ucode` references remain in app config**
 
 Run: `grep -ri "ucode" dab/src/app/ || echo "clean"`
-Expected: `clean` (or only incidental matches in comments — if any reference local tooling, remove it).
+Expected: `clean` (or only incidental matches in comments; if any reference local tooling, remove it).
 
 - [ ] **Step 4: Commit**
 
@@ -632,7 +632,7 @@ git commit -m "Cross-link guides + final consistency pass"
 - Rewritten agenda → Task 7. ✓
 - Risks (skills load, embed auth, metric-view detail loss, template app exists) → covered in Task 7 troubleshooting + facilitator deploy. ✓
 
-**Placeholder scan:** The `metric_view.yml` is intentionally a documenting placeholder (metric views are created by notebook, not a DAB resource type) — this is explained, not a gap. Dashboard JSON rebinding (Task 5 step 4) describes the transformation rather than reproducing the full ~hundreds-of-lines JSON; the source file is available to crib and the verification gate (valid JSON + measures present) bounds it. Metric-view DDL syntax flagged to defer to the `databricks-metric-views` skill at execution — acceptable since that skill is authoritative and runtime-version-dependent.
+**Placeholder scan:** The `metric_view.yml` is intentionally a documenting placeholder (metric views are created by notebook, not a DAB resource type); this is explained, not a gap. Dashboard JSON rebinding (Task 5 step 4) describes the transformation rather than reproducing the full ~hundreds-of-lines JSON; the source file is available to crib and the verification gate (valid JSON + measures present) bounds it. Metric-view DDL syntax flagged to defer to the `databricks-metric-views` skill at execution: acceptable since that skill is authoritative and runtime-version-dependent.
 
 **Type/name consistency:** `command_center_metrics` (metric view), `command-center-dev` (template app), the 6 measures (`revenue`, `labor_cost`, `labor_pct_of_sales`, `days_of_cover`, `sell_through_pct`, `net_sentiment`), and the 6-module order are used identically across Tasks 3, 4, 5, 7, 8, 9.
 
