@@ -1,0 +1,21 @@
+# Shared Lakebase (managed Postgres) instance for workshop write-backs.
+#
+# All attendee Apps' service principals get INSERT/SELECT on these tables.
+# Used by:
+#   - Reorders module → purchase_orders_released
+#   - Guest Feedback module → review_replies
+#   - Labor module → schedules_approved
+#
+# NOTE: Lakebase resource binding via DABs requires the deployer to be a
+# workspace admin. If you hit a binding error, fall back to manually creating
+# the instance in the workspace UI and pointing the App at it via the
+# LAKEBASE_INSTANCE_NAME env var.
+
+resources:
+  database_instances:
+    command_center_lakebase:
+      name: command-center-lakebase
+      capacity: CU_1
+      # The DDL for the write-back tables is applied by the init_lakebase
+      # notebook in the setup job. We don't model individual Postgres tables
+      # in the bundle because Postgres DDL isn't a first-class DAB resource.

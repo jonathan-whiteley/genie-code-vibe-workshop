@@ -1,0 +1,67 @@
+version: "0.1"
+source: |
+  SELECT
+    s.date,
+    s.store_id,
+    st.store_name,
+    st.region,
+    date_format(s.date, 'EEEE')           AS day_of_week,
+    s.revenue,
+    l.labor_cost,
+    inv.units_sold,
+    inv.on_hand_eod,
+    fb.pos_cnt,
+    fb.neg_cnt,
+    fb.total_cnt
+  FROM (
+    SELECT date, store_id, SUM(revenue) AS revenue
+    FROM ioc_sandbox.vibe_workshop.facts_sales_daypart
+    GROUP BY date, store_id
+  ) s
+  LEFT JOIN (
+    SELECT date, store_id, SUM(labor_cost) AS labor_cost
+    FROM ioc_sandbox.vibe_workshop.facts_labor_daypart
+    GROUP BY date, store_id
+  ) l USING (date, store_id)
+  LEFT JOIN (
+    SELECT date, store_id,
+           SUM(units_sold) AS units_sold,
+           SUM(on_hand_eod) AS on_hand_eod
+    FROM ioc_sandbox.vibe_workshop.facts_sales_inventory_daily
+    GROUP BY date, store_id
+  ) inv USING (date, store_id)
+  LEFT JOIN (
+    SELECT date, store_id,
+           SUM(CASE WHEN sentiment_label = 'pos' THEN 1 ELSE 0 END) AS pos_cnt,
+           SUM(CASE WHEN sentiment_label = 'neg' THEN 1 ELSE 0 END) AS neg_cnt,
+           COUNT(*) AS total_cnt
+    FROM ioc_sandbox.vibe_workshop.facts_customer_feedback
+    GROUP BY date, store_id
+  ) fb USING (date, store_id)
+  JOIN ioc_sandbox.vibe_workshop.dims_stores st USING (store_id)
+
+dimensions:
+  - name: date
+    expr: date
+  - name: store_id
+    expr: store_id
+  - name: store_name
+    expr: store_name
+  - name: region
+    expr: region
+  - name: day_of_week
+    expr: day_of_week
+
+measures:
+  - name: revenue
+    expr: SUM(revenue)
+  - name: labor_cost
+    expr: SUM(labor_cost)
+  - name: labor_pct_of_sales
+    expr: SUM(labor_cost) / NULLIF(SUM(revenue), 0)
+  - name: days_of_cover
+    expr: SUM(on_hand_eod) / NULLIF(SUM(units_sold), 0)
+  - name: sell_through_pct
+    expr: SUM(units_sold) / NULLIF(SUM(units_sold) + SUM(on_hand_eod), 0)
+  - name: net_sentiment
+    expr: (SUM(pos_cnt) - SUM(neg_cnt)) / NULLIF(SUM(total_cnt), 0)

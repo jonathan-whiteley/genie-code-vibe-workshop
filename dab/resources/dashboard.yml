@@ -1,0 +1,17 @@
+# Reference AI/BI (Lakeview) dashboard for the Operator Command Center.
+#
+# Facilitator's fallback. Attendees build their own dashboard from prompts
+# in the lab companion guide; if any attendee gets stuck, they can clone
+# this one.
+
+resources:
+  dashboards:
+    command_center_dash:
+      display_name: "Operator Command Center"
+      file_path: ../src/dashboards/operator_command_center.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+      dataset_catalog: ${var.catalog}
+      dataset_schema: ${var.schema}
+      permissions:
+        - level: CAN_RUN
+          group_name: ${var.attendee_group}

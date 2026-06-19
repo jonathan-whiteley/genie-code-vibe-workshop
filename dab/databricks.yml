@@ -1,0 +1,91 @@
+# Databricks Asset Bundle for the Genie Code Vibe Workshop.
+#
+# This bundle is the FACILITATOR reference build for a metric-view-first
+# workshop run in Genie Code. The facilitator runs this once per target
+# workspace to set up:
+#   - Setup job (synthetic data generation + metric view + Genie space + Lakebase DDL)
+#   - Lakebase instance for write-back (shared across all attendees)
+#   - Reference AI/BI dashboard (one per facilitator)
+#   - Reference App ("Operator Command Center" prototype)
+#
+# Attendees do NOT run this bundle. They build their own Genie space,
+# dashboard, and App during the workshop using prompts from the lab
+# companion guide. This bundle is the facilitator's fallback reference.
+
+bundle:
+  name: genie-code-vibe-workshop
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: "Unity Catalog catalog where workshop data lives"
+    default: "ioc_sandbox"
+  schema:
+    description: "Schema for the 8-table workshop dataset"
+    default: "vibe_workshop"
+  warehouse_id:
+    description: "SQL warehouse used by the job, dashboard, and app. Default lookup name 'serverless' matches the LCE workshop warehouse; override with --var warehouse_id=<id> for other workspaces."
+    lookup:
+      warehouse: "serverless"
+  fmapi_endpoint:
+    description: "Model endpoint used by both ai_query() in the app AND the AI Gateway route for the Genie Code coding agent. Same endpoint serves both for simplicity."
+    default: "databricks-claude-sonnet-4-6"
+  data_end_date:
+    description: "Latest date in the synthetic data, YYYY-MM-DD"
+    default: "2026-06-22"
+  attendee_group:
+    description: "Workspace group of workshop attendees (gets SELECT on tables and INSERT on Lakebase tables)"
+    default: "users"
+  lakebase_instance:
+    description: "Name of the Lakebase Postgres instance the App connects to"
+    default: "command-center-lakebase"
+  company:
+    description: "Company config to drive synthetic data (item catalog, store locations, review language). See COMPANY_CONFIGS in 01_generate_data.py for valid keys."
+    default: "lce"
+
+targets:
+  dev:
+    default: true
+    mode: development
+    # Strip the auto "[dev <user>]" prefix on resource names
+    presets:
+      name_prefix: ""
+    workspace:
+      profile: DEFAULT
+    variables:
+      catalog: "jdub_demo"
+      schema: "vibe_workshop"
+
+  lce:
+    mode: production
+    workspace:
+      profile: lce
+    variables:
+      catalog: "ioc_sandbox"
+      schema: "vibe_workshop"
+
+  e2demo:
+    # Clean-room test target in the e2-demo-field-eng workspace.
+    # Auth first: databricks auth login --host https://e2-demo-field-eng.cloud.databricks.com --profile e2-demo-west
+    mode: development
+    presets:
+      name_prefix: ""
+    workspace:
+      profile: e2-demo-west
+    variables:
+      catalog: "jdub_demo_aws"
+      schema: "vibe_workshop"
+
+  azure:
+    # Clean-room test target in the Azure adb-984752964297111 workspace.
+    # Auth first: databricks auth login --host https://adb-984752964297111.11.azuredatabricks.net --profile azure
+    mode: development
+    presets:
+      name_prefix: ""
+    workspace:
+      profile: azure
+    variables:
+      catalog: "jdub_demo"
+      schema: "vibe_workshop"
