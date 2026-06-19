@@ -1,0 +1,33 @@
+command:
+  - "uvicorn"
+  - "app:app"
+  - "--host"
+  - "0.0.0.0"
+  - "--port"
+  - "8000"
+
+# Most config (catalog, schema, genie_space_id) comes from a workspace file
+# written by the setup job at /Workspace/Shared/command-center/config.json.
+# The env vars below are bootstrap defaults for first-boot / fallback only.
+env:
+  - name: DEFAULT_DOC
+    value: "Homebase.html"
+
+  # Warehouse for SQL reads. Injected by the resource binding in resources/app.yml.
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: workshop_warehouse
+
+  # Bootstrap defaults — overridden once the setup job writes the workspace
+  # config file. Restart the App after `bundle run command_center_setup`.
+  - name: CC_CATALOG
+    value: "ioc_sandbox"
+  - name: CC_SCHEMA
+    value: "vibe_workshop"
+  - name: ANCHOR_DATE
+    value: "2026-06-22"
+  - name: FMAPI_ENDPOINT
+    value: "databricks-claude-sonnet-4-6"
+  - name: LAKEBASE_INSTANCE
+    value: "command-center-lakebase"
+  - name: GENIE_SPACE_ID
+    value: ""
