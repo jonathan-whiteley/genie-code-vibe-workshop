@@ -81,19 +81,26 @@ if not initials:
         "into the 'initials' widget at the top of this notebook and run this cell again."
     )
 
-session_setup_prompt = f"""I am doing the Genie Code Command Center lab. Remember these for the whole chat:
-  My initials:  {initials}
-  Catalog:      ioc_sandbox.vibe_workshop
-  Warehouse:    serverless
-  Model:        databricks-claude-sonnet-4-6   (for ai_query() only)
-My resources (use exactly these names):
-  metric view:  {initials}_command_center_metrics
-  Genie space:  "{initials} Command Center"
-  dashboard:    "{initials} Operator Insights"
-  app:          {initials}-command-center   (already created and deployed for me by Lab 00)
-  job:          {initials}-command-center-refresh
-As we go, remember my Genie space ID, dashboard ID, and app URL.
-Confirm, then wait for my first prompt."""
+session_setup_prompt = f"""I am doing the Genie Code Command Center lab. Use these settings for the whole chat:
+
+| Setting | Value |
+|---|---|
+| My initials | {initials} |
+| Catalog | ioc_sandbox.vibe_workshop |
+| Warehouse | serverless |
+| Model (for ai_query only) | databricks-claude-sonnet-4-6 |
+
+Create these with exactly these names:
+
+| Resource | Name |
+|---|---|
+| Metric view | {initials}_command_center_metrics |
+| Genie space | {initials} Command Center |
+| Dashboard | {initials} Operator Insights |
+| App | {initials}-command-center (already created and deployed by Lab 00) |
+| Job | {initials}-command-center-refresh |
+
+As we go, remember my Genie space ID, dashboard ID, and app URL. Confirm these back to me, then wait for my first prompt."""
 
 print("\nCopy everything below this line into Genie Code as your first message:\n")
 print(session_setup_prompt)
