@@ -1,0 +1,196 @@
+{
+  "datasets": [
+    {
+      "name": "labor_pct_trend",
+      "displayName": "Labor % of sales, last 30 days",
+      "queryLines": [
+        "SELECT date AS labor_date,",
+        "       MEASURE(labor_pct_of_sales) AS labor_pct",
+        "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
+        "WHERE date >= (SELECT MAX(date) - 30 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
+        "GROUP BY date",
+        "ORDER BY date"
+      ],
+      "parameters": [
+        {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
+        {"keyword": "schema", "displayName": "schema", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "vibe_workshop"}]}}}
+      ]
+    },
+    {
+      "name": "revenue_by_region",
+      "displayName": "Revenue by region, last 30 days",
+      "queryLines": [
+        "SELECT region,",
+        "       MEASURE(revenue) AS revenue",
+        "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
+        "WHERE date >= (SELECT MAX(date) - 30 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
+        "GROUP BY region",
+        "ORDER BY revenue DESC"
+      ],
+      "parameters": [
+        {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
+        {"keyword": "schema", "displayName": "schema", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "vibe_workshop"}]}}}
+      ]
+    },
+    {
+      "name": "days_of_cover_by_store",
+      "displayName": "Days of cover by store, latest date",
+      "queryLines": [
+        "SELECT store_name,",
+        "       MEASURE(days_of_cover) AS days_of_cover",
+        "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
+        "WHERE date = (SELECT MAX(date) FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
+        "GROUP BY store_name",
+        "ORDER BY days_of_cover ASC"
+      ],
+      "parameters": [
+        {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
+        {"keyword": "schema", "displayName": "schema", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "vibe_workshop"}]}}}
+      ]
+    },
+    {
+      "name": "net_sentiment_trend",
+      "displayName": "Net sentiment timeline, last 30 days",
+      "queryLines": [
+        "SELECT date AS sentiment_date,",
+        "       MEASURE(net_sentiment) AS net_sentiment",
+        "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
+        "WHERE date >= (SELECT MAX(date) - 30 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
+        "GROUP BY date",
+        "ORDER BY date"
+      ],
+      "parameters": [
+        {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
+        {"keyword": "schema", "displayName": "schema", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "vibe_workshop"}]}}}
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "main",
+      "displayName": "Overview",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "title",
+            "multilineTextboxSpec": {"lines": ["## Operator Command Center"]}
+          },
+          "position": {"x": 0, "y": 0, "width": 12, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "subtitle",
+            "multilineTextboxSpec": {"lines": ["Governed metrics view across Labor, Inventory, and Guest Sentiment. Powered by command_center_metrics metric view."]}
+          },
+          "position": {"x": 0, "y": 1, "width": 12, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "chart_labor_trend",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "labor_pct_trend",
+                "fields": [
+                  {"name": "labor_date", "expression": "`labor_date`"},
+                  {"name": "labor_pct", "expression": "`labor_pct`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {"fieldName": "labor_date", "scale": {"type": "temporal"}, "displayName": "Date"},
+                "y": {"fieldName": "labor_pct", "scale": {"type": "quantitative"}, "displayName": "Labor % of Sales", "format": {"type": "number", "decimalPlaces": {"type": "fixed", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Labor % of sales, last 30 days"}
+            }
+          },
+          "position": {"x": 0, "y": 2, "width": 6, "height": 5}
+        },
+        {
+          "widget": {
+            "name": "chart_revenue_by_region",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "revenue_by_region",
+                "fields": [
+                  {"name": "region", "expression": "`region`"},
+                  {"name": "revenue", "expression": "`revenue`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "region", "scale": {"type": "categorical"}, "displayName": "Region"},
+                "y": {"fieldName": "revenue", "scale": {"type": "quantitative"}, "displayName": "Revenue", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Revenue by region, last 30 days"}
+            }
+          },
+          "position": {"x": 6, "y": 2, "width": 6, "height": 5}
+        },
+        {
+          "widget": {
+            "name": "chart_days_of_cover",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "days_of_cover_by_store",
+                "fields": [
+                  {"name": "store_name", "expression": "`store_name`"},
+                  {"name": "days_of_cover", "expression": "`days_of_cover`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "store_name", "scale": {"type": "categorical"}, "displayName": "Store"},
+                "y": {"fieldName": "days_of_cover", "scale": {"type": "quantitative"}, "displayName": "Days of Cover", "format": {"type": "number", "decimalPlaces": {"type": "fixed", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Days of cover by store, latest date"}
+            }
+          },
+          "position": {"x": 0, "y": 7, "width": 6, "height": 5}
+        },
+        {
+          "widget": {
+            "name": "chart_net_sentiment",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "net_sentiment_trend",
+                "fields": [
+                  {"name": "sentiment_date", "expression": "`sentiment_date`"},
+                  {"name": "net_sentiment", "expression": "`net_sentiment`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {"fieldName": "sentiment_date", "scale": {"type": "temporal"}, "displayName": "Date"},
+                "y": {"fieldName": "net_sentiment", "scale": {"type": "quantitative"}, "displayName": "Net Sentiment", "format": {"type": "number", "decimalPlaces": {"type": "fixed", "places": 2}}}
+              },
+              "frame": {"showTitle": true, "title": "Net sentiment timeline, last 30 days"}
+            }
+          },
+          "position": {"x": 6, "y": 7, "width": 6, "height": 5}
+        }
+      ]
+    }
+  ]
+}
