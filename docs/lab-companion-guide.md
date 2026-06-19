@@ -123,7 +123,9 @@ Dimensions: store, region, date, day-of-week.
 
 Put all the joins and rollups inside the metric view's own source query; do not create any intermediary or base view, only the single metric view.
 
-Validate it returns rows.
+Important: roll each source table up to one row per store per date in its own subquery BEFORE joining them, so revenue and labor are not double counted by the daypart, role, or SKU grains. Labor % of sales should land around 20 to 35%; if it is over 100%, the join fanned out and needs pre-aggregation.
+
+Validate it returns rows and that labor % of sales is realistic.
 ```
 
 ---
@@ -160,11 +162,22 @@ Add these 10 benchmark questions to my Genie space, then run the benchmark and t
 ### Module 3: AI/BI Dashboard (0:45-1:05)
 
 ```text
-Create an AI/BI dashboard on my metric view with 4 widgets:
-- labor % of sales (30-day line)
+Create a rich AI/BI dashboard on my metric view.
+
+Start with a row of KPI counters (latest day):
+- total revenue
+- labor % of sales
+- average days of cover
+- net sentiment
+
+Then add these charts:
+- revenue trend, last 30 days (line)
+- labor % of sales, last 30 days (line)
 - revenue by region (bar)
-- days of cover / stock health (bar)
-- net sentiment timeline (line)
+- sell-through % by store (bar)
+- 10 stores with the lowest days of cover (bar)
+- net sentiment timeline, last 30 days (line)
+- revenue by day-of-week (bar)
 
 Give it Little Caesars branding and make it pop:
 - use the LCE orange (#FF671B) as the primary accent across the charts

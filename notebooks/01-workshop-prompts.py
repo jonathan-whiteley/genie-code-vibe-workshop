@@ -137,7 +137,9 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC Put all the joins and rollups inside the metric view's own source query; do not create any intermediary or base view, only the single metric view.
 # MAGIC
-# MAGIC Then run a SELECT to confirm it returns rows.
+# MAGIC Important: roll each source table up to one row per store per date in its own subquery BEFORE joining them, so revenue and labor are not double counted by the daypart, role, or SKU grains. Labor % of sales should land around 20 to 35%; if it is over 100%, the join fanned out and needs pre-aggregation.
+# MAGIC
+# MAGIC Then run a SELECT to confirm it returns rows and that labor % of sales is realistic.
 # MAGIC ```
 
 # COMMAND ----------
@@ -198,11 +200,22 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create an AI/BI dashboard on my metric view with 4 widgets:
-# MAGIC - labor % of sales (30-day line)
+# MAGIC Create a rich AI/BI dashboard on my metric view.
+# MAGIC
+# MAGIC Start with a row of KPI counters (latest day):
+# MAGIC - total revenue
+# MAGIC - labor % of sales
+# MAGIC - average days of cover
+# MAGIC - net sentiment
+# MAGIC
+# MAGIC Then add these charts:
+# MAGIC - revenue trend, last 30 days (line)
+# MAGIC - labor % of sales, last 30 days (line)
 # MAGIC - revenue by region (bar)
-# MAGIC - days of cover / stock health (bar)
-# MAGIC - net sentiment timeline (line)
+# MAGIC - sell-through % by store (bar)
+# MAGIC - 10 stores with the lowest days of cover (bar)
+# MAGIC - net sentiment timeline, last 30 days (line)
+# MAGIC - revenue by day-of-week (bar)
 # MAGIC
 # MAGIC Give it Little Caesars branding and make it pop:
 # MAGIC - use the LCE orange (#FF671B) as the primary accent across the charts
