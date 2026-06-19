@@ -7,9 +7,9 @@
 # MAGIC Release / Reply / Approve actions in the UI persist somewhere.
 # MAGIC
 # MAGIC Tables:
-# MAGIC - `purchase_orders_released` — Reorders module Release button
-# MAGIC - `review_replies` — Guest Feedback Send Reply button
-# MAGIC - `schedules_approved` — Labor planner Approve Schedule button
+# MAGIC - `purchase_orders_released`: Reorders module Release button
+# MAGIC - `review_replies`: Guest Feedback Send Reply button
+# MAGIC - `schedules_approved`: Labor planner Approve Schedule button
 
 # COMMAND ----------
 dbutils.widgets.text("lakebase_instance_name", "command-center-lakebase")

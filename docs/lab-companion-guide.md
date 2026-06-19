@@ -17,7 +17,7 @@
 
 | Time | Module | Outcome |
 |---|---|---|
-| pre (async) | Setup | Repo cloned as Git folder; `attendee_setup` notebook ran (skills installed + app deployed) |
+| pre (async) | Setup | Repo cloned as Git folder; `attendee/00-setup` notebook ran (skills installed + app deployed) |
 | 0:00-0:10 | Welcome + demo | See finished app; get env values + session-setup prompt |
 | 0:10-0:25 | Module 1: Metric View | Governed KPIs defined over landed tables |
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
@@ -48,7 +48,7 @@ No local software to install. All steps happen inside the Databricks workspace.
 
 1. **Clone this workshop repo as a Workspace Git folder.** In the workspace, go to **Workspace > Create > Git folder**, paste the repo URL, and click Create. This makes the notebooks available directly inside your workspace.
 
-2. **Open `dab/src/notebooks/attendee_setup`, set your initials widget, and click Run All.** This single notebook does everything you would otherwise do manually: it installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired. You do not need to run any separate installer or create the app yourself.
+2. **Open `dab/src/notebooks/attendee/00-setup`, set your initials widget, and click Run All.** This single notebook does everything you would otherwise do manually: it installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired. You do not need to run any separate installer or create the app yourself. Once setup finishes, the hands-on lab lives in the `dab/src/notebooks/attendee/01-workshop-prompts` notebook (you can follow it there or in this guide; the prompts are identical).
 
 3. **Start a new Agent-mode chat in Genie Code.** Skills only work in Agent mode. After the setup notebook finishes, open a **new chat thread** in Genie Code (hard-refresh the browser if skills do not appear after opening a new thread).
 
@@ -61,7 +61,7 @@ List the tables in ioc_sandbox.vibe_workshop. I should see 8 (3 dims_, 5 facts_)
 ### Pre-work checklist
 
 - [ ] Repo cloned as a Workspace Git folder
-- [ ] `attendee_setup` notebook ran successfully (skills installed + app deployed)
+- [ ] `attendee/00-setup` notebook ran successfully (skills installed + app deployed)
 - [ ] New Agent-mode chat open in Genie Code
 - [ ] Smoke test passed: agent lists 8 tables in `ioc_sandbox.vibe_workshop` (3 `dims_*`, 5 `facts_*`)
 
@@ -99,6 +99,8 @@ Now paste each module prompt in order; the agent already knows your initials and
 ---
 
 ### Module 1: Metric View (0:10-0:25)
+
+> **Note:** Genie Code runs the CREATE statement for you, but you need CREATE on the schema. If it is denied, ask the facilitator to grant your group CREATE on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
 
 ```text
 Module 1. Create a metric view named <initials>_command_center_metrics over my
@@ -149,19 +151,17 @@ Center | LCE") and redeploy.
 
 ### Module 5: Embed Genie + Dashboard (1:45-2:25)
 
+> **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on your app by the 00-setup notebook; do not ask Genie Code to add scopes (it cannot, and they are not needed).
+
 ```text
-Module 5. Embed my Genie space and dashboard into my app (dashboard tiles
-per pillar tab plus an Ask Genie panel) with the embed wiring spelled out
-so it works cleanly:
-  - Use OBO auth (X-Forwarded-Access-Token), NOT the app SP, for Genie;
-    Genie spaces are user-permissioned and SP calls will 403.
-  - Declare user_api_scopes: [genie, sql, dashboards.genie] on the app
-    resource, then redeploy and re-consent on first open.
-  - For the dashboard, use the published dashboard's embed/iframe URL scoped
-    to my dashboard ID and grant CAN_VIEW to the app SP / user.
-  - Support multi-turn Genie: first ask calls start-conversation, follow-up
-    asks post to the conversation messages endpoint; poll until COMPLETED and
-    return the answer plus generated SQL.
+Module 5. Update my app to embed MY Genie space (the ID from Module 2) and MY
+dashboard (the ID from Module 3), then redeploy:
+  - Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token
+    header (OBO), not the app service principal, so it uses my access to my space.
+  - Embed my published dashboard by its ID, rendered as the signed-in user.
+  - Support multi-turn: start-conversation on the first ask, then post to the
+    conversation messages endpoint; poll until COMPLETED; return the answer and the
+    SQL Genie generated.
 ```
 
 > **If running low on time:** drop the per-tab dashboard tiles and keep only the Ask Genie panel. Genie is the higher-impact piece.

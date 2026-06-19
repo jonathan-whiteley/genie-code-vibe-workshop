@@ -18,7 +18,7 @@ The reference build is **Command Center**, a store-operations console for a sing
 |---|---|
 | **Duration** | 3 hours |
 | **Audience** | 8-15 engineers / analysts per cohort |
-| **Pre-work** | Run the ai-dev-kit skills installer notebook in the Databricks Workspace |
+| **Pre-work** | Clone repo as a Workspace Git folder; run `dab/src/notebooks/attendee/00-setup` (installs skills + deploys app) |
 | **Modules** | 6 modules: Metric View → Genie → Dashboard → App → Embed → Job |
 | **Stack** | Metric Views · Genie · AI/BI Dashboards · Databricks Apps · DABs · FMAPI |
 | **Default brand** | Little Caesars (swap via `company` config in the data generator) |
@@ -29,11 +29,11 @@ The reference build is **Command Center**, a store-operations console for a sing
 
 No local install required. All workshop modules run entirely inside the Databricks Workspace:
 
-1. Open **Genie Code** in your Databricks Workspace.
-2. Run the **ai-dev-kit skills installer notebook** (`install_genie_code_skills.py`): this loads the metric-views, genie, dashboard, apps, and jobs skills into your user workspace.
-3. Open a **new Agent-mode chat** in Genie Code (new thread + hard refresh if skills do not appear).
+1. **Clone this repo as a Workspace Git folder.** In the workspace, go to **Workspace > Create > Git folder**, paste the repo URL, and click Create.
+2. **Open `dab/src/notebooks/attendee/00-setup`, set your initials widget, and click Run All.** This single notebook installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired.
+3. **Open a new Agent-mode chat** in Genie Code (new thread; hard-refresh the browser if skills do not appear).
 
-Full attendee setup and module-by-module prompts: [`docs/lab-companion-guide.md`](docs/lab-companion-guide.md).
+The hands-on lab prompts are in `dab/src/notebooks/attendee/01-workshop-prompts`. Full setup instructions and module-by-module prompts: [`docs/lab-companion-guide.md`](docs/lab-companion-guide.md).
 
 ---
 
