@@ -23,7 +23,7 @@
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
 | 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
 | 1:05-1:15 | Break | |
-| 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify wiring + optional branding tweaks |
+| 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:25 | Module 5: Embed | Genie + dashboard live in the app |
 | 2:25-2:50 | Module 6 (BONUS): Job | Scheduled refresh job |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
@@ -169,9 +169,9 @@ My app <initials>-command-center is already deployed (the setup notebook created
 
 Open its URL and confirm it loads.
 
-If you want, tweak the LCE branding:
-- logo branding/lce/logo.svg
-- primary #FF671B
+If you want, give it Little Caesars branding:
+- copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it
+- primary color #FF671B
 - dark navbar
 - title "Command Center | LCE"
 
