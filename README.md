@@ -31,7 +31,7 @@ No local install required. All workshop modules run entirely inside the Databric
 
 1. **Clone this repo as a Workspace Git folder.** In the workspace, go to **Workspace > Create > Git folder**, paste the repo URL, and click Create.
 2. **Open `notebooks/00-setup`, set your initials widget, and click Run All.** This single notebook installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired.
-3. **Open a new Agent-mode chat** in Genie Code (new thread; hard-refresh the browser if skills do not appear).
+3. **Open a new chat** in Genie Code (new thread; hard-refresh the browser if skills do not appear).
 
 The hands-on lab prompts are in `notebooks/01-workshop-prompts`. Full setup instructions and module-by-module prompts: [`docs/lab-companion-guide.md`](docs/lab-companion-guide.md).
 

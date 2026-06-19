@@ -20,7 +20,7 @@ Times are relative; facilitator sets the wall clock.
 
 | Time | Module | Outcome |
 |---|---|---|
-| pre (async) | Setup | Repo cloned as Git folder; `notebooks/00-setup` notebook ran (skills installed + app deployed); new Agent-mode chat open |
+| pre (async) | Setup | Repo cloned as Git folder; `notebooks/00-setup` notebook ran (skills installed + app deployed); new chat open |
 | 0:00-0:10 | Welcome + demo | See finished app; get env values + session-setup prompt |
 | 0:10-0:25 | Module 1: Metric View | Governed KPIs defined over landed tables |
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
@@ -62,13 +62,13 @@ Each attendee runs one notebook before the workshop. It handles both skills inst
 3. The notebook orchestrates two helpers:
    - `notebooks/utils/install_genie_code_skills.py`: installs ai-dev-kit skills into `/Users/<username>/.assistant/skills/` (delegates to the official ai-dev-kit installer).
    - `notebooks/utils/clone_app.py`: copies the `command-center-dev` template, creates the attendee's `<initials>-command-center` app, binds its service principal to the warehouse, catalog/schema (SELECT ON SCHEMA covers all 8 tables and the metric view), and Lakebase, sets OBO scopes (genie, sql, dashboards.genie), and deploys.
-4. Attendee opens Genie Code, starts a **new Agent-mode chat thread**, and verifies skills loaded.
+4. Attendee opens Genie Code, starts a **new chat thread**, and verifies skills loaded.
 
 The attendee's app is fully created, permissioned, and deployed BEFORE the live session. Module 4 in the workshop is now app verification and optional polish, not app creation.
 
 **Caveats (communicate to all attendees before the workshop):**
 
-- Skills only work in **Agent mode**. Standard Genie Code chat does not invoke skills.
+- Open a **new chat thread** after installing skills so Genie Code loads them.
 - After setup, attendees must open a **new chat thread** and may need a hard browser refresh for skills to register.
 - `databricks aitools` does NOT support Genie Code. That CLI path is for local IDE setups only and is not used here.
 - Skill parity is not 1:1 with local ai-dev-kit; the 6 build steps were chosen to use skills known to work in Genie Code (metric views, genie, AI/BI dashboards, apps, jobs).
@@ -180,7 +180,7 @@ The App reads `/Workspace/Shared/command-center/config.json` (written by the set
 - [ ] Attendee permissions confirmed (everyone can reach the workspace, create Git folders, and has the entitlements above)
 - [ ] `command-center-dev` template app is deployed and running (attendees' `notebooks/00-setup` notebook copies from it)
 - [ ] Send attendees the **Lab Companion Guide** and workshop env values: workspace URL, catalog, warehouse name, AI Gateway endpoint, branding folder (`branding/lce/`)
-- [ ] Remind attendees to clone the repo as a Git folder, run `notebooks/00-setup`, and open a new Agent-mode chat before the session
+- [ ] Remind attendees to clone the repo as a Git folder, run `notebooks/00-setup`, and open a new chat before the session
 - [ ] Warm the SQL warehouse by running the reference dashboard once
 - [ ] Smoke-test the reference Genie space with 2-3 questions per pillar
 - [ ] Confirm at least one test-attendee run of `notebooks/00-setup` completed successfully (app deployed, wiring green)
@@ -220,7 +220,7 @@ Single source of truth: **[Lab Companion Guide section "Pre-Work"](lab-companion
 2. Clone the workshop repo as a **Workspace Git folder** (Workspace > Create > Git folder, paste the repo URL).
 3. Open `notebooks/00-setup`, set the initials widget, and click **Run All**. This single notebook installs the ai-dev-kit skills into Genie Code AND creates, permissions, and deploys the attendee's `<initials>-command-center` app. The app is fully live before the session starts.
 4. The hands-on lab prompts are in `notebooks/01-workshop-prompts` (identical to the Lab Companion Guide; attendees can follow either).
-5. Open **Genie Code**, start a new **Agent-mode chat**, and verify skills loaded.
+5. Open **Genie Code**, start a **new chat**, and verify skills loaded.
 6. Keep that chat open; copy the session-setup prompt from the Lab Companion Guide.
 
 **Facilitator prerequisite:** the `command-center-dev` template app must be deployed and running before any attendee runs `notebooks/00-setup`. The `clone_app.py` helper copies from it.
@@ -236,7 +236,7 @@ Sorted by likelihood. Highest-impact items first.
 | Symptom | Fix |
 |---|---|
 | **First-time deploy fails:** `SCHEMA_DOES_NOT_EXIST` or `TABLE_OR_VIEW_NOT_FOUND` | Run `dab/scripts/bootstrap.py` (from repo root, or `scripts/bootstrap.py` from `dab/`) **before** `bundle deploy`. App's `uc_securable` bindings are validated at deploy time, so the 8 tables must exist (even empty). |
-| **Skills not loading in Genie Code** | Open a **new Agent-mode chat** after running the installer (do not reuse the same thread). Hard-refresh the browser if skills still do not appear. Verify skills landed under `/Users/<username>/.assistant/skills/` in the workspace file browser. Note: `databricks aitools` does NOT support Genie Code and is not used here. |
+| **Skills not loading in Genie Code** | Open a **new chat** after running the installer (do not reuse the same thread). Hard-refresh the browser if skills still do not appear. Verify skills landed under `/Users/<username>/.assistant/skills/` in the workspace file browser. Note: `databricks aitools` does NOT support Genie Code and is not used here. |
 | **Attendees skip pre-workshop setup** | Send reminder 24h before; reserve 10 min at session start for stragglers (cuts into Module 1). |
 | **Attendee app SP lacks catalog access** | `clone_app.py` binds the SP via app resources and runs GRANT USE CATALOG / USE SCHEMA / SELECT ON SCHEMA automatically. If the attendee group lacks grant authority on the shared facilitator-owned catalog, `clone_app.py` prints the exact GRANT statements with the SP id; the facilitator pastes them into a SQL warehouse as catalog owner. The SELECT ON SCHEMA grant covers all 8 tables AND the `command_center_metrics` metric view in a single statement. |
 | **`notebooks/00-setup` fails: `command-center-dev` not found** | The template app must be deployed before attendees run setup. Verify `command-center-dev` is running (T-1-week smoke test) and that attendees have workspace access to its source path. |

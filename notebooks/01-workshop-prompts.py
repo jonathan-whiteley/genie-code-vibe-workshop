@@ -3,7 +3,7 @@
 # MAGIC # Lab 01: Build Your Command Center with Genie Code 🏗️
 # MAGIC
 # MAGIC In this lab you will build a fully governed operational command center for LCE
-# MAGIC by prompting Genie Code in Agent mode. You tell it WHAT to build; the ai-dev-kit
+# MAGIC by prompting Genie Code. You tell it WHAT to build; the ai-dev-kit
 # MAGIC skills installed in Lab 00 tell it HOW. You will go from raw workshop tables to a
 # MAGIC live deployed app with an embedded Genie space and AI/BI dashboard, all without
 # MAGIC leaving the chat.
@@ -25,7 +25,7 @@
 # MAGIC
 # MAGIC Before you start prompting, read these once:
 # MAGIC
-# MAGIC - **You build everything by prompting Genie Code in Agent mode.** The ai-dev-kit
+# MAGIC - **You build everything by prompting Genie Code.** The ai-dev-kit
 # MAGIC   skills (installed in Lab 00) tell it how to build on Databricks. You tell it
 # MAGIC   WHAT; the skills know HOW.
 # MAGIC
@@ -49,7 +49,7 @@
 # MAGIC %md
 # MAGIC ## Session setup (paste this first) 🔧
 # MAGIC
-# MAGIC Open Genie Code, start a **new Agent-mode chat**, and paste the block below as
+# MAGIC Open Genie Code, start a **new chat**, and paste the block below as
 # MAGIC your very first message. Replace `<INITIALS>` with your actual initials (the same
 # MAGIC ones you used in Lab 00). Do not send any other message until Genie Code
 # MAGIC confirms.
@@ -58,7 +58,7 @@
 # MAGIC > exactly what Lab 00 created, otherwise Genie Code will try to create duplicates.
 # MAGIC
 # MAGIC ```text
-# MAGIC I am doing the Genie Code Command Center lab in Agent mode. Remember these for the whole chat:
+# MAGIC I am doing the Genie Code Command Center lab. Remember these for the whole chat:
 # MAGIC   My initials:  <INITIALS>
 # MAGIC   Catalog:      ioc_sandbox.vibe_workshop
 # MAGIC   Warehouse:    serverless
