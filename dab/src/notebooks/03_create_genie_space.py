@@ -36,22 +36,23 @@ if not WAREHOUSE_ID:
 TITLE = "Command Center reference"
 DESCRIPTION = (
     "Reference Genie space for the ucode Vibe Coding workshop. Answers questions "
-    "about labor efficiency, inventory health, and guest sentiment across 20 stores. "
+    "about sales performance and labor efficiency across 20 stores. "
     "Powered by the command_center_metrics metric view. Drives the Ask Genie panel "
     "in the Command Center app."
 )
 INSTRUCTIONS = (
     "You are answering questions for an operator using the Command Center app. "
     "The primary data source is the command_center_metrics metric view, which "
-    "provides governed measures at store x date grain: labor_pct_of_sales "
-    "(labor cost divided by revenue), days_of_cover (inventory days remaining), "
-    "sell_through_pct (units sold as a share of total supply), net_sentiment "
-    "(positive minus negative reviews divided by total), revenue, and labor_cost. "
+    "provides governed sales and labor measures at store x date grain: "
+    "revenue (total sales), forecast_revenue (planned revenue target), "
+    "traffic (guest count), labor_cost (total labor spend), "
+    "forecast_labor_cost (planned labor budget), and labor_pct_of_sales "
+    "(labor cost divided by revenue). "
     "Dimensions available are date, store_id, store_name, region, and day_of_week. "
     "The dataset covers 20 stores. Anchor 'today' to MAX(date) in the metric view, "
     "not current_date(). Use MEASURE() syntax when querying governed measures "
     "(e.g. SELECT date, MEASURE(labor_pct_of_sales) FROM command_center_metrics). "
-    "If the user asks about daypart or SKU breakdowns that require the underlying "
+    "If the user asks about daypart breakdowns that require the underlying "
     "fact tables, note that more granular data may not be available in this space."
 )
 
@@ -69,21 +70,39 @@ TABLES = [
 
 SAMPLE_QUESTIONS = [
     "Which 5 stores had the highest labor % of sales last week?",
-    "Show labor % of sales trend over the last 30 days.",
-    "Which region has the lowest days of cover right now?",
-    "Show sell-through % by store for the latest date.",
-    "What's the net sentiment trend over the last 30 days?",
-    "Which stores have negative net sentiment this week?",
+    "How has labor % of sales trended over the last 30 days?",
+    "Which stores are below their revenue forecast this week?",
+    "Show the revenue trend over the last 30 days.",
+    "How did labor cost track against its forecast this week?",
+    "Which region has the highest revenue this month?",
 ]
 
 EXAMPLE_SQLS = [
     {
-        "title": "Labor % of sales trend, last 30 days",
+        "title": "Revenue by region, last 30 days",
+        "sql": (
+            f"SELECT region, MEASURE(revenue) AS revenue "
+            f"FROM {CATALOG}.{SCHEMA}.command_center_metrics "
+            f"WHERE date >= (SELECT MAX(date) - 30 FROM {CATALOG}.{SCHEMA}.command_center_metrics) "
+            f"GROUP BY region ORDER BY revenue DESC"
+        ),
+    },
+    {
+        "title": "Labor % of sales trend by date, last 30 days",
         "sql": (
             f"SELECT date, MEASURE(labor_pct_of_sales) AS labor_pct "
             f"FROM {CATALOG}.{SCHEMA}.command_center_metrics "
             f"WHERE date >= (SELECT MAX(date) - 30 FROM {CATALOG}.{SCHEMA}.command_center_metrics) "
             f"GROUP BY date ORDER BY date"
+        ),
+    },
+    {
+        "title": "Revenue vs forecast by store, current week",
+        "sql": (
+            f"SELECT store_name, MEASURE(revenue) AS revenue, MEASURE(forecast_revenue) AS forecast_revenue "
+            f"FROM {CATALOG}.{SCHEMA}.command_center_metrics "
+            f"WHERE date >= (SELECT MAX(date) - 7 FROM {CATALOG}.{SCHEMA}.command_center_metrics) "
+            f"GROUP BY store_name ORDER BY revenue DESC"
         ),
     },
     {
@@ -93,25 +112,6 @@ EXAMPLE_SQLS = [
             f"FROM {CATALOG}.{SCHEMA}.command_center_metrics "
             f"WHERE date >= (SELECT MAX(date) - 7 FROM {CATALOG}.{SCHEMA}.command_center_metrics) "
             f"GROUP BY store_name ORDER BY labor_pct DESC LIMIT 5"
-        ),
-    },
-    {
-        "title": "Days of cover by region, latest date",
-        "sql": (
-            f"WITH latest AS (SELECT MAX(date) AS d FROM {CATALOG}.{SCHEMA}.command_center_metrics) "
-            f"SELECT region, MEASURE(days_of_cover) AS days_of_cover "
-            f"FROM {CATALOG}.{SCHEMA}.command_center_metrics, latest "
-            f"WHERE date = latest.d "
-            f"GROUP BY region ORDER BY days_of_cover ASC"
-        ),
-    },
-    {
-        "title": "Net sentiment trend, last 30 days",
-        "sql": (
-            f"SELECT date, MEASURE(net_sentiment) AS net_sentiment "
-            f"FROM {CATALOG}.{SCHEMA}.command_center_metrics "
-            f"WHERE date >= (SELECT MAX(date) - 30 FROM {CATALOG}.{SCHEMA}.command_center_metrics) "
-            f"GROUP BY date ORDER BY date"
         ),
     },
 ]

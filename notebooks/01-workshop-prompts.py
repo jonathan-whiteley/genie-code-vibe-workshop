@@ -121,25 +121,21 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create my Command Center metric view over the workshop tables at store x date grain.
+# MAGIC Create my Command Center metric view at store x date grain, from just two tables: facts_sales_daypart and facts_labor_daypart.
 # MAGIC
-# MAGIC Use the metric view name from my session setup.
+# MAGIC Roll each table up to one row per store per date in its own subquery first (sum revenue, forecast revenue, and traffic from sales; sum labor cost and forecast labor cost from labor), then join the two rollups on date and store, and join dims_stores for region. Do not create any separate or intermediary view, only the single metric view.
 # MAGIC
 # MAGIC Measures:
 # MAGIC - revenue
+# MAGIC - forecast revenue
+# MAGIC - traffic
 # MAGIC - labor cost
-# MAGIC - labor % of sales
-# MAGIC - days of cover
-# MAGIC - sell-through %
-# MAGIC - net sentiment
+# MAGIC - forecast labor cost
+# MAGIC - labor % of sales (labor cost / revenue)
 # MAGIC
 # MAGIC Dimensions: store, region, date, day-of-week.
 # MAGIC
-# MAGIC Put all the joins and rollups inside the metric view's own source query; do not create any intermediary or base view, only the single metric view.
-# MAGIC
-# MAGIC Important: roll each source table up to one row per store per date in its own subquery BEFORE joining them, so revenue and labor are not double counted by the daypart, role, or SKU grains. Labor % of sales should land around 20 to 35%; if it is over 100%, the join fanned out and needs pre-aggregation.
-# MAGIC
-# MAGIC Then run a SELECT to confirm it returns rows and that labor % of sales is realistic.
+# MAGIC Run a SELECT to confirm it returns rows and that labor % of sales is realistic (around 20 to 35%).
 # MAGIC ```
 
 # COMMAND ----------
@@ -156,9 +152,9 @@ print(session_setup_prompt)
 # MAGIC ```text
 # MAGIC Create a Genie space on my metric view.
 # MAGIC
-# MAGIC Add 6 sample questions, 2 per pillar (Labor / Inventory / Guest Feedback), grounded in the metric view measures.
+# MAGIC Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
 # MAGIC
-# MAGIC Ask one question per pillar to test it, then tell me the space ID.
+# MAGIC Ask a few questions to test it, then tell me the space ID.
 # MAGIC ```
 
 # COMMAND ----------
@@ -177,15 +173,15 @@ print(session_setup_prompt)
 # MAGIC tell me how many Genie answered correctly:
 # MAGIC
 # MAGIC - Which 5 stores had the highest labor % of sales last week?
-# MAGIC - How has labor cost trended over the last 30 days across all stores?
+# MAGIC - How has labor % of sales trended over the last 30 days across all stores?
 # MAGIC - Which region has the lowest labor % of sales this month?
-# MAGIC - Which 5 stores have the lowest days of cover right now?
-# MAGIC - What is the average sell-through % by region this week?
-# MAGIC - How has sell-through % trended over the last 30 days?
-# MAGIC - Which stores have the lowest net sentiment this week?
-# MAGIC - What is the net sentiment trend over the last 30 days?
-# MAGIC - Which stores have both a high labor % of sales and a low net sentiment this week?
+# MAGIC - Which stores are below their revenue forecast this week?
+# MAGIC - Show the revenue trend over the last 30 days.
+# MAGIC - How did labor cost track against its forecast this week?
+# MAGIC - Which 5 stores have the highest revenue this month?
 # MAGIC - Rank regions by total revenue this month.
+# MAGIC - What is the busiest day of week by revenue?
+# MAGIC - Which stores improved labor % of sales the most over the last 30 days?
 # MAGIC ```
 
 # COMMAND ----------
@@ -205,16 +201,15 @@ print(session_setup_prompt)
 # MAGIC Start with a row of KPI counters (latest day):
 # MAGIC - total revenue
 # MAGIC - labor % of sales
-# MAGIC - average days of cover
-# MAGIC - net sentiment
+# MAGIC - revenue vs forecast
+# MAGIC - traffic
 # MAGIC
 # MAGIC Then add these charts:
 # MAGIC - revenue trend, last 30 days (line)
 # MAGIC - labor % of sales, last 30 days (line)
 # MAGIC - revenue by region (bar)
-# MAGIC - sell-through % by store (bar)
-# MAGIC - 10 stores with the lowest days of cover (bar)
-# MAGIC - net sentiment timeline, last 30 days (line)
+# MAGIC - revenue vs forecast by store (bar)
+# MAGIC - labor cost vs forecast by store (bar)
 # MAGIC - revenue by day-of-week (bar)
 # MAGIC
 # MAGIC Give it Little Caesars branding and make it pop:
@@ -259,21 +254,22 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ## Module 5: Embed your Genie space and dashboard 🔗
 # MAGIC
-# MAGIC Point your app at the Genie space and dashboard you just built.
+# MAGIC Your app already has an Ask Genie panel and a home page with 3 tiles. You are
+# MAGIC swapping in your own Genie space and adding your dashboard below the tiles.
 # MAGIC
 # MAGIC > **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on
-# MAGIC > your app by Lab 00. Do not ask Genie Code to add scopes (it cannot, and they are
-# MAGIC > not needed).
+# MAGIC > your app by Lab 00, and the Ask Genie panel already uses on-behalf-of-user auth.
+# MAGIC > Do not rebuild the panel or change scopes.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Update my app to embed my Genie space (the ID from the Genie step) and my dashboard (the ID from the dashboard step), then redeploy:
+# MAGIC My app already has an Ask Genie panel wired to a Genie space, and a home page with 3 tiles. Make these two changes, then redeploy:
 # MAGIC
-# MAGIC - Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token header (OBO), not the app service principal, so it uses my access to my space.
-# MAGIC - Embed my published dashboard by its ID, rendered as the signed-in user.
-# MAGIC - Support multi-turn: start-conversation on the first ask, then post to the conversation messages endpoint; poll until COMPLETED; return the answer and the SQL Genie generated.
+# MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from the Genie step). Do not rebuild the panel or its auth; just point it at my space ID.
+# MAGIC
+# MAGIC 2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. Use the published dashboard embed URL for my dashboard ID, rendered as the signed-in user.
 # MAGIC ```
 
 # COMMAND ----------

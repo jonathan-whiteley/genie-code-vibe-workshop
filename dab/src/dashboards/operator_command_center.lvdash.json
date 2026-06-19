@@ -1,6 +1,39 @@
 {
   "datasets": [
     {
+      "name": "kpi_totals",
+      "displayName": "KPI totals (latest 7 days)",
+      "queryLines": [
+        "SELECT",
+        "  MEASURE(revenue) AS total_revenue,",
+        "  MEASURE(labor_pct_of_sales) AS labor_pct,",
+        "  MEASURE(forecast_revenue) AS total_forecast_revenue,",
+        "  MEASURE(traffic) AS total_traffic",
+        "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
+        "WHERE date >= (SELECT MAX(date) - 7 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))"
+      ],
+      "parameters": [
+        {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
+        {"keyword": "schema", "displayName": "schema", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "vibe_workshop"}]}}}
+      ]
+    },
+    {
+      "name": "revenue_trend",
+      "displayName": "Revenue trend, last 30 days",
+      "queryLines": [
+        "SELECT date AS trend_date,",
+        "       MEASURE(revenue) AS revenue",
+        "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
+        "WHERE date >= (SELECT MAX(date) - 30 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
+        "GROUP BY date",
+        "ORDER BY date"
+      ],
+      "parameters": [
+        {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
+        {"keyword": "schema", "displayName": "schema", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "vibe_workshop"}]}}}
+      ]
+    },
+    {
       "name": "labor_pct_trend",
       "displayName": "Labor % of sales, last 30 days",
       "queryLines": [
@@ -33,15 +66,16 @@
       ]
     },
     {
-      "name": "days_of_cover_by_store",
-      "displayName": "Days of cover by store, latest date",
+      "name": "revenue_vs_forecast_by_store",
+      "displayName": "Revenue vs forecast by store, current week",
       "queryLines": [
         "SELECT store_name,",
-        "       MEASURE(days_of_cover) AS days_of_cover",
+        "       MEASURE(revenue) AS revenue,",
+        "       MEASURE(forecast_revenue) AS forecast_revenue",
         "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
-        "WHERE date = (SELECT MAX(date) FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
+        "WHERE date >= (SELECT MAX(date) - 7 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
         "GROUP BY store_name",
-        "ORDER BY days_of_cover ASC"
+        "ORDER BY revenue DESC"
       ],
       "parameters": [
         {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
@@ -49,15 +83,32 @@
       ]
     },
     {
-      "name": "net_sentiment_trend",
-      "displayName": "Net sentiment timeline, last 30 days",
+      "name": "labor_vs_forecast_by_store",
+      "displayName": "Labor cost vs forecast by store, current week",
       "queryLines": [
-        "SELECT date AS sentiment_date,",
-        "       MEASURE(net_sentiment) AS net_sentiment",
+        "SELECT store_name,",
+        "       MEASURE(labor_cost) AS labor_cost,",
+        "       MEASURE(forecast_labor_cost) AS forecast_labor_cost",
+        "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
+        "WHERE date >= (SELECT MAX(date) - 7 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
+        "GROUP BY store_name",
+        "ORDER BY labor_cost DESC"
+      ],
+      "parameters": [
+        {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
+        {"keyword": "schema", "displayName": "schema", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "vibe_workshop"}]}}}
+      ]
+    },
+    {
+      "name": "revenue_by_day_of_week",
+      "displayName": "Revenue by day of week",
+      "queryLines": [
+        "SELECT day_of_week,",
+        "       MEASURE(revenue) AS revenue",
         "FROM identifier(:catalog || '.' || :schema || '.command_center_metrics')",
         "WHERE date >= (SELECT MAX(date) - 30 FROM identifier(:catalog || '.' || :schema || '.command_center_metrics'))",
-        "GROUP BY date",
-        "ORDER BY date"
+        "GROUP BY day_of_week",
+        "ORDER BY revenue DESC"
       ],
       "parameters": [
         {"keyword": "catalog", "displayName": "catalog", "dataType": "STRING", "defaultSelection": {"values": {"dataType": "STRING", "values": [{"value": "ioc_sandbox"}]}}},
@@ -82,13 +133,135 @@
         {
           "widget": {
             "name": "subtitle",
-            "multilineTextboxSpec": {"lines": ["Governed metrics view across Labor, Inventory, and Guest Sentiment. Powered by command_center_metrics metric view."]}
+            "multilineTextboxSpec": {"lines": ["Sales and labor metrics at store x date grain. Powered by command_center_metrics metric view. KPIs reflect the last 7 days."]}
           },
           "position": {"x": 0, "y": 1, "width": 12, "height": 1}
         },
         {
           "widget": {
-            "name": "chart_labor_trend",
+            "name": "kpi_revenue",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "kpi_totals",
+                "fields": [
+                  {"name": "total_revenue", "expression": "`total_revenue`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {"fieldName": "total_revenue", "displayName": "Total Revenue", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Total Revenue (7d)"}
+            }
+          },
+          "position": {"x": 0, "y": 2, "width": 3, "height": 2}
+        },
+        {
+          "widget": {
+            "name": "kpi_labor_pct",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "kpi_totals",
+                "fields": [
+                  {"name": "labor_pct", "expression": "`labor_pct`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {"fieldName": "labor_pct", "displayName": "Labor % of Sales", "format": {"type": "number", "decimalPlaces": {"type": "fixed", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Labor % of Sales (7d)"}
+            }
+          },
+          "position": {"x": 3, "y": 2, "width": 3, "height": 2}
+        },
+        {
+          "widget": {
+            "name": "kpi_forecast_revenue",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "kpi_totals",
+                "fields": [
+                  {"name": "total_forecast_revenue", "expression": "`total_forecast_revenue`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {"fieldName": "total_forecast_revenue", "displayName": "Forecast Revenue", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Forecast Revenue (7d)"}
+            }
+          },
+          "position": {"x": 6, "y": 2, "width": 3, "height": 2}
+        },
+        {
+          "widget": {
+            "name": "kpi_traffic",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "kpi_totals",
+                "fields": [
+                  {"name": "total_traffic", "expression": "`total_traffic`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {"fieldName": "total_traffic", "displayName": "Guest Traffic", "format": {"type": "number", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 0}}}
+              },
+              "frame": {"showTitle": true, "title": "Guest Traffic (7d)"}
+            }
+          },
+          "position": {"x": 9, "y": 2, "width": 3, "height": 2}
+        },
+        {
+          "widget": {
+            "name": "chart_revenue_trend",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "revenue_trend",
+                "fields": [
+                  {"name": "trend_date", "expression": "`trend_date`"},
+                  {"name": "revenue", "expression": "`revenue`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {"fieldName": "trend_date", "scale": {"type": "temporal"}, "displayName": "Date"},
+                "y": {"fieldName": "revenue", "scale": {"type": "quantitative"}, "displayName": "Revenue", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Revenue trend, last 30 days"}
+            }
+          },
+          "position": {"x": 0, "y": 4, "width": 6, "height": 5}
+        },
+        {
+          "widget": {
+            "name": "chart_labor_pct_trend",
             "queries": [{
               "name": "main_query",
               "query": {
@@ -110,7 +283,7 @@
               "frame": {"showTitle": true, "title": "Labor % of sales, last 30 days"}
             }
           },
-          "position": {"x": 0, "y": 2, "width": 6, "height": 5}
+          "position": {"x": 6, "y": 4, "width": 6, "height": 5}
         },
         {
           "widget": {
@@ -136,18 +309,19 @@
               "frame": {"showTitle": true, "title": "Revenue by region, last 30 days"}
             }
           },
-          "position": {"x": 6, "y": 2, "width": 6, "height": 5}
+          "position": {"x": 0, "y": 9, "width": 4, "height": 5}
         },
         {
           "widget": {
-            "name": "chart_days_of_cover",
+            "name": "chart_revenue_vs_forecast",
             "queries": [{
               "name": "main_query",
               "query": {
-                "datasetName": "days_of_cover_by_store",
+                "datasetName": "revenue_vs_forecast_by_store",
                 "fields": [
                   {"name": "store_name", "expression": "`store_name`"},
-                  {"name": "days_of_cover", "expression": "`days_of_cover`"}
+                  {"name": "revenue", "expression": "`revenue`"},
+                  {"name": "forecast_revenue", "expression": "`forecast_revenue`"}
                 ],
                 "disaggregated": true
               }
@@ -157,38 +331,67 @@
               "widgetType": "bar",
               "encodings": {
                 "x": {"fieldName": "store_name", "scale": {"type": "categorical"}, "displayName": "Store"},
-                "y": {"fieldName": "days_of_cover", "scale": {"type": "quantitative"}, "displayName": "Days of Cover", "format": {"type": "number", "decimalPlaces": {"type": "fixed", "places": 1}}}
+                "y": {"fieldName": "revenue", "scale": {"type": "quantitative"}, "displayName": "Revenue", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}},
+                "y2": {"fieldName": "forecast_revenue", "scale": {"type": "quantitative"}, "displayName": "Forecast Revenue", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}}
               },
-              "frame": {"showTitle": true, "title": "Days of cover by store, latest date"}
+              "frame": {"showTitle": true, "title": "Revenue vs forecast by store, current week"}
             }
           },
-          "position": {"x": 0, "y": 7, "width": 6, "height": 5}
+          "position": {"x": 4, "y": 9, "width": 8, "height": 5}
         },
         {
           "widget": {
-            "name": "chart_net_sentiment",
+            "name": "chart_labor_vs_forecast",
             "queries": [{
               "name": "main_query",
               "query": {
-                "datasetName": "net_sentiment_trend",
+                "datasetName": "labor_vs_forecast_by_store",
                 "fields": [
-                  {"name": "sentiment_date", "expression": "`sentiment_date`"},
-                  {"name": "net_sentiment", "expression": "`net_sentiment`"}
+                  {"name": "store_name", "expression": "`store_name`"},
+                  {"name": "labor_cost", "expression": "`labor_cost`"},
+                  {"name": "forecast_labor_cost", "expression": "`forecast_labor_cost`"}
                 ],
                 "disaggregated": true
               }
             }],
             "spec": {
               "version": 3,
-              "widgetType": "line",
+              "widgetType": "bar",
               "encodings": {
-                "x": {"fieldName": "sentiment_date", "scale": {"type": "temporal"}, "displayName": "Date"},
-                "y": {"fieldName": "net_sentiment", "scale": {"type": "quantitative"}, "displayName": "Net Sentiment", "format": {"type": "number", "decimalPlaces": {"type": "fixed", "places": 2}}}
+                "x": {"fieldName": "store_name", "scale": {"type": "categorical"}, "displayName": "Store"},
+                "y": {"fieldName": "labor_cost", "scale": {"type": "quantitative"}, "displayName": "Labor Cost", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}},
+                "y2": {"fieldName": "forecast_labor_cost", "scale": {"type": "quantitative"}, "displayName": "Forecast Labor Cost", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}}
               },
-              "frame": {"showTitle": true, "title": "Net sentiment timeline, last 30 days"}
+              "frame": {"showTitle": true, "title": "Labor cost vs forecast by store, current week"}
             }
           },
-          "position": {"x": 6, "y": 7, "width": 6, "height": 5}
+          "position": {"x": 0, "y": 14, "width": 8, "height": 5}
+        },
+        {
+          "widget": {
+            "name": "chart_revenue_by_dow",
+            "queries": [{
+              "name": "main_query",
+              "query": {
+                "datasetName": "revenue_by_day_of_week",
+                "fields": [
+                  {"name": "day_of_week", "expression": "`day_of_week`"},
+                  {"name": "revenue", "expression": "`revenue`"}
+                ],
+                "disaggregated": true
+              }
+            }],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "day_of_week", "scale": {"type": "categorical"}, "displayName": "Day of Week"},
+                "y": {"fieldName": "revenue", "scale": {"type": "quantitative"}, "displayName": "Revenue", "format": {"type": "number-currency", "currencyCode": "USD", "abbreviation": "compact", "decimalPlaces": {"type": "max", "places": 1}}}
+              },
+              "frame": {"showTitle": true, "title": "Revenue by day of week, last 30 days"}
+            }
+          },
+          "position": {"x": 8, "y": 14, "width": 4, "height": 5}
         }
       ]
     }

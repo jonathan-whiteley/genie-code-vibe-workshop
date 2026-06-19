@@ -1,6 +1,6 @@
 # Genie Code Workshop: Operator Command Center: Lab Companion Guide
 
-**You'll build:** "Command Center", a Databricks App that surfaces AI insights and analytics across **Labor, Inventory, and Guest Feedback** for store operations. Your app will embed a Genie space and an AI/BI dashboard, both built on a single governed **Metric View** you define first. Everything runs inside the Databricks workspace using **Genie Code** (no local install required).
+**You'll build:** "Command Center", a Databricks App that surfaces AI insights and analytics across **Sales and Labor** for store operations. Your app will embed a Genie space and an AI/BI dashboard, both built on a single governed **Metric View** you define first. Everything runs inside the Databricks workspace using **Genie Code** (no local install required).
 
 **Duration:** 3 hours.
 
@@ -109,23 +109,21 @@ Now paste each module prompt in order; the agent already knows your initials and
 > **Note:** Genie Code runs the CREATE statement for you, but you need CREATE on the schema. If it is denied, ask the facilitator to grant your group CREATE on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
 
 ```text
-Create a metric view named <initials>_command_center_metrics over my workshop tables at store x date grain.
+Create my Command Center metric view at store x date grain, from just two tables: facts_sales_daypart and facts_labor_daypart.
+
+Roll each table up to one row per store per date in its own subquery first (sum revenue, forecast revenue, and traffic from sales; sum labor cost and forecast labor cost from labor), then join the two rollups on date and store, and join dims_stores for region. Do not create any separate or intermediary view, only the single metric view.
 
 Measures:
 - revenue
+- forecast revenue
+- traffic
 - labor cost
-- labor % of sales
-- days of cover
-- sell-through %
-- net sentiment
+- forecast labor cost
+- labor % of sales (labor cost / revenue)
 
 Dimensions: store, region, date, day-of-week.
 
-Put all the joins and rollups inside the metric view's own source query; do not create any intermediary or base view, only the single metric view.
-
-Important: roll each source table up to one row per store per date in its own subquery BEFORE joining them, so revenue and labor are not double counted by the daypart, role, or SKU grains. Labor % of sales should land around 20 to 35%; if it is over 100%, the join fanned out and needs pre-aggregation.
-
-Validate it returns rows and that labor % of sales is realistic.
+Run a SELECT to confirm it returns rows and that labor % of sales is realistic (around 20 to 35%).
 ```
 
 ---
@@ -133,11 +131,11 @@ Validate it returns rows and that labor % of sales is realistic.
 ### Module 2: Genie Space (0:25-0:45)
 
 ```text
-Module 2. Create a Genie space on my metric view <initials>_command_center_metrics.
+Create a Genie space on my metric view.
 
-Add 6 sample questions (2 per pillar: Labor / Inventory / Guest Feedback) grounded in the metric view's measures.
+Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
 
-Test one per pillar, then remember the space ID.
+Ask a few questions to test it, then tell me the space ID.
 ```
 
 **Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Add 10, then run them to score your space.
@@ -146,15 +144,15 @@ Test one per pillar, then remember the space ID.
 Add these 10 benchmark questions to my Genie space, then run the benchmark and tell me how many Genie answered correctly:
 
 - Which 5 stores had the highest labor % of sales last week?
-- How has labor cost trended over the last 30 days across all stores?
+- How has labor % of sales trended over the last 30 days across all stores?
 - Which region has the lowest labor % of sales this month?
-- Which 5 stores have the lowest days of cover right now?
-- What is the average sell-through % by region this week?
-- How has sell-through % trended over the last 30 days?
-- Which stores have the lowest net sentiment this week?
-- What is the net sentiment trend over the last 30 days?
-- Which stores have both a high labor % of sales and a low net sentiment this week?
+- Which stores are below their revenue forecast this week?
+- Show the revenue trend over the last 30 days.
+- How did labor cost track against its forecast this week?
+- Which 5 stores have the highest revenue this month?
 - Rank regions by total revenue this month.
+- What is the busiest day of week by revenue?
+- Which stores improved labor % of sales the most over the last 30 days?
 ```
 
 ---
@@ -167,16 +165,15 @@ Create a rich AI/BI dashboard on my metric view.
 Start with a row of KPI counters (latest day):
 - total revenue
 - labor % of sales
-- average days of cover
-- net sentiment
+- revenue vs forecast
+- traffic
 
 Then add these charts:
 - revenue trend, last 30 days (line)
 - labor % of sales, last 30 days (line)
 - revenue by region (bar)
-- sell-through % by store (bar)
-- 10 stores with the lowest days of cover (bar)
-- net sentiment timeline, last 30 days (line)
+- revenue vs forecast by store (bar)
+- labor cost vs forecast by store (bar)
 - revenue by day-of-week (bar)
 
 Give it Little Caesars branding and make it pop:
@@ -212,17 +209,19 @@ Then redeploy.
 
 ### Module 5: Embed Genie + Dashboard (1:45-2:25)
 
-> **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on your app by the 00-setup notebook; do not ask Genie Code to add scopes (it cannot, and they are not needed).
+Your app already has an Ask Genie panel and a home page with 3 tiles. You are swapping in your own Genie space and adding your dashboard below the tiles.
+
+> **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on your app by the 00-setup notebook, and the Ask Genie panel already uses on-behalf-of-user auth. Do not rebuild the panel or change scopes.
 
 ```text
-Module 5. Update my app to embed MY Genie space (the ID from Module 2) and MY dashboard (the ID from Module 3), then redeploy:
+My app already has an Ask Genie panel wired to a Genie space, and a home page with 3 tiles. Make these two changes, then redeploy:
 
-- Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token header (OBO), not the app service principal, so it uses my access to my space.
-- Embed my published dashboard by its ID, rendered as the signed-in user.
-- Support multi-turn: start-conversation on the first ask, then post to the conversation messages endpoint; poll until COMPLETED; return the answer and the SQL Genie generated.
+1. Swap the Ask Genie panel to use MY Genie space (the space ID from Module 2). Do not rebuild the panel or its auth; just point it at my space ID.
+
+2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. Use the published dashboard embed URL for my dashboard ID, rendered as the signed-in user.
 ```
 
-> **If running low on time:** drop the per-tab dashboard tiles and keep only the Ask Genie panel. Genie is the higher-impact piece.
+> **If running low on time:** the Genie space swap is the higher-impact change, so do that first.
 
 ---
 
