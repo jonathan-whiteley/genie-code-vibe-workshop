@@ -34,7 +34,7 @@ Times are relative; your facilitator sets the wall clock.
 
 ## How to use this guide
 
-Every prompt below is in a **code block**: hit the copy button, paste into **Genie Code in Agent mode** in the workspace. **You only fill in `<INITIALS>` once**, in the **Session setup** prompt at the start of the day-of section. Every prompt after that says "my metric view", "my Genie space", etc.; the agent already knows the values from the setup prompt.
+Every prompt below is in a **code block**: hit the copy button, paste into **Genie Code** in the workspace. **You only fill in `<INITIALS>` once**, in the **Session setup** prompt at the start of the day-of section. Every prompt after that says "my metric view", "my Genie space", etc.; the agent already knows the values from the setup prompt.
 
 Prompts are short on purpose. The agent has **ai-dev-kit** skills loaded: it knows how to build metric views, Genie spaces, dashboards, apps, and jobs on Databricks. Tell it *what*; the skills know *how*. **Always read what it generates before running it.**
 
@@ -50,7 +50,7 @@ No local software to install. All steps happen inside the Databricks workspace.
 
 2. **Open `notebooks/00-setup`, set your initials widget, and click Run All.** This single notebook does everything you would otherwise do manually: it installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired. You do not need to run any separate installer or create the app yourself. Once setup finishes, the hands-on lab lives in the `notebooks/01-workshop-prompts` notebook (you can follow it there or in this guide; the prompts are identical).
 
-3. **Start a new Agent-mode chat in Genie Code.** Skills only work in Agent mode. After the setup notebook finishes, open a **new chat thread** in Genie Code (hard-refresh the browser if skills do not appear after opening a new thread).
+3. **Start a new chat in Genie Code.** After the setup notebook finishes, open a **new chat thread** in Genie Code (hard-refresh the browser if skills do not appear after opening a new thread).
 
 4. **Run the smoke-test prompt** to confirm skills loaded and the workshop data is in place:
 
@@ -62,7 +62,7 @@ List the tables in ioc_sandbox.vibe_workshop. I should see 8 (3 dims_, 5 facts_)
 
 - [ ] Repo cloned as a Workspace Git folder
 - [ ] `notebooks/00-setup` notebook ran successfully (skills installed + app deployed)
-- [ ] New Agent-mode chat open in Genie Code
+- [ ] New chat open in Genie Code
 - [ ] Smoke test passed: agent lists 8 tables in `ioc_sandbox.vibe_workshop` (3 `dims_*`, 5 `facts_*`)
 
 If anything fails, ping the facilitator in the workshop channel **before** the session starts.
@@ -210,7 +210,7 @@ Pre-filled values used throughout the workshop. The **Session setup** prompt at 
 - **Be specific about constraints when it matters** (for example: "use the Databricks SQL connector, not pyodbc"); otherwise let the skills decide.
 - **Iterate in small chunks.** One feature at a time is easier to review and debug.
 - **When stuck, ask the agent to explain its own code.** Often surfaces the bug.
-- **Skills need Agent mode.** If the agent seems unaware of metric views, Genie, or apps, confirm you are in Agent mode and that you opened a new chat after installing skills.
+- **Skills and new chats.** If the agent seems unaware of metric views, Genie, or apps, open a **new chat thread** after installing the skills.
 
 ---
 

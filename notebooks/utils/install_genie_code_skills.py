@@ -49,7 +49,7 @@ except Exception as e:
     print("Manual fallback (do this once, then re-run attendee_setup):")
     print(f"  1. In the workspace, create a Git folder from {AI_DEV_KIT_URL}")
     print(f"  2. Open {INSTALLER_PATH} and Run All")
-    print("  3. Start a NEW Agent-mode chat in Genie Code")
+    print("  3. Open Genie Code and start a new chat")
 
 # COMMAND ----------
 
@@ -72,7 +72,7 @@ if cloned:
 
 # MAGIC %md
 # MAGIC ## After this step
-# MAGIC Skills only load in **Agent mode**, and only in a **new chat thread**. Once
-# MAGIC setup finishes, open Genie Code, start a new Agent-mode chat, and hard
-# MAGIC refresh the browser if the skills do not appear. Verify with the smoke-test
-# MAGIC prompt in the lab companion guide (list the 8 tables in the schema).
+# MAGIC Skills load when you open a **new chat thread**. Once setup finishes,
+# MAGIC open Genie Code, start a new chat, and hard refresh the browser if the
+# MAGIC skills do not appear. Verify with the smoke-test prompt in the lab
+# MAGIC companion guide (list the 8 tables in the schema).

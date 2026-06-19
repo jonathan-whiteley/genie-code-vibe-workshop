@@ -66,7 +66,7 @@ print(f"Your app will be: {INITIALS}-command-center")
 # MAGIC Databricks: creating metric views, Genie spaces, AI/BI dashboards, and apps.
 # MAGIC Without them, Genie Code would not know the correct APIs or payload shapes.
 # MAGIC The utility script below installs them directly into your workspace so they
-# MAGIC are available the next time you open Genie Code in Agent mode.
+# MAGIC are available the next time you open Genie Code.
 # MAGIC
 # MAGIC > **Note:** If the skills do not appear in Genie Code after this step, do a
 # MAGIC > hard refresh of the browser tab (Cmd+Shift+R / Ctrl+Shift+R) before starting
@@ -111,7 +111,7 @@ print(f"Your app will be: {INITIALS}-command-center")
 # MAGIC
 # MAGIC **Next steps:**
 # MAGIC
-# MAGIC 1. Open Genie Code and start a **new Agent-mode chat** (hard refresh if the
+# MAGIC 1. Open Genie Code and start a **new chat** (hard refresh if the
 # MAGIC    skills do not appear in the tool list).
 # MAGIC 2. Open **Lab 01: Build Your Command Center with Genie Code** and follow the
 # MAGIC    module prompts from top to bottom.
