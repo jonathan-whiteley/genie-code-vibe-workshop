@@ -109,11 +109,20 @@ Now paste each module prompt in order; the agent already knows your initials and
 > **Note:** Genie Code runs the CREATE statement for you, but you need CREATE on the schema. If it is denied, ask the facilitator to grant your group CREATE on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
 
 ```text
-Create a metric view named <initials>_command_center_metrics over my workshop
-tables at store x date grain. Measures: revenue, labor cost, labor % of sales,
-days of cover, sell-through %, net sentiment. Dimensions: store, region, date,
-day-of-week. Put all the joins and rollups inside the metric view's own source
-query; do not create any intermediary or base view, only the single metric view.
+Create a metric view named <initials>_command_center_metrics over my workshop tables at store x date grain.
+
+Measures:
+- revenue
+- labor cost
+- labor % of sales
+- days of cover
+- sell-through %
+- net sentiment
+
+Dimensions: store, region, date, day-of-week.
+
+Put all the joins and rollups inside the metric view's own source query; do not create any intermediary or base view, only the single metric view.
+
 Validate it returns rows.
 ```
 
@@ -123,9 +132,10 @@ Validate it returns rows.
 
 ```text
 Module 2. Create a Genie space on my metric view <initials>_command_center_metrics.
-Add 6 sample questions (2 per pillar: Labor / Inventory / Guest Feedback)
-grounded in the metric view's measures. Test one per pillar, then remember
-the space ID.
+
+Add 6 sample questions (2 per pillar: Labor / Inventory / Guest Feedback) grounded in the metric view's measures.
+
+Test one per pillar, then remember the space ID.
 ```
 
 ---
@@ -133,11 +143,18 @@ the space ID.
 ### Module 3: AI/BI Dashboard (0:45-1:05)
 
 ```text
-Module 3. Create an AI/BI dashboard on my metric view with 4 widgets:
-  (1) labor % of sales last 30 days as a line chart
-  (2) revenue by region as a bar chart
-  (3) days of cover / stock health as a stacked bar
-  (4) net sentiment timeline as a line chart
+Create an AI/BI dashboard on my metric view with 4 widgets:
+- labor % of sales (30-day line)
+- revenue by region (bar)
+- days of cover / stock health (bar)
+- net sentiment timeline (line)
+
+Give it Little Caesars branding and make it pop:
+- use the LCE orange (#FF671B) as the primary accent across the charts
+- set a bold, cool dashboard background color
+- use vibrant, high-contrast colors so the charts really stand out
+- add a title with the Little Caesars feel
+
 Publish it and remember the dashboard ID.
 ```
 
@@ -148,11 +165,17 @@ Publish it and remember the dashboard ID.
 Your `<initials>-command-center` app was already created, branded, and deployed by the setup notebook (it copied `command-center-dev`, wired permissions, and deployed). This module confirms it is running and lets you polish the branding if you like.
 
 ```text
-My app <initials>-command-center is already deployed (the setup notebook
-created it from command-center-dev). Open its URL and confirm it loads. If
-you want, tweak the LCE branding (logo
-branding/lce/logo.svg, primary #FF671B, dark navbar, title "Command
-Center | LCE") and redeploy.
+My app <initials>-command-center is already deployed (the setup notebook created it from command-center-dev).
+
+Open its URL and confirm it loads.
+
+If you want, tweak the LCE branding:
+- logo branding/lce/logo.svg
+- primary #FF671B
+- dark navbar
+- title "Command Center | LCE"
+
+Then redeploy.
 ```
 
 ---
@@ -162,14 +185,11 @@ Center | LCE") and redeploy.
 > **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on your app by the 00-setup notebook; do not ask Genie Code to add scopes (it cannot, and they are not needed).
 
 ```text
-Module 5. Update my app to embed MY Genie space (the ID from Module 2) and MY
-dashboard (the ID from Module 3), then redeploy:
-  - Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token
-    header (OBO), not the app service principal, so it uses my access to my space.
-  - Embed my published dashboard by its ID, rendered as the signed-in user.
-  - Support multi-turn: start-conversation on the first ask, then post to the
-    conversation messages endpoint; poll until COMPLETED; return the answer and the
-    SQL Genie generated.
+Module 5. Update my app to embed MY Genie space (the ID from Module 2) and MY dashboard (the ID from Module 3), then redeploy:
+
+- Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token header (OBO), not the app service principal, so it uses my access to my space.
+- Embed my published dashboard by its ID, rendered as the signed-in user.
+- Support multi-turn: start-conversation on the first ask, then post to the conversation messages endpoint; poll until COMPLETED; return the answer and the SQL Genie generated.
 ```
 
 > **If running low on time:** drop the per-tab dashboard tiles and keep only the Ask Genie panel. Genie is the higher-impact piece.
@@ -179,8 +199,9 @@ dashboard (the ID from Module 3), then redeploy:
 ### Module 6: Job (BONUS) (2:25-2:50)
 
 ```text
-Module 6. Add a daily job <initials>-command-center-refresh at 6am ET that
-refreshes the metric view's source rollups and redeploys my app.
+Module 6. Add a daily job <initials>-command-center-refresh at 6am ET with these steps:
+- refresh the metric view's source rollups
+- redeploy my app
 ```
 
 ---
