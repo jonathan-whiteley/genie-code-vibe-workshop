@@ -78,20 +78,26 @@ If anything fails, ping the facilitator in the workshop channel **before** the s
 Substitute `<INITIALS>` once (lowercase, e.g. `jjw`), paste, and hit enter. The agent will use these values for every module prompt below.
 
 ```text
-I'm running the Genie Code Command Center workshop. Remember these values
-for the whole conversation:
-  My initials:  <INITIALS>
-  Catalog:      ioc_sandbox.vibe_workshop
-  Warehouse:    serverless
-  Model endpt:  databricks-claude-sonnet-4-6   (for ai_query())
-Resources (use exactly these names):
-  - metric view:  <initials>_command_center_metrics
-  - Genie space:  "<initials> Command Center"
-  - dashboard:    "<initials> Operator Insights"
-  - app:          <initials>-command-center   (already deployed by setup notebook)
-  - job:          <initials>-command-center-refresh
-Capture as we go: my Genie space ID, dashboard ID, app URL.
-Confirm, then wait for my first module prompt.
+I am doing the Genie Code Command Center lab. Use these settings for the whole chat:
+
+| Setting | Value |
+|---|---|
+| My initials | <INITIALS> |
+| Catalog | ioc_sandbox.vibe_workshop |
+| Warehouse | serverless |
+| Model (for ai_query only) | databricks-claude-sonnet-4-6 |
+
+Create these with exactly these names:
+
+| Resource | Name |
+|---|---|
+| Metric view | <initials>_command_center_metrics |
+| Genie space | <initials> Command Center |
+| Dashboard | <initials> Operator Insights |
+| App | <initials>-command-center (already created and deployed by Lab 00) |
+| Job | <initials>-command-center-refresh |
+
+As we go, remember my Genie space ID, dashboard ID, and app URL. Confirm these back to me, then wait for my first prompt.
 ```
 
 Now paste each module prompt in order; the agent already knows your initials and resource names.
