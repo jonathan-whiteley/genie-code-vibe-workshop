@@ -138,6 +138,23 @@ Add 6 sample questions (2 per pillar: Labor / Inventory / Guest Feedback) ground
 Test one per pillar, then remember the space ID.
 ```
 
+**Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Add 10, then run them to score your space.
+
+```text
+Add these 10 benchmark questions to my Genie space, then run the benchmark and tell me how many Genie answered correctly:
+
+- Which 5 stores had the highest labor % of sales last week?
+- How has labor cost trended over the last 30 days across all stores?
+- Which region has the lowest labor % of sales this month?
+- Which 5 stores have the lowest days of cover right now?
+- What is the average sell-through % by region this week?
+- How has sell-through % trended over the last 30 days?
+- Which stores have the lowest net sentiment this week?
+- What is the net sentiment trend over the last 30 days?
+- Which stores have both a high labor % of sales and a low net sentiment this week?
+- Rank regions by total revenue this month.
+```
+
 ---
 
 ### Module 3: AI/BI Dashboard (0:45-1:05)
