@@ -1,0 +1,82 @@
+# Reference Databricks App: the Operator Command Center prototype, served
+# via FastAPI as a static site. The facilitator runs this so attendees can
+# see the finished app at the start of the workshop.
+#
+# After `bundle deploy`, you must `bundle run` to actually start the app:
+#   databricks bundle deploy -t lce
+#   databricks bundle run command_center_app -t lce
+#
+# Resources (SQL warehouse, UC tables, Lakebase) are granted to the App's
+# service principal via the resources block here. If you change them after
+# the first deploy, you must redeploy AND restart the app.
+
+resources:
+  apps:
+    command_center_app:
+      name: "command-center-${bundle.target}"
+      description: "Operator Command Center reference build (facilitator copy)"
+      source_code_path: ../src/app
+
+      # OBO (on-behalf-of-user) API scopes. Genie spaces are user-permissioned,
+      # so the App must forward the logged-in user's token with the `genie`
+      # scope when calling /api/2.0/genie/* - otherwise the SP's token is used
+      # and the call 403s with "Invalid scope, required scopes: genie".
+      user_api_scopes:
+        - genie
+        - sql
+        - dashboards.genie
+
+      resources:
+        - name: workshop_warehouse
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: "CAN_USE"
+        - name: dims_stores
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.dims_stores"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: dims_items
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.dims_items"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: dims_employees
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.dims_employees"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: facts_sales_daypart
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.facts_sales_daypart"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: facts_labor_daypart
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.facts_labor_daypart"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: facts_sales_inventory_daily
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.facts_sales_inventory_daily"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: facts_purchase_orders
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.facts_purchase_orders"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: facts_customer_feedback
+          uc_securable:
+            securable_full_name: "${var.catalog}.${var.schema}.facts_customer_feedback"
+            securable_type: "TABLE"
+            permission: "SELECT"
+        - name: lakebase
+          database:
+            instance_name: command-center-lakebase
+            database_name: databricks_postgres
+            permission: "CAN_CONNECT_AND_CREATE"
+
+      permissions:
+        - level: CAN_USE
+          group_name: ${var.attendee_group}

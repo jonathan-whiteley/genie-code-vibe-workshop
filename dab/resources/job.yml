@@ -1,0 +1,101 @@
+# Setup job: runs the data generator, creates the metric view, provisions
+# the reference Genie space, and initializes Lakebase write-back tables.
+# The facilitator runs this once per target environment before the workshop.
+#
+#   databricks bundle deploy -t lce
+#   databricks bundle run command_center_setup -t lce
+
+resources:
+  jobs:
+    command_center_setup:
+      name: "Operator Command Center setup"
+      description: |
+        One-shot setup for the Genie Code Vibe Workshop.
+        Tasks run sequentially (with parallelism where noted):
+          1. generate_data       - synthesize 8 workshop tables
+          2. create_metric_view  - register command_center_metrics metric view
+          3. create_genie_space  - reference Genie space over the metric view
+          4. init_lakebase       - DDL for shared write-back tables (parallel with create_metric_view)
+      tags:
+        purpose: workshop
+        workshop: genie-code-vibe-command-center
+        owner: facilitator
+        environment: ${bundle.target}
+        cost_center: fe-workshop
+
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: schema
+          default: ${var.schema}
+        - name: data_end_date
+          default: ${var.data_end_date}
+        - name: lakebase_instance_name
+          default: command-center-lakebase
+        - name: warehouse_id
+          default: ${var.warehouse_id}
+        - name: attendee_group
+          default: ${var.attendee_group}
+        - name: company
+          default: ${var.company}
+
+      # Serverless notebook compute (no cluster required).
+      environments:
+        - environment_key: default
+          spec:
+            client: "2"
+
+      tasks:
+        - task_key: generate_data
+          environment_key: default
+          notebook_task:
+            notebook_path: ../src/notebooks/01_generate_data.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+              end_date: "{{job.parameters.data_end_date}}"
+              days: "60"
+              stores: "20"
+              items: "50"
+              feedback: "1000"
+              seed: "42"
+              attendee_group: "{{job.parameters.attendee_group}}"
+              company: "{{job.parameters.company}}"
+
+        - task_key: create_metric_view
+          environment_key: default
+          depends_on:
+            - task_key: generate_data
+          notebook_task:
+            notebook_path: ../src/notebooks/02_create_metric_view.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+              warehouse_id: "{{job.parameters.warehouse_id}}"
+
+        - task_key: create_genie_space
+          environment_key: default
+          depends_on:
+            - task_key: create_metric_view
+          notebook_task:
+            notebook_path: ../src/notebooks/03_create_genie_space.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+              warehouse_id: "{{job.parameters.warehouse_id}}"
+
+        - task_key: init_lakebase
+          environment_key: default
+          depends_on:
+            - task_key: generate_data
+          notebook_task:
+            notebook_path: ../src/notebooks/04_init_lakebase.py
+            base_parameters:
+              lakebase_instance_name: "{{job.parameters.lakebase_instance_name}}"
+              attendee_group: "{{job.parameters.attendee_group}}"
+
+      max_concurrent_runs: 1
+
+      permissions:
+        - level: CAN_VIEW
+          group_name: ${var.attendee_group}

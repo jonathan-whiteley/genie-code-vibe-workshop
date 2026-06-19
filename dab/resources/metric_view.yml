@@ -1,0 +1,7 @@
+# The command_center_metrics metric view is created by the setup job's
+# create_metric_view task (../src/notebooks/02_create_metric_view.py).
+# Object: ${var.catalog}.${var.schema}.command_center_metrics
+# The reference dashboard and Genie space both bind to it.
+#
+# No standalone DAB resource is declared here; this file is a placeholder
+# documenting the dependency so the bundle's resource set is self-describing.
