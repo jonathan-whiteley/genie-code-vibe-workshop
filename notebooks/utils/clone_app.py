@@ -387,6 +387,40 @@ if url:
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## Step 10: Save your session for Lab 01
+# MAGIC
+# MAGIC Persists your initials (and app URL) to a small workspace file so the
+# MAGIC `01-workshop-prompts` lab can auto-fill your prompts. You will not have to
+# MAGIC retype your initials.
+
+# COMMAND ----------
+
+import base64
+import json as _json
+
+SESSION_DIR = f"/Workspace/Users/{ME}/command-center-lab"
+SESSION_PATH = f"{SESSION_DIR}/session.json"
+try:
+    w.api_client.do("POST", "/api/2.0/workspace/mkdirs", body={"path": SESSION_DIR})
+except Exception:
+    pass
+_session = _json.dumps({"initials": INITIALS, "app_name": NEW_APP, "app_url": url}, indent=2)
+w.api_client.do(
+    "POST",
+    "/api/2.0/workspace/import",
+    body={
+        "path": SESSION_PATH,
+        "format": "AUTO",
+        "content": base64.b64encode(_session.encode()).decode(),
+        "overwrite": True,
+    },
+)
+print(f"Saved {SESSION_PATH}")
+print(_session)
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Metric view, Lakebase, Genie, and the dashboard
 # MAGIC
 # MAGIC - **Metric view (`command_center_metrics`):** covered by the `SELECT ON
