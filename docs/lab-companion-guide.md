@@ -17,13 +17,13 @@
 
 | Time | Module | Outcome |
 |---|---|---|
-| pre (async) | Setup | ai-dev-kit skills installed into Genie Code via notebook |
+| pre (async) | Setup | Repo cloned as Git folder; `attendee_setup` notebook ran (skills installed + app deployed) |
 | 0:00-0:10 | Welcome + demo | See finished app; get env values + session-setup prompt |
 | 0:10-0:25 | Module 1: Metric View | Governed KPIs defined over landed tables |
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
 | 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
 | 1:05-1:15 | Break | |
-| 1:15-1:45 | Module 4: App from template | `<initials>-command-center` deployed, LCE-branded |
+| 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify wiring + optional branding tweaks |
 | 1:45-2:25 | Module 5: Embed | Genie + dashboard live in the app |
 | 2:25-2:50 | Module 6 (BONUS): Job | Scheduled refresh job |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
@@ -46,13 +46,11 @@ No local software to install. All steps happen inside the Databricks workspace.
 
 ### Steps
 
-1. **Open the workspace** your facilitator provided, then open **Genie Code**.
+1. **Clone this workshop repo as a Workspace Git folder.** In the workspace, go to **Workspace > Create > Git folder**, paste the repo URL, and click Create. This makes the notebooks available directly inside your workspace.
 
-2. **Import and run the ai-dev-kit skills installer notebook.** In the workspace file browser, import this notebook and click **Run All:**
-   `https://github.com/databricks-solutions/ai-dev-kit/blob/main/databricks-skills/install_genie_code_skills.py`
-   This copies the ai-dev-kit skill folders into your personal workspace directory so Genie Code can find them.
+2. **Open `dab/src/notebooks/attendee_setup`, set your initials widget, and click Run All.** This single notebook does everything you would otherwise do manually: it installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired. You do not need to run any separate installer or create the app yourself.
 
-3. **Start a new Agent-mode chat.** Skills only work in Agent mode. After running the installer, open a **new chat thread** in Genie Code (hard-refresh the browser if skills do not appear after opening a new thread).
+3. **Start a new Agent-mode chat in Genie Code.** Skills only work in Agent mode. After the setup notebook finishes, open a **new chat thread** in Genie Code (hard-refresh the browser if skills do not appear after opening a new thread).
 
 4. **Run the smoke-test prompt** to confirm skills loaded and the workshop data is in place:
 
@@ -62,7 +60,8 @@ List the tables in ioc_sandbox.vibe_workshop. I should see 8 (3 dims_, 5 facts_)
 
 ### Pre-work checklist
 
-- [ ] Skills installed (installer notebook ran successfully)
+- [ ] Repo cloned as a Workspace Git folder
+- [ ] `attendee_setup` notebook ran successfully (skills installed + app deployed)
 - [ ] New Agent-mode chat open in Genie Code
 - [ ] Smoke test passed: agent lists 8 tables in `ioc_sandbox.vibe_workshop` (3 `dims_*`, 5 `facts_*`)
 
@@ -85,11 +84,11 @@ for the whole conversation:
   Catalog:      ioc_sandbox.vibe_workshop
   Warehouse:    serverless
   Model endpt:  databricks-claude-sonnet-4-6   (for ai_query())
-Resources I'll build (use exactly these names):
+Resources (use exactly these names):
   - metric view:  <initials>_command_center_metrics
   - Genie space:  "<initials> Command Center"
   - dashboard:    "<initials> Operator Insights"
-  - app:          <initials>-command-center   (template: command-center-dev)
+  - app:          <initials>-command-center   (already deployed by setup notebook)
   - job:          <initials>-command-center-refresh
 Capture as we go: my Genie space ID, dashboard ID, app URL.
 Confirm, then wait for my first module prompt.
@@ -134,14 +133,16 @@ Publish it and remember the dashboard ID.
 
 ---
 
-### Module 4: App from template (1:15-1:45)
+### Module 4: App polish (1:15-1:45)
+
+Your `<initials>-command-center` app was already created, branded, and deployed by the setup notebook (it copied `command-center-dev`, wired permissions, and deployed). This module confirms it is running and lets you polish the branding if you like.
 
 ```text
-Module 4. Create an App named <initials>-command-center using the existing
-command-center-dev app as a template. Give it Labor / Inventory / Guest
-Feedback tabs. Make it pop with LCE branding (logo branding/lce/logo.svg,
-primary #FF671B, dark navbar, title "Command Center | LCE"). Deploy and
-print the URL.
+Module 4. My app <initials>-command-center is already deployed (the setup
+notebook created it from command-center-dev). Open its URL and confirm
+/api/wiring is green. If you want, tweak the LCE branding (logo
+branding/lce/logo.svg, primary #FF671B, dark navbar, title "Command
+Center | LCE") and redeploy.
 ```
 
 ---
