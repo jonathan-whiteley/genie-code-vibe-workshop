@@ -122,12 +122,11 @@ Full runbook with explanations: [`dab/README.md`](../dab/README.md). After `data
 ```bash
 # 1. Pre-create catalog/schema + 8 empty UC tables (once per workspace).
 #    Required because App resource bindings are validated at deploy time.
-#    Note: scripts/bootstrap.py can be copied from the source repo if not yet
-#    present in this repo; flag as a follow-up if needed.
+cd dab
 python3 scripts/bootstrap.py --profile lce --warehouse-id <id> --catalog ioc_sandbox
 
-# 2. Validate
-cd dab && databricks bundle validate -t lce --var warehouse_id=<id>
+# 2. Validate (already in dab/)
+databricks bundle validate -t lce --var warehouse_id=<id>
 
 # 3. Deploy (Lakebase + dashboard + app + job)
 databricks bundle deploy -t lce --var warehouse_id=<id>
@@ -155,7 +154,7 @@ databricks bundle run command_center_app -t lce
 | Resource | Notes |
 |---|---|
 | 8-table dataset in `ioc_sandbox.vibe_workshop` | 60 days anchored to workshop date; `company=lce` brand config |
-| Metric view `command_center_metrics` | Store x date grain; 5 measures + 5 dimensions; the spine for all downstream surfaces |
+| Metric view `command_center_metrics` | Store x date grain; 6 measures + 5 dimensions; the spine for all downstream surfaces |
 | Lakebase instance `command-center-lakebase` | 3 write-back tables; sequence grants applied |
 | Reference Genie space "Command Center reference" | 6 sample questions; example SQLs grounded in the metric view |
 | AI/BI dashboard | 4 widgets: labor % of sales; revenue by region; stock health (days of cover); net sentiment timeline |
@@ -221,7 +220,7 @@ Sorted by likelihood. Highest-impact items first.
 
 | Symptom | Fix |
 |---|---|
-| **First-time deploy fails:** `SCHEMA_DOES_NOT_EXIST` or `TABLE_OR_VIEW_NOT_FOUND` | Run `scripts/bootstrap.py` **before** `bundle deploy`. App's `uc_securable` bindings are validated at deploy time, so the 8 tables must exist (even empty). |
+| **First-time deploy fails:** `SCHEMA_DOES_NOT_EXIST` or `TABLE_OR_VIEW_NOT_FOUND` | Run `dab/scripts/bootstrap.py` (from repo root, or `scripts/bootstrap.py` from `dab/`) **before** `bundle deploy`. App's `uc_securable` bindings are validated at deploy time, so the 8 tables must exist (even empty). |
 | **Skills not loading in Genie Code** | Open a **new Agent-mode chat** after running the installer (do not reuse the same thread). Hard-refresh the browser if skills still do not appear. Verify skills landed under `/Users/<username>/.assistant/skills/` in the workspace file browser. Note: `databricks aitools` does NOT support Genie Code and is not used here. |
 | **Attendees skip pre-workshop setup** | Send reminder 24h before; reserve 10 min at session start for stragglers (cuts into Module 1). |
 | **AI Gateway endpoint not granted to attendees** | Test 1 week before; confirm `CAN_USE` on the endpoint for the attendee group; have a facilitator-owned backup endpoint identified. |
@@ -322,10 +321,9 @@ databricks --profile lce apps list | jq '.apps | length'
 
 Run the cleanup script 24-48h after the workshop ends. Without this, the Lakebase instance keeps billing and attendee-created Apps and Genie spaces clutter the workspace.
 
-> **Note:** `scripts/cleanup.py` can be copied from the source repo (`jonathan-whiteley/ucode-vibe-workshop`) if it is not yet present in this repo; flag as a follow-up.
-
 ```bash
 # 1. DRY RUN: see what would be deleted
+cd dab
 python3 scripts/cleanup.py --profile lce --catalog ioc_sandbox
 
 # 2. APPLY: delete everything matching the workshop patterns
@@ -333,7 +331,7 @@ python3 scripts/cleanup.py --profile lce --catalog ioc_sandbox \
     --warehouse-id <id> --apply
 
 # 3. (optional) Drop the bundle-owned facilitator resources too
-cd dab && databricks bundle destroy -t lce --auto-approve
+databricks bundle destroy -t lce --auto-approve
 ```
 
 The script sweeps and deletes:

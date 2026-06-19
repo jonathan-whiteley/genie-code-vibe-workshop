@@ -154,7 +154,7 @@ Column-level detail: [`data/README.md`](data/README.md).
 | Resource | What it is |
 |---|---|
 | `command_center_setup` job | 2 sequential tasks: create metric view + create Genie space (data already landed) |
-| `command_center_dash` AI/BI dashboard | 4 KPI widgets on the metric view: labor % of sales (line), revenue by region (bar), days of cover (stacked bar), net sentiment (line) |
+| `command_center_dash` AI/BI dashboard | 4 KPI widgets on the metric view: labor % of sales (line), revenue by region (bar), days of cover (bar), net sentiment (line) |
 | `command-center-dev` Databricks App | FastAPI + Homebase UI; the reference template attendees extend in Module 4 |
 
 The App's catalog, schema, and Genie space ID are published to `/Workspace/Shared/command-center/config.json` by the setup job and read by the App at startup; the same `app.yaml` ships dev and prod with no hand-edits.

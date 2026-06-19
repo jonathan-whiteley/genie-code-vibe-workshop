@@ -37,7 +37,7 @@
 | `retail_price` | DECIMAL(10,2) |
 | `cost` | DECIMAL(10,2) |
 
-**`dims_employees`** — team-member roster; drives the Labor planner role mix
+**`dims_employees`**: team-member roster; drives the Labor planner role mix
 
 | Column | Type |
 |---|---|
@@ -50,7 +50,7 @@
 
 ### Facts
 
-**`facts_sales_daypart`** — daypart-grain sales + forecast
+**`facts_sales_daypart`**: daypart-grain sales + forecast
 
 | Column | Type | Notes |
 |---|---|---|
@@ -61,7 +61,7 @@
 | `revenue`, `traffic` | DECIMAL / INT | Actuals |
 | `forecast_revenue`, `forecast_traffic` | DECIMAL / INT | Pre-staged so the App never calls ai_forecast |
 
-**`facts_labor_daypart`** — daypart × role-grain labor + forecast
+**`facts_labor_daypart`**: daypart x role-grain labor + forecast
 
 | Column | Type | Notes |
 |---|---|---|
@@ -72,7 +72,7 @@
 | `headcount`, `total_hours`, `labor_cost` | mixed | Actuals |
 | `forecast_headcount`, `forecast_labor_cost` | mixed | Pre-staged |
 
-**`facts_sales_inventory_daily`** — SKU-grain inventory + per-SKU sales
+**`facts_sales_inventory_daily`**: SKU-grain inventory + per-SKU sales
 
 | Column | Type | Notes |
 |---|---|---|
@@ -84,7 +84,7 @@
 | `on_hand_eod` | INT | End-of-day inventory |
 | `reorder_point` | INT | |
 
-**`facts_purchase_orders`** — pre-staged POs; flattened, one row per PO line
+**`facts_purchase_orders`**: pre-staged POs; flattened, one row per PO line
 
 | Column | Type | Notes |
 |---|---|---|
@@ -96,7 +96,7 @@
 | `created_at`, `eta` | TIMESTAMP | |
 | `status` | STRING | staged \| released \| delivered |
 
-**`facts_customer_feedback`** — guest reviews with pre-staged AI outputs
+**`facts_customer_feedback`**: guest reviews with pre-staged AI outputs
 
 | Column | Type | Notes |
 |---|---|---|
