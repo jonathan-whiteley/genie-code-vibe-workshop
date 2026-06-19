@@ -20,7 +20,7 @@ Times are relative; facilitator sets the wall clock.
 
 | Time | Module | Outcome |
 |---|---|---|
-| pre (async) | Setup | Repo cloned as Git folder; `attendee/00-setup` notebook ran (skills installed + app deployed); new Agent-mode chat open |
+| pre (async) | Setup | Repo cloned as Git folder; `notebooks/00-setup` notebook ran (skills installed + app deployed); new Agent-mode chat open |
 | 0:00-0:10 | Welcome + demo | See finished app; get env values + session-setup prompt |
 | 0:10-0:25 | Module 1: Metric View | Governed KPIs defined over landed tables |
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
@@ -58,10 +58,10 @@ Each attendee runs one notebook before the workshop. It handles both skills inst
 **How it works:**
 
 1. Attendee clones the workshop repo as a **Workspace Git folder** (Workspace > Create > Git folder, paste the repo URL).
-2. Attendee opens `dab/src/notebooks/attendee/00-setup`, sets their initials widget, and clicks **Run All**.
+2. Attendee opens `notebooks/00-setup`, sets their initials widget, and clicks **Run All**.
 3. The notebook orchestrates two helpers:
-   - `attendee/utils/install_genie_code_skills.py`: installs ai-dev-kit skills into `/Users/<username>/.assistant/skills/` (delegates to the official ai-dev-kit installer).
-   - `attendee/utils/clone_app.py`: copies the `command-center-dev` template, creates the attendee's `<initials>-command-center` app, binds its service principal to the warehouse, catalog/schema (SELECT ON SCHEMA covers all 8 tables and the metric view), and Lakebase, sets OBO scopes (genie, sql, dashboards.genie), and deploys.
+   - `notebooks/utils/install_genie_code_skills.py`: installs ai-dev-kit skills into `/Users/<username>/.assistant/skills/` (delegates to the official ai-dev-kit installer).
+   - `notebooks/utils/clone_app.py`: copies the `command-center-dev` template, creates the attendee's `<initials>-command-center` app, binds its service principal to the warehouse, catalog/schema (SELECT ON SCHEMA covers all 8 tables and the metric view), and Lakebase, sets OBO scopes (genie, sql, dashboards.genie), and deploys.
 4. Attendee opens Genie Code, starts a **new Agent-mode chat thread**, and verifies skills loaded.
 
 The attendee's app is fully created, permissioned, and deployed BEFORE the live session. Module 4 in the workshop is now app verification and optional polish, not app creation.
@@ -108,7 +108,7 @@ GRANT CREATE ON SCHEMA ioc_sandbox.vibe_workshop TO `<attendee_group>`;
 
 Warehouse `CAN_USE`, Genie `CAN_VIEW`, and endpoint `CAN_USE` grants are set via the workspace UI or REST API.
 
-**Each attendee's App service principal** (created by `attendee/00-setup` during pre-req)
+**Each attendee's App service principal** (created by `notebooks/00-setup` during pre-req)
 - Same shape as the reference App SP, scoped to attendee's own resources
 - `clone_app.py` binds the SP via app resources and runs GRANT USE CATALOG / USE SCHEMA / SELECT ON SCHEMA automatically
 - If the attendee group lacks grant authority on the shared facilitator-owned catalog, `clone_app.py` prints the exact GRANT statements with the SP id; the facilitator pastes them into a SQL warehouse as catalog owner
@@ -169,7 +169,7 @@ databricks bundle run command_center_app -t lce
 | Reference Genie space "Command Center reference" | 6 sample questions; example SQLs grounded in the metric view |
 | AI/BI dashboard | 4 widgets: labor % of sales; revenue by region; stock health (days of cover); net sentiment timeline |
 | Reference App `command-center-<target>` | FastAPI + routers; live KPIs; Lakebase writes; LCE branding |
-| `command-center-dev` App | The template `clone_app.py` copies during `attendee/00-setup` (must be deployed before attendees run pre-req) |
+| `command-center-dev` App | The template `clone_app.py` copies during `notebooks/00-setup` (must be deployed before attendees run pre-req) |
 
 The App reads `/Workspace/Shared/command-center/config.json` (written by the setup job) at startup, so the same `app.yaml` ships dev and prod with no hand-edits.
 
@@ -178,12 +178,12 @@ The App reads `/Workspace/Shared/command-center/config.json` (written by the set
 ### T-1 day: attendee comms + final warmup
 
 - [ ] Attendee permissions confirmed (everyone can reach the workspace, create Git folders, and has the entitlements above)
-- [ ] `command-center-dev` template app is deployed and running (attendees' `attendee/00-setup` notebook copies from it)
+- [ ] `command-center-dev` template app is deployed and running (attendees' `notebooks/00-setup` notebook copies from it)
 - [ ] Send attendees the **Lab Companion Guide** and workshop env values: workspace URL, catalog, warehouse name, AI Gateway endpoint, branding folder (`branding/lce/`)
-- [ ] Remind attendees to clone the repo as a Git folder, run `dab/src/notebooks/attendee/00-setup`, and open a new Agent-mode chat before the session
+- [ ] Remind attendees to clone the repo as a Git folder, run `notebooks/00-setup`, and open a new Agent-mode chat before the session
 - [ ] Warm the SQL warehouse by running the reference dashboard once
 - [ ] Smoke-test the reference Genie space with 2-3 questions per pillar
-- [ ] Confirm at least one test-attendee run of `attendee/00-setup` completed successfully (app deployed, wiring green)
+- [ ] Confirm at least one test-attendee run of `notebooks/00-setup` completed successfully (app deployed, wiring green)
 
 ---
 
@@ -218,12 +218,12 @@ Single source of truth: **[Lab Companion Guide section "Pre-Work"](lab-companion
 
 1. Open the Databricks workspace (URL provided by facilitator).
 2. Clone the workshop repo as a **Workspace Git folder** (Workspace > Create > Git folder, paste the repo URL).
-3. Open `dab/src/notebooks/attendee/00-setup`, set the initials widget, and click **Run All**. This single notebook installs the ai-dev-kit skills into Genie Code AND creates, permissions, and deploys the attendee's `<initials>-command-center` app. The app is fully live before the session starts.
-4. The hands-on lab prompts are in `dab/src/notebooks/attendee/01-workshop-prompts` (identical to the Lab Companion Guide; attendees can follow either).
+3. Open `notebooks/00-setup`, set the initials widget, and click **Run All**. This single notebook installs the ai-dev-kit skills into Genie Code AND creates, permissions, and deploys the attendee's `<initials>-command-center` app. The app is fully live before the session starts.
+4. The hands-on lab prompts are in `notebooks/01-workshop-prompts` (identical to the Lab Companion Guide; attendees can follow either).
 5. Open **Genie Code**, start a new **Agent-mode chat**, and verify skills loaded.
 6. Keep that chat open; copy the session-setup prompt from the Lab Companion Guide.
 
-**Facilitator prerequisite:** the `command-center-dev` template app must be deployed and running before any attendee runs `attendee/00-setup`. The `clone_app.py` helper copies from it.
+**Facilitator prerequisite:** the `command-center-dev` template app must be deployed and running before any attendee runs `notebooks/00-setup`. The `clone_app.py` helper copies from it.
 
 ---
 
@@ -239,7 +239,7 @@ Sorted by likelihood. Highest-impact items first.
 | **Skills not loading in Genie Code** | Open a **new Agent-mode chat** after running the installer (do not reuse the same thread). Hard-refresh the browser if skills still do not appear. Verify skills landed under `/Users/<username>/.assistant/skills/` in the workspace file browser. Note: `databricks aitools` does NOT support Genie Code and is not used here. |
 | **Attendees skip pre-workshop setup** | Send reminder 24h before; reserve 10 min at session start for stragglers (cuts into Module 1). |
 | **Attendee app SP lacks catalog access** | `clone_app.py` binds the SP via app resources and runs GRANT USE CATALOG / USE SCHEMA / SELECT ON SCHEMA automatically. If the attendee group lacks grant authority on the shared facilitator-owned catalog, `clone_app.py` prints the exact GRANT statements with the SP id; the facilitator pastes them into a SQL warehouse as catalog owner. The SELECT ON SCHEMA grant covers all 8 tables AND the `command_center_metrics` metric view in a single statement. |
-| **`attendee/00-setup` fails: `command-center-dev` not found** | The template app must be deployed before attendees run setup. Verify `command-center-dev` is running (T-1-week smoke test) and that attendees have workspace access to its source path. |
+| **`notebooks/00-setup` fails: `command-center-dev` not found** | The template app must be deployed before attendees run setup. Verify `command-center-dev` is running (T-1-week smoke test) and that attendees have workspace access to its source path. |
 | **AI Gateway endpoint not granted to attendees** | Test 1 week before; confirm `CAN_USE` on the endpoint for the attendee group; have a facilitator-owned backup endpoint identified. |
 
 ### Medium likelihood
@@ -262,7 +262,7 @@ Sorted by likelihood. Highest-impact items first.
 | **Synthetic data has bad joins or null columns** | Reference Genie and dashboard exercise the schema during the T-1-week setup. The metric view inner-joins `dims_stores`, so stores missing from that dim will have no rows; verify the store count matches expectations. |
 | **Module overruns** | The `dab/` starter is fully working; attendees customize, not build from scratch. The metric-view and Genie steps (Modules 1-2) are the most likely to take extra time. |
 | **SDK version drift** in serverless notebook runtime | Setup notebooks pin `databricks-sdk>=0.40` and include a raw REST fallback (`/api/2.0/database/{instances,credentials}`). |
-| **App resource bindings not applied before deploy** | `clone_app.py` (run during `attendee/00-setup`) handles `apps update --json` before `apps deploy` automatically. If an attendee re-deploys manually during Module 4 polish, remind them to run `apps update --json` first. The reference App in `dab/` shows the working pattern. |
+| **App resource bindings not applied before deploy** | `clone_app.py` (run during `notebooks/00-setup`) handles `apps update --json` before `apps deploy` automatically. If an attendee re-deploys manually during Module 4 polish, remind them to run `apps update --json` first. The reference App in `dab/` shows the working pattern. |
 
 ---
 

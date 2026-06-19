@@ -17,7 +17,7 @@
 
 | Time | Module | Outcome |
 |---|---|---|
-| pre (async) | Setup | Repo cloned as Git folder; `attendee/00-setup` notebook ran (skills installed + app deployed) |
+| pre (async) | Setup | Repo cloned as Git folder; `notebooks/00-setup` notebook ran (skills installed + app deployed) |
 | 0:00-0:10 | Welcome + demo | See finished app; get env values + session-setup prompt |
 | 0:10-0:25 | Module 1: Metric View | Governed KPIs defined over landed tables |
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
@@ -48,7 +48,7 @@ No local software to install. All steps happen inside the Databricks workspace.
 
 1. **Clone this workshop repo as a Workspace Git folder.** In the workspace, go to **Workspace > Create > Git folder**, paste the repo URL, and click Create. This makes the notebooks available directly inside your workspace.
 
-2. **Open `dab/src/notebooks/attendee/00-setup`, set your initials widget, and click Run All.** This single notebook does everything you would otherwise do manually: it installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired. You do not need to run any separate installer or create the app yourself. Once setup finishes, the hands-on lab lives in the `dab/src/notebooks/attendee/01-workshop-prompts` notebook (you can follow it there or in this guide; the prompts are identical).
+2. **Open `notebooks/00-setup`, set your initials widget, and click Run All.** This single notebook does everything you would otherwise do manually: it installs the ai-dev-kit skills into Genie Code AND creates and deploys your `<initials>-command-center` app with all permissions and OBO scopes already wired. You do not need to run any separate installer or create the app yourself. Once setup finishes, the hands-on lab lives in the `notebooks/01-workshop-prompts` notebook (you can follow it there or in this guide; the prompts are identical).
 
 3. **Start a new Agent-mode chat in Genie Code.** Skills only work in Agent mode. After the setup notebook finishes, open a **new chat thread** in Genie Code (hard-refresh the browser if skills do not appear after opening a new thread).
 
@@ -61,7 +61,7 @@ List the tables in ioc_sandbox.vibe_workshop. I should see 8 (3 dims_, 5 facts_)
 ### Pre-work checklist
 
 - [ ] Repo cloned as a Workspace Git folder
-- [ ] `attendee/00-setup` notebook ran successfully (skills installed + app deployed)
+- [ ] `notebooks/00-setup` notebook ran successfully (skills installed + app deployed)
 - [ ] New Agent-mode chat open in Genie Code
 - [ ] Smoke test passed: agent lists 8 tables in `ioc_sandbox.vibe_workshop` (3 `dims_*`, 5 `facts_*`)
 
