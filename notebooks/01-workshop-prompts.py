@@ -2,96 +2,121 @@
 # MAGIC %md
 # MAGIC # Lab 01: Build Your Command Center with Genie Code 🏗️
 # MAGIC
-# MAGIC In this lab you will build a fully governed operational command center for LCE
-# MAGIC by prompting Genie Code. You tell it WHAT to build; the ai-dev-kit
-# MAGIC skills installed in Lab 00 tell it HOW. You will go from raw workshop tables to a
-# MAGIC live deployed app with an embedded Genie space and AI/BI dashboard, all without
-# MAGIC leaving the chat.
+# MAGIC You will build a complete Command Center by prompting Genie Code: a governed
+# MAGIC metric view, a Genie space and an AI/BI dashboard on top of it, and an app
+# MAGIC that embeds both. Each step is a short prompt you copy into Genie Code.
 # MAGIC
 # MAGIC ## Learning Objectives
-# MAGIC
-# MAGIC By the end of this lab you will have:
-# MAGIC - Built a governed **metric view** over the workshop tables at store x date grain
-# MAGIC - Created a **Genie space** grounded in your metric view with sample questions
-# MAGIC - Published an **AI/BI dashboard** with four operational widgets
-# MAGIC - Confirmed your **deployed app** from Lab 00 is running and optionally restyled it
-# MAGIC - **Embedded** your Genie space and dashboard into the app with OBO authentication
-# MAGIC - (Bonus) Scheduled a **daily refresh job** for your metric view and app
+# MAGIC By the end you will have:
+# MAGIC - A metric view that governs your KPIs at store x date grain
+# MAGIC - A Genie space for natural-language Q&A on the metric view
+# MAGIC - An AI/BI dashboard on the metric view
+# MAGIC - Your deployed app (created in Lab 00) embedding your Genie space and dashboard
+# MAGIC - A bonus scheduled job that refreshes everything
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## How Genie Code works here (ground rules) 📋
 # MAGIC
-# MAGIC Before you start prompting, read these once:
-# MAGIC
-# MAGIC - **You build everything by prompting Genie Code.** The ai-dev-kit
-# MAGIC   skills (installed in Lab 00) tell it how to build on Databricks. You tell it
-# MAGIC   WHAT; the skills know HOW.
-# MAGIC
-# MAGIC - **Genie Code can author and run SQL/DDL** you are authorized for, and it can
-# MAGIC   call Databricks APIs to create metric views, Genie spaces, dashboards, and
-# MAGIC   deploy apps.
-# MAGIC
-# MAGIC - **Genie Code will NOT run permission or grant commands,** and it cannot bind
-# MAGIC   app resources or set app OBO scopes. That is exactly why Lab 00 already:
-# MAGIC   created your app, granted its service principal the warehouse and
-# MAGIC   catalog/schema (which covers the tables and the metric view) and Lakebase, and
-# MAGIC   set the genie/sql/dashboards.genie scopes. No prompt below ever asks Genie
-# MAGIC   Code to grant anything or set scopes.
-# MAGIC
-# MAGIC - **Always read what Genie Code generates before running it.** If a generated
-# MAGIC   statement looks wrong, ask Genie Code to explain or revise it before
-# MAGIC   approving execution.
+# MAGIC - You build everything by prompting Genie Code. The ai-dev-kit skills (installed
+# MAGIC   in Lab 00) tell it how to build on Databricks. You tell it WHAT; the skills know HOW.
+# MAGIC - Genie Code can author and run SQL or DDL you are authorized for, and call
+# MAGIC   Databricks APIs (create metric views, Genie spaces, dashboards, deploy apps).
+# MAGIC - Genie Code will NOT run permission or grant commands, and it cannot bind app
+# MAGIC   resources or set app OBO scopes. That is why Lab 00 already created your app,
+# MAGIC   granted its service principal the warehouse, catalog and schema (which covers
+# MAGIC   the tables and the metric view) and Lakebase, and set the genie, sql, and
+# MAGIC   dashboards.genie scopes. So no prompt here asks Genie Code to grant anything.
+# MAGIC - Always read what Genie Code generates before you run it.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Session setup (paste this first) 🔧
+# MAGIC ## Personalize your prompts 🔧
 # MAGIC
-# MAGIC Open Genie Code, start a **new chat**, and paste the block below as
-# MAGIC your very first message. Replace `<INITIALS>` with your actual initials (the same
-# MAGIC ones you used in Lab 00). Do not send any other message until Genie Code
-# MAGIC confirms.
+# MAGIC Run the next cell. It reads the initials you entered in **Lab 00** and prints
+# MAGIC your session-setup prompt, already filled in. Copy the printed prompt and paste
+# MAGIC it into Genie Code as your **first** message.
 # MAGIC
-# MAGIC > **Important:** Use the same initials everywhere. The resource names must match
-# MAGIC > exactly what Lab 00 created, otherwise Genie Code will try to create duplicates.
-# MAGIC
-# MAGIC ```text
-# MAGIC I am doing the Genie Code Command Center lab. Remember these for the whole chat:
-# MAGIC   My initials:  <INITIALS>
-# MAGIC   Catalog:      ioc_sandbox.vibe_workshop
-# MAGIC   Warehouse:    serverless
-# MAGIC   Model:        databricks-claude-sonnet-4-6   (for ai_query() only)
-# MAGIC My resources (use exactly these names):
-# MAGIC   metric view:  <initials>_command_center_metrics
-# MAGIC   Genie space:  "<initials> Command Center"
-# MAGIC   dashboard:    "<initials> Operator Insights"
-# MAGIC   app:          <initials>-command-center   (already created and deployed for me by Lab 00)
-# MAGIC   job:          <initials>-command-center-refresh
-# MAGIC As we go, remember my Genie space ID, dashboard ID, and app URL.
-# MAGIC Confirm, then wait for my first module prompt.
-# MAGIC ```
+# MAGIC > **Tip:** If you did not run Lab 00 in this workspace, type your initials into the
+# MAGIC > `initials` widget that appears at the top of this notebook, then run the cell again.
+
+# COMMAND ----------
+
+dbutils.widgets.text("initials", "", "Your initials (auto-filled from Lab 00 if blank)")
+
+import base64
+import json
+
+from databricks.sdk import WorkspaceClient
+
+w = WorkspaceClient()
+
+# Resolve initials: the widget wins; otherwise read the file Lab 00 saved.
+initials = dbutils.widgets.get("initials").strip().lower()
+if not initials:
+    me = w.current_user.me().user_name
+    try:
+        resp = w.api_client.do(
+            "GET",
+            "/api/2.0/workspace/export",
+            query={
+                "path": f"/Workspace/Users/{me}/command-center-lab/session.json",
+                "format": "SOURCE",
+                "direct_download": False,
+            },
+        )
+        content = (resp or {}).get("content") if isinstance(resp, dict) else None
+        if content:
+            initials = json.loads(base64.b64decode(content).decode()).get("initials", "").strip().lower()
+            print(f"Loaded your initials from Lab 00: {initials}")
+    except Exception as e:
+        print(f"(Could not read the Lab 00 session file: {type(e).__name__})")
+
+if not initials:
+    raise ValueError(
+        "No initials found. Run the 00-setup notebook first, or type your initials "
+        "into the 'initials' widget at the top of this notebook and run this cell again."
+    )
+
+session_setup_prompt = f"""I am doing the Genie Code Command Center lab. Remember these for the whole chat:
+  My initials:  {initials}
+  Catalog:      ioc_sandbox.vibe_workshop
+  Warehouse:    serverless
+  Model:        databricks-claude-sonnet-4-6   (for ai_query() only)
+My resources (use exactly these names):
+  metric view:  {initials}_command_center_metrics
+  Genie space:  "{initials} Command Center"
+  dashboard:    "{initials} Operator Insights"
+  app:          {initials}-command-center   (already created and deployed for me by Lab 00)
+  job:          {initials}-command-center-refresh
+As we go, remember my Genie space ID, dashboard ID, and app URL.
+Confirm, then wait for my first prompt."""
+
+print("\nCopy everything below this line into Genie Code as your first message:\n")
+print(session_setup_prompt)
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Module 1: Build the metric view 📊
 # MAGIC
-# MAGIC A metric view is a governed semantic layer that defines your measures and
-# MAGIC dimensions once so that Genie, dashboards, and SQL queries all speak the same
-# MAGIC language. You will create one over the workshop tables at store x date grain.
-# MAGIC Genie Code will author and execute the CREATE statement for you.
+# MAGIC The metric view is the spine: define your KPIs once, then everything else reuses
+# MAGIC them. Copy the prompt in the next cell into Genie Code.
 # MAGIC
-# MAGIC > **Note:** Genie Code runs the CREATE statement for you. You need CREATE on
-# MAGIC > the schema; if it is denied, ask your facilitator to grant your group CREATE
+# MAGIC > **Note:** Genie Code runs the `CREATE` statement for you, but you need `CREATE`
+# MAGIC > on the schema. If it is denied, ask your facilitator to grant your group `CREATE`
 # MAGIC > on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
-# MAGIC
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ```text
-# MAGIC Module 1. Create a metric view named <initials>_command_center_metrics over my
-# MAGIC workshop tables at store x date grain. Measures: revenue, labor cost, labor % of
-# MAGIC sales, days of cover, sell-through %, net sentiment. Dimensions: store, region,
-# MAGIC date, day-of-week. Then run a SELECT to confirm it returns rows.
+# MAGIC Create my Command Center metric view over the workshop tables at store x date
+# MAGIC grain. Use the metric view name from my session setup. Measures: revenue, labor
+# MAGIC cost, labor % of sales, days of cover, sell-through %, net sentiment. Dimensions:
+# MAGIC store, region, date, day-of-week. Then run a SELECT to confirm it returns rows.
 # MAGIC ```
 
 # COMMAND ----------
@@ -99,19 +124,16 @@
 # MAGIC %md
 # MAGIC ## Module 2: Create a Genie space on the metric view 🧞
 # MAGIC
-# MAGIC A Genie space exposes your metric view to natural language queries. You will
-# MAGIC create one with six sample questions covering the three operational pillars of
-# MAGIC the command center: Labor, Inventory, and Guest Feedback.
-# MAGIC
-# MAGIC > **Tip:** After Genie Code creates the space, ask one question per pillar
-# MAGIC > yourself before moving on. This confirms the space is grounded correctly and
-# MAGIC > gives you the space ID you will need in Module 5.
-# MAGIC
+# MAGIC A Genie space lets anyone ask questions in natural language, grounded in your
+# MAGIC governed measures.
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ```text
-# MAGIC Module 2. Create a Genie space on my metric view <initials>_command_center_metrics.
-# MAGIC Add 6 sample questions, 2 per pillar (Labor / Inventory / Guest Feedback), grounded
-# MAGIC in the metric view measures. Ask one question per pillar to test it, then tell me
-# MAGIC the space ID.
+# MAGIC Create a Genie space on my metric view. Add 6 sample questions, 2 per pillar
+# MAGIC (Labor / Inventory / Guest Feedback), grounded in the metric view measures. Ask
+# MAGIC one question per pillar to test it, then tell me the space ID.
 # MAGIC ```
 
 # COMMAND ----------
@@ -119,18 +141,16 @@
 # MAGIC %md
 # MAGIC ## Module 3: Create an AI/BI dashboard on the metric view 📈
 # MAGIC
-# MAGIC An AI/BI dashboard gives stakeholders a visual snapshot of the same metrics your
-# MAGIC Genie space answers conversationally. You will publish a four-widget dashboard
-# MAGIC covering all three pillars. Make note of the dashboard ID that Genie Code returns
-# MAGIC at the end; you will need it in Module 5.
-# MAGIC
-# MAGIC > **Tip:** Once Genie Code publishes the dashboard, open the link it returns to
-# MAGIC > verify all four widgets render before moving on.
-# MAGIC
+# MAGIC The dashboard reuses the same governed measures, so the numbers match the Genie
+# MAGIC space exactly.
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ```text
-# MAGIC Module 3. Create an AI/BI dashboard on my metric view with 4 widgets: labor % of
-# MAGIC sales (30-day line), revenue by region (bar), days of cover / stock health (bar),
-# MAGIC net sentiment timeline (line). Publish it and tell me the dashboard ID.
+# MAGIC Create an AI/BI dashboard on my metric view with 4 widgets: labor % of sales
+# MAGIC (30-day line), revenue by region (bar), days of cover / stock health (bar), net
+# MAGIC sentiment timeline (line). Publish it and tell me the dashboard ID.
 # MAGIC ```
 
 # COMMAND ----------
@@ -138,18 +158,19 @@
 # MAGIC %md
 # MAGIC ## Module 4: Confirm and polish your app 🎨
 # MAGIC
-# MAGIC Lab 00 already created, permissioned, scoped, and deployed your app. This module
-# MAGIC does not recreate it. You will confirm it is healthy and optionally restyle the
-# MAGIC LCE branding before adding the embedded views in Module 5.
+# MAGIC Your app was already created, permissioned, scoped, and deployed by Lab 00. This
+# MAGIC step does not recreate it.
 # MAGIC
-# MAGIC > **Note:** Lab 00 already created, permissioned, scoped, and deployed your app.
-# MAGIC > This module does not recreate it. Genie Code can edit source and redeploy, but
-# MAGIC > it cannot change resources or scopes (and does not need to).
-# MAGIC
+# MAGIC > **Note:** Genie Code can edit the app source and redeploy, but it cannot change
+# MAGIC > resources or scopes (and does not need to: Lab 00 set them).
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ```text
-# MAGIC Module 4. My app <initials>-command-center is already deployed (Lab 00 created it).
-# MAGIC Open its URL and check that /api/wiring is green. Optional: restyle the LCE branding
-# MAGIC in the app source (logo branding/lce/logo.svg, primary #FF671B, dark navbar, title
+# MAGIC My Command Center app is already deployed (Lab 00 created it). Open its URL and
+# MAGIC check that /api/wiring is green. Optional: restyle the LCE branding in the app
+# MAGIC source (logo branding/lce/logo.svg, primary #FF671B, dark navbar, title
 # MAGIC "Command Center | LCE") and redeploy. Do not change the app's resources or scopes.
 # MAGIC ```
 
@@ -158,24 +179,24 @@
 # MAGIC %md
 # MAGIC ## Module 5: Embed your Genie space and dashboard 🔗
 # MAGIC
-# MAGIC Now you will wire the Genie space and the dashboard you built in Modules 2 and 3
-# MAGIC into the app. The key requirement is on-behalf-of (OBO) authentication: the app
-# MAGIC calls Genie and renders the dashboard as the signed-in user, not as the app
-# MAGIC service principal, so each user sees only what they are authorized to see.
+# MAGIC Point your app at the Genie space and dashboard you just built.
 # MAGIC
-# MAGIC > **Important:** The genie, sql, and dashboards.genie OBO scopes are already set
-# MAGIC > on your app by Lab 00. Do not ask Genie Code to add scopes; it cannot, and
-# MAGIC > they are not needed.
-# MAGIC
+# MAGIC > **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on
+# MAGIC > your app by Lab 00. Do not ask Genie Code to add scopes (it cannot, and they are
+# MAGIC > not needed).
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ```text
-# MAGIC Module 5. Update my app to embed MY Genie space (the ID from Module 2) and MY
-# MAGIC dashboard (the ID from Module 3), then redeploy:
+# MAGIC Update my app to embed my Genie space (the ID from the Genie step) and my dashboard
+# MAGIC (the ID from the dashboard step), then redeploy:
 # MAGIC   - Call Genie on behalf of the signed-in user using the X-Forwarded-Access-Token
 # MAGIC     header (OBO), not the app service principal, so it uses my access to my space.
 # MAGIC   - Embed my published dashboard by its ID, rendered as the signed-in user.
 # MAGIC   - Support multi-turn: start-conversation on the first ask, then post to the
-# MAGIC     conversation messages endpoint; poll until COMPLETED; return the answer and the
-# MAGIC     SQL Genie generated.
+# MAGIC     conversation messages endpoint; poll until COMPLETED; return the answer and
+# MAGIC     the SQL Genie generated.
 # MAGIC ```
 
 # COMMAND ----------
@@ -183,17 +204,14 @@
 # MAGIC %md
 # MAGIC ## Module 6 (BONUS): Schedule a refresh job ⏰
 # MAGIC
-# MAGIC If you finish early, create a scheduled job that keeps your metric view and app
-# MAGIC up to date. The job runs as you, so no extra permissions are needed beyond what
-# MAGIC you already have.
-# MAGIC
-# MAGIC > **Tip:** After Genie Code creates the job, open the Jobs UI and confirm the
-# MAGIC > schedule shows 6am ET before leaving the workshop.
-# MAGIC
+# MAGIC Automate the refresh so the data and app stay current.
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ```text
-# MAGIC Module 6 (bonus). Create a daily job named <initials>-command-center-refresh at
-# MAGIC 6am ET that refreshes my metric view's source rollups and redeploys my app. The
-# MAGIC job runs as me, so no extra permissions are needed.
+# MAGIC Create my daily refresh job at 6am ET that refreshes my metric view's source
+# MAGIC rollups and redeploys my app. The job runs as me, so no extra permissions are needed.
 # MAGIC ```
 
 # COMMAND ----------
@@ -201,19 +219,6 @@
 # MAGIC %md
 # MAGIC ## Conclusion 🏁
 # MAGIC
-# MAGIC You have built a fully governed operational command center by prompting Genie
-# MAGIC Code, without writing a single line of boilerplate yourself. Starting from raw
-# MAGIC workshop tables, you created a metric view that defines your measures once and
-# MAGIC serves as the single source of truth for every layer above it. From that metric
-# MAGIC view you hung a Genie space for natural language queries, an AI/BI dashboard for
-# MAGIC visual reporting, and a deployed app that embeds both using OBO authentication so
-# MAGIC every user sees data they are authorized for.
-# MAGIC
-# MAGIC **Share your app URL** with your facilitator or teammates to show the finished
-# MAGIC command center. The URL is printed in your Lab 00 output and available from the
-# MAGIC Databricks Apps UI.
-# MAGIC
-# MAGIC > **Next steps:** Take the patterns from today back to a real account. The same
-# MAGIC > flow (metric view, Genie space, dashboard, app) works on any governed table in
-# MAGIC > Unity Catalog. The ai-dev-kit skills remain installed in your workspace after
-# MAGIC > the workshop ends.
+# MAGIC You built a governed metric view and hung a Genie space, an AI/BI dashboard, and a
+# MAGIC deployed app off it, all by prompting Genie Code. Share your app URL with the group,
+# MAGIC show one Genie question that worked, and one dashboard tile.
