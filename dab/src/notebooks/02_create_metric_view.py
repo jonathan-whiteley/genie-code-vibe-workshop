@@ -30,21 +30,26 @@ SCHEMA = dbutils.widgets.get("schema")
 METRIC_YAML = r'''
 version: "0.1"
 source: |
-  SELECT s.date, s.store_id, st.store_name, st.region,
-         date_format(s.date,'EEEE') AS day_of_week,
-         s.revenue, l.labor_cost, inv.units_sold, inv.on_hand_eod,
-         fb.pos_cnt, fb.neg_cnt, fb.total_cnt
-  FROM (SELECT date, store_id, SUM(revenue) revenue
-        FROM {cat}.{sch}.facts_sales_daypart GROUP BY date, store_id) s
-  LEFT JOIN (SELECT date, store_id, SUM(labor_cost) labor_cost
-        FROM {cat}.{sch}.facts_labor_daypart GROUP BY date, store_id) l USING (date, store_id)
-  LEFT JOIN (SELECT date, store_id, SUM(units_sold) units_sold, SUM(on_hand_eod) on_hand_eod
-        FROM {cat}.{sch}.facts_sales_inventory_daily GROUP BY date, store_id) inv USING (date, store_id)
-  LEFT JOIN (SELECT date, store_id,
-               SUM(CASE WHEN sentiment_label='pos' THEN 1 ELSE 0 END) pos_cnt,
-               SUM(CASE WHEN sentiment_label='neg' THEN 1 ELSE 0 END) neg_cnt,
-               COUNT(*) total_cnt
-        FROM {cat}.{sch}.facts_customer_feedback GROUP BY date, store_id) fb USING (date, store_id)
+  SELECT
+    s.date, s.store_id, st.store_name, st.region,
+    date_format(s.date, 'EEEE') AS day_of_week,
+    s.revenue, s.forecast_revenue, s.traffic,
+    l.labor_cost, l.forecast_labor_cost
+  FROM (
+    SELECT date, store_id,
+           SUM(revenue) AS revenue,
+           SUM(forecast_revenue) AS forecast_revenue,
+           SUM(traffic) AS traffic
+    FROM {cat}.{sch}.facts_sales_daypart
+    GROUP BY date, store_id
+  ) s
+  LEFT JOIN (
+    SELECT date, store_id,
+           SUM(labor_cost) AS labor_cost,
+           SUM(forecast_labor_cost) AS forecast_labor_cost
+    FROM {cat}.{sch}.facts_labor_daypart
+    GROUP BY date, store_id
+  ) l USING (date, store_id)
   JOIN {cat}.{sch}.dims_stores st USING (store_id)
 dimensions:
   - name: date
@@ -60,16 +65,16 @@ dimensions:
 measures:
   - name: revenue
     expr: SUM(revenue)
+  - name: forecast_revenue
+    expr: SUM(forecast_revenue)
+  - name: traffic
+    expr: SUM(traffic)
   - name: labor_cost
     expr: SUM(labor_cost)
+  - name: forecast_labor_cost
+    expr: SUM(forecast_labor_cost)
   - name: labor_pct_of_sales
-    expr: SUM(labor_cost) / NULLIF(SUM(revenue),0)
-  - name: days_of_cover
-    expr: SUM(on_hand_eod) / NULLIF(SUM(units_sold),0)
-  - name: sell_through_pct
-    expr: SUM(units_sold) / NULLIF(SUM(units_sold)+SUM(on_hand_eod),0)
-  - name: net_sentiment
-    expr: (SUM(pos_cnt)-SUM(neg_cnt)) / NULLIF(SUM(total_cnt),0)
+    expr: SUM(labor_cost) / NULLIF(SUM(revenue), 0)
 '''.format(cat=CATALOG, sch=SCHEMA)
 
 fqn = f"{CATALOG}.{SCHEMA}.command_center_metrics"

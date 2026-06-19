@@ -3,7 +3,7 @@
 **Workshop:** Build an AI-powered Command Center **inside Databricks Genie Code** (metric-view-first, no local install required).
 **Audience:** Field Engineers, analysts, or customer engineers (8-15 attendees recommended).
 **Duration:** 3 hours.
-**End state:** Each attendee has their own deployed Databricks App that surfaces a Genie space and an AI/BI dashboard, both built on a single governed Metric View, across three operational pillars: **Labor, Inventory, Guest Feedback**. Everything is packaged as a Databricks Asset Bundle.
+**End state:** Each attendee has their own deployed Databricks App that surfaces a Genie space and an AI/BI dashboard, both built on a single governed Metric View covering **Sales and Labor** (inventory and feedback raw tables remain in the schema for the app, but are not in the metric view). Everything is packaged as a Databricks Asset Bundle.
 
 ### Quick Links
 
@@ -120,7 +120,7 @@ Warehouse `CAN_USE`, Genie `CAN_VIEW`, and endpoint `CAN_USE` grants are set via
 - [ ] Branding assets in `branding/lce/` (logo SVG + brand color hex) already shipped in repo
 - [ ] Workspace quotas verified (defaults fit); edge cases in [`dab/README.md` section "Common gotchas"](../dab/README.md#common-deploy-gotchas)
 - [ ] **Metric view smoke test:** run `SELECT * FROM ioc_sandbox.vibe_workshop.command_center_metrics LIMIT 5` (must return rows)
-- [ ] **Genie smoke test:** ask the reference Genie space one question per pillar; verify answers
+- [ ] **Genie smoke test:** ask the reference Genie space 2-3 revenue and labor questions; verify answers
 - [ ] **App smoke test:** the `command-center-dev` reference app renders with live KPIs and a green wiring banner
 
 ---
@@ -154,8 +154,8 @@ databricks bundle run command_center_app -t lce
 
 - [ ] All 5 steps exit clean
 - [ ] Metric view returns rows: `SELECT * FROM ioc_sandbox.vibe_workshop.command_center_metrics LIMIT 5`
-- [ ] Reference Genie space answers one metric-view question (e.g. "Which store had the highest labor % of sales last week?")
-- [ ] Reference dashboard renders 4 widgets with data
+- [ ] Reference Genie space answers one metric-view question (e.g. "Which stores are below their revenue forecast this week?")
+- [ ] Reference dashboard renders with data (KPI counters + revenue and labor charts)
 - [ ] App wiring banner is **green** with live counts and "Genie: Command Center reference"
 - [ ] The `command-center-dev` app renders (this is the template for Module 4)
 
@@ -164,10 +164,10 @@ databricks bundle run command_center_app -t lce
 | Resource | Notes |
 |---|---|
 | 8-table dataset in `ioc_sandbox.vibe_workshop` | 60 days anchored to workshop date; `company=lce` brand config |
-| Metric view `command_center_metrics` | Store x date grain; 6 measures + 5 dimensions; the spine for all downstream surfaces |
+| Metric view `command_center_metrics` | Store x date grain; sales + labor only (6 measures + 5 dimensions); the spine for all downstream surfaces |
 | Lakebase instance `command-center-lakebase` | 3 write-back tables; sequence grants applied |
-| Reference Genie space "Command Center reference" | 6 sample questions; example SQLs grounded in the metric view |
-| AI/BI dashboard | 4 widgets: labor % of sales; revenue by region; stock health (days of cover); net sentiment timeline |
+| Reference Genie space "Command Center reference" | 6 sample questions grounded in revenue and labor measures |
+| AI/BI dashboard | KPI counters (revenue, labor % of sales, revenue vs forecast, traffic) + revenue and labor charts |
 | Reference App `command-center-<target>` | FastAPI + routers; live KPIs; Lakebase writes; LCE branding |
 | `command-center-dev` App | The template `clone_app.py` copies during `notebooks/00-setup` (must be deployed before attendees run pre-req) |
 
@@ -182,7 +182,7 @@ The App reads `/Workspace/Shared/command-center/config.json` (written by the set
 - [ ] Send attendees the **Lab Companion Guide** and workshop env values: workspace URL, catalog, warehouse name, AI Gateway endpoint, branding folder (`branding/lce/`)
 - [ ] Remind attendees to clone the repo as a Git folder, run `notebooks/00-setup`, and open a new chat before the session
 - [ ] Warm the SQL warehouse by running the reference dashboard once
-- [ ] Smoke-test the reference Genie space with 2-3 questions per pillar
+- [ ] Smoke-test the reference Genie space with 2-3 revenue and labor questions
 - [ ] Confirm at least one test-attendee run of `notebooks/00-setup` completed successfully (app deployed, wiring green)
 
 ---
@@ -204,7 +204,7 @@ Materialized in `ioc_sandbox.vibe_workshop` (dev mirror at `jdub_demo.vibe_works
 - `facts_customer_feedback`: guest reviews with pre-staged `sentiment_label`, `theme`, and `ai_drafted_reply` columns
 
 **Metric view (the spine):**
-The setup job creates `command_center_metrics` over these tables at `store x date` grain. Measures: `revenue`, `labor_cost`, `labor_pct_of_sales`, `days_of_cover`, `sell_through_pct`, `net_sentiment`. The metric view inner-joins `dims_stores`, so fact rows with no matching store are dropped. The `days_of_cover` and `sell_through_pct` measures sum `on_hand_eod` across the selected date window (a snapshot-summed semantic); anticipate Genie questions that span multiple days to reflect this.
+The setup job creates `command_center_metrics` over `facts_sales_daypart` and `facts_labor_daypart` at `store x date` grain. Each table is pre-aggregated to one row per store per date in its own subquery before joining, to avoid fan-out. Measures: `revenue`, `forecast_revenue`, `traffic`, `labor_cost`, `forecast_labor_cost`, `labor_pct_of_sales`. Dimensions: `date`, `store_id`, `store_name`, `region`, `day_of_week`. The metric view inner-joins `dims_stores`, so fact rows with no matching store are dropped. Inventory and feedback measures were dropped from the metric view for reliability; the raw source tables still exist in the schema for the reference app.
 
 See [`data/README.md`](../data/README.md) and [`metric-views/command_center_metrics.yaml`](../metric-views/command_center_metrics.yaml) for column-level details.
 

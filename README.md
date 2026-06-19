@@ -8,7 +8,7 @@
 
 > A 3-hour workshop where each attendee uses **Genie Code** (the in-workspace Databricks agent) to build a working Databricks app end-to-end, **no local install**. One Metric View governs the KPIs; every downstream surface (Genie space, AI/BI dashboard, embedded App) reuses the same governed measures.
 
-The reference build is **Command Center**, a store-operations console for a single-store operator. It surfaces analytics and AI insights across three pillars: **Labor**, **Inventory**, and **Guest Feedback**, over an LCE-flavored synthetic dataset. Drop in a different schema and the same format works for any domain.
+The reference build is **Command Center**, a store-operations console for a single-store operator. It surfaces analytics and AI insights across **Sales and Labor** over an LCE-flavored synthetic dataset. Drop in a different schema and the same format works for any domain.
 
 ---
 
@@ -114,18 +114,20 @@ The workshop is architected around a single governed Metric View at `store x dat
 **Object:** `ioc_sandbox.vibe_workshop.command_center_metrics`
 (per-attendee copy: `<initials>_command_center_metrics`)
 
-**Six measures (the governed KPIs reused everywhere):**
+**Six measures (the governed KPIs reused everywhere) -- sales + labor only, two-table view at store x date grain:**
 
 | Measure | Definition |
 |---|---|
 | `revenue` | Sum of actual revenue across dayparts |
-| `labor_cost` | Sum of actual labor cost across dayparts and roles |
+| `forecast_revenue` | Sum of forecast revenue across dayparts |
+| `traffic` | Sum of guest traffic across dayparts |
+| `labor_cost` | Sum of actual labor cost across dayparts |
+| `forecast_labor_cost` | Sum of forecast labor cost across dayparts |
 | `labor_pct_of_sales` | Labor cost divided by revenue |
-| `days_of_cover` | On-hand inventory divided by average daily units sold |
-| `sell_through_pct` | Units sold divided by (units sold + on-hand) |
-| `net_sentiment` | Positive minus negative feedback count, normalized |
 
-The metric view joins `facts_sales_daypart`, `facts_labor_daypart`, `facts_sales_inventory_daily`, and `facts_customer_feedback`, all rolled up to daily per store, with `dims_stores` providing region and store attributes.
+**Five dimensions:** `date`, `store_id`, `store_name`, `region`, `day_of_week`.
+
+The metric view joins `facts_sales_daypart` and `facts_labor_daypart` (each pre-aggregated to one row per store per date in its own subquery before joining), with `dims_stores` providing region and store attributes. Inventory and feedback raw tables remain in the schema for the reference app but are not included in the metric view, keeping the join fan-out-free.
 
 Every downstream surface (the Genie space, the AI/BI dashboard, and the embedded App) draws from these same governed measures. Raw source tables remain in the schema so Genie can drill into daypart, role, or SKU detail when a question requires finer grain.
 
@@ -159,7 +161,7 @@ Column-level detail: [`data/README.md`](data/README.md).
 | Resource | What it is |
 |---|---|
 | `command_center_setup` job | 2 sequential tasks: create metric view + create Genie space (data already landed) |
-| `command_center_dash` AI/BI dashboard | 4 KPI widgets on the metric view: labor % of sales (line), revenue by region (bar), days of cover (bar), net sentiment (line) |
+| `command_center_dash` AI/BI dashboard | KPI counters (revenue, labor % of sales, revenue vs forecast, traffic) + revenue and labor charts on the metric view |
 | `command-center-dev` Databricks App | FastAPI + Homebase UI; the reference template attendees extend in Module 4 |
 
 The App's catalog, schema, and Genie space ID are published to `/Workspace/Shared/command-center/config.json` by the setup job and read by the App at startup; the same `app.yaml` ships dev and prod with no hand-edits.
