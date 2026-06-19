@@ -162,6 +162,33 @@ print(session_setup_prompt)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ### Module 2 follow-up: add a benchmark set 🎯
+# MAGIC
+# MAGIC Benchmarks measure how accurately Genie answers known questions. Add a set of 10,
+# MAGIC then run it to see how your space scores. Copy the prompt below.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Add these 10 benchmark questions to my Genie space, then run the benchmark and
+# MAGIC tell me how many Genie answered correctly:
+# MAGIC
+# MAGIC - Which 5 stores had the highest labor % of sales last week?
+# MAGIC - How has labor cost trended over the last 30 days across all stores?
+# MAGIC - Which region has the lowest labor % of sales this month?
+# MAGIC - Which 5 stores have the lowest days of cover right now?
+# MAGIC - What is the average sell-through % by region this week?
+# MAGIC - How has sell-through % trended over the last 30 days?
+# MAGIC - Which stores have the lowest net sentiment this week?
+# MAGIC - What is the net sentiment trend over the last 30 days?
+# MAGIC - Which stores have both a high labor % of sales and a low net sentiment this week?
+# MAGIC - Rank regions by total revenue this month.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Module 3: Create an AI/BI dashboard on the metric view 📈
 # MAGIC
 # MAGIC The dashboard reuses the same governed measures, so the numbers match the Genie
