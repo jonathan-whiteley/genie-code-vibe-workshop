@@ -285,7 +285,9 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from the Genie step). Do not rebuild the panel or its auth; just point it at my space ID.
 # MAGIC
-# MAGIC 2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. Use the published dashboard embed URL for my dashboard ID, rendered as the signed-in user.
+# MAGIC 2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. To avoid a "refused to connect" iframe error:
+# MAGIC    - use the dashboard's published EMBED url (the /embed/ link from the dashboard's Share then Embed), NOT the normal dashboard link; the normal workspace link sets X-Frame-Options and refuses to be framed.
+# MAGIC    - make sure the dashboard is Published with embedding enabled, and add my app's domain (the .databricksapps.com host of my app URL) to the dashboard's list of approved domains for embedding.
 # MAGIC ```
 
 # COMMAND ----------
