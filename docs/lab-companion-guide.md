@@ -103,10 +103,12 @@ Now paste each module prompt in order; the agent already knows your initials and
 > **Note:** Genie Code runs the CREATE statement for you, but you need CREATE on the schema. If it is denied, ask the facilitator to grant your group CREATE on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
 
 ```text
-Module 1. Create a metric view named <initials>_command_center_metrics over my
-workshop tables at store x date grain. Measures: revenue, labor cost, labor %
-of sales, days of cover, sell-through %, net sentiment. Dimensions: store,
-region, date, day-of-week. Validate it returns rows.
+Create a metric view named <initials>_command_center_metrics over my workshop
+tables at store x date grain. Measures: revenue, labor cost, labor % of sales,
+days of cover, sell-through %, net sentiment. Dimensions: store, region, date,
+day-of-week. Put all the joins and rollups inside the metric view's own source
+query; do not create any intermediary or base view, only the single metric view.
+Validate it returns rows.
 ```
 
 ---
@@ -140,9 +142,9 @@ Publish it and remember the dashboard ID.
 Your `<initials>-command-center` app was already created, branded, and deployed by the setup notebook (it copied `command-center-dev`, wired permissions, and deployed). This module confirms it is running and lets you polish the branding if you like.
 
 ```text
-Module 4. My app <initials>-command-center is already deployed (the setup
-notebook created it from command-center-dev). Open its URL and confirm
-/api/wiring is green. If you want, tweak the LCE branding (logo
+My app <initials>-command-center is already deployed (the setup notebook
+created it from command-center-dev). Open its URL and confirm it loads. If
+you want, tweak the LCE branding (logo
 branding/lce/logo.svg, primary #FF671B, dark navbar, title "Command
 Center | LCE") and redeploy.
 ```

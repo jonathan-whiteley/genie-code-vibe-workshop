@@ -17,7 +17,7 @@
 # MAGIC - Granted the app service principal access to the warehouse, catalog/schema,
 # MAGIC   and Lakebase
 # MAGIC - Set the genie, sql, and dashboards.genie OBO scopes on the app
-# MAGIC - Deployed the app and confirmed it is reachable at `/api/wiring`
+# MAGIC - Deployed the app and printed its URL
 # MAGIC
 # MAGIC > **Before you run:** clone this repo as a Workspace Git folder (Workspace >
 # MAGIC > Create > Git folder, paste the repo URL). Open this notebook from inside that
@@ -91,8 +91,8 @@ print(f"Your app will be: {INITIALS}-command-center")
 # MAGIC already in place after this step completes.
 # MAGIC
 # MAGIC > **Important:** Do not run this cell a second time during the workshop. If
-# MAGIC > something looks wrong with your app, open `/api/wiring` in the app URL
-# MAGIC > (printed below when the step finishes) to diagnose before re-running.
+# MAGIC > something looks wrong with your app, open the app URL (printed below when
+# MAGIC > the step finishes) to check it loads before re-running.
 
 # COMMAND ----------
 
@@ -105,8 +105,8 @@ print(f"Your app will be: {INITIALS}-command-center")
 # MAGIC
 # MAGIC Setup is complete. Here is what was done for you:
 # MAGIC
-# MAGIC - Your `<initials>-command-center` app is deployed and wired. Open
-# MAGIC   `<url>/api/wiring` (URL printed above) to confirm the green status.
+# MAGIC - Your `<initials>-command-center` app is deployed and wired. Open its URL
+# MAGIC   (printed above) to confirm it loads.
 # MAGIC - The ai-dev-kit skills are installed in your workspace.
 # MAGIC
 # MAGIC **Next steps:**

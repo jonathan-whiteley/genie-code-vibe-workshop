@@ -382,7 +382,7 @@ print(f"OBO scopes : {final.get('user_api_scopes')}")
 print(f"SP id      : {final.get('service_principal_client_id') or final.get('id')}")
 print("=" * 60)
 if url:
-    print(f"\nWiring check: {url}/api/wiring")
+    print(f"\nOpen your app: {url}")
 
 # COMMAND ----------
 

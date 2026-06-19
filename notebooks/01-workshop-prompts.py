@@ -7,12 +7,13 @@
 # MAGIC that embeds both. Each step is a short prompt you copy into Genie Code.
 # MAGIC
 # MAGIC ## Learning Objectives
-# MAGIC By the end you will have:
-# MAGIC - A metric view that governs your KPIs at store x date grain
-# MAGIC - A Genie space for natural-language Q&A on the metric view
-# MAGIC - An AI/BI dashboard on the metric view
-# MAGIC - Your deployed app (created in Lab 00) embedding your Genie space and dashboard
-# MAGIC - A bonus scheduled job that refreshes everything
+# MAGIC Each module below produces one of these:
+# MAGIC - **Module 1:** a metric view that governs your KPIs at store x date grain
+# MAGIC - **Module 2:** a Genie space for natural-language Q&A on the metric view
+# MAGIC - **Module 3:** an AI/BI dashboard on the metric view
+# MAGIC - **Module 4:** your app (deployed in Lab 00), confirmed and branded
+# MAGIC - **Module 5:** your Genie space and dashboard embedded in the app
+# MAGIC - **Module 6 (bonus):** a scheduled job that refreshes everything
 
 # COMMAND ----------
 
@@ -116,7 +117,9 @@ print(session_setup_prompt)
 # MAGIC Create my Command Center metric view over the workshop tables at store x date
 # MAGIC grain. Use the metric view name from my session setup. Measures: revenue, labor
 # MAGIC cost, labor % of sales, days of cover, sell-through %, net sentiment. Dimensions:
-# MAGIC store, region, date, day-of-week. Then run a SELECT to confirm it returns rows.
+# MAGIC store, region, date, day-of-week. Put all the joins and rollups inside the metric
+# MAGIC view's own source query; do not create any intermediary or base view, only the
+# MAGIC single metric view. Then run a SELECT to confirm it returns rows.
 # MAGIC ```
 
 # COMMAND ----------
@@ -169,7 +172,7 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ```text
 # MAGIC My Command Center app is already deployed (Lab 00 created it). Open its URL and
-# MAGIC check that /api/wiring is green. Optional: restyle the LCE branding in the app
+# MAGIC confirm it loads. Optional: restyle the LCE branding in the app
 # MAGIC source (logo branding/lce/logo.svg, primary #FF671B, dark navbar, title
 # MAGIC "Command Center | LCE") and redeploy. Do not change the app's resources or scopes.
 # MAGIC ```
