@@ -48,8 +48,11 @@ Times are relative; facilitator sets the wall clock.
 | **Metric Views** (Unity Catalog) | The spine: governed KPIs defined once, reused by Genie and the dashboard |
 | **Foundation Model API + AI Gateway** with `databricks-claude-sonnet-4-6` | Single endpoint for `ai_query()` in the app; confirm attendee group has `CAN_USE` |
 | **Lakebase** (Postgres preview) | Write-back persistence (release POs, replies, schedule approvals) |
+| **AI/BI dashboard embedding allowlist** | Module 5 embeds the dashboard as an iframe in each attendee's app. Without this, every attendee hits a "refused to connect" / approved-domains error |
 
 > **Note on AI Gateway:** the endpoint serves `ai_query()` in the reference app only. The attendee agent (Genie Code) does not require an AI Gateway route; skills run within Genie Code's built-in agent runtime.
+
+> **Note on dashboard embedding (admin-only, do once):** the approved-domains allowlist is a **workspace-admin setting** attendees cannot change. Set it once for the whole workshop: **Settings → Security → External access → Embed dashboards → Allow approved domains → Manage**, add **`*.databricksapps.com`**, Save. The single `*` matches any subdomain depth (CSP grammar), so this one entry covers every attendee's `<initials>-command-center-<id>.<cloud>.databricksapps.com` app host: no per-attendee step. Takes effect within ~2 minutes (pod cache); a hard refresh / incognito tab picks it up. This is the only thing attendees need from the admin in Module 5: they just use the dashboard's `/embed/` URL. Internal refs: `go/iframe`, `go/embedded-analytics`.
 
 #### Attendee pre-req: single setup notebook
 
@@ -179,10 +182,12 @@ The App reads `/Workspace/Shared/command-center/config.json` (written by the set
 
 - [ ] Attendee permissions confirmed (everyone can reach the workspace, create Git folders, and has the entitlements above)
 - [ ] `command-center-dev` template app is deployed and running (attendees' `notebooks/00-setup` notebook copies from it)
+- [ ] Dashboard embedding allowlist set: `*.databricksapps.com` added under Settings → Security → External access → Embed dashboards (admin-only; without it Module 5 iframes fail for everyone)
 - [ ] Send attendees the **Lab Companion Guide** and workshop env values: workspace URL, catalog, warehouse name, AI Gateway endpoint, branding folder (`branding/lce/`)
 - [ ] Remind attendees to clone the repo as a Git folder, run `notebooks/00-setup`, and open a new chat before the session
 - [ ] Warm the SQL warehouse by running the reference dashboard once
 - [ ] Smoke-test the reference Genie space with 2-3 revenue and labor questions
+- [ ] **Pre-test the dashboard iframe embed in a company-managed-laptop browser profile** (Chrome/Edge, normal window). If MDM hard-blocks third-party cookies with no user override, decide the fallback now (open `/embed/` in its own tab from a tile, or screenshot) rather than discovering it live: see the troubleshooting table row on the approved-domains/cookie error
 - [ ] Confirm at least one test-attendee run of `notebooks/00-setup` completed successfully (app deployed, wiring green)
 
 ---
@@ -249,6 +254,7 @@ Sorted by likelihood. Highest-impact items first.
 | **Metric view DDL syntax error** | The `CREATE OR REPLACE VIEW ... WITH METRICS LANGUAGE YAML` syntax may be runtime-version-dependent. Confirm the DDL against the `databricks-metric-views` skill in the target workspace T-1 week. The T-1-week smoke test (verify the metric view returns rows) catches this before the workshop. |
 | **MEASURE() or identifier() over a metric view fails at runtime** | At first deploy, verify that dashboard datasets and Genie example SQLs using `MEASURE(...)` and `identifier(:catalog||'.'||:schema||'.command_center_metrics')` resolve over the metric view. If the runtime rejects those constructs, hardcode the fully-qualified table name as a fallback. |
 | **Embed 403s: "Invalid scope" or "PermissionDenied"** on attendee apps | Genie spaces are user-permissioned: use OBO auth (`X-Forwarded-Access-Token` header) instead of the App service principal. Declare `user_api_scopes: [genie, sql, dashboards.genie]` on the App resource, then redeploy and re-consent on first open. Reference pattern: [`dab/src/app/routers/genie.py`](../dab/src/app/routers/genie.py). |
+| **Dashboard iframe blank / "refused to connect" / approved-domains error** even though the allowlist is set | Basic dashboard embedding rides the viewer's Databricks **session cookie**, which the browser treats as a **third-party cookie** relative to the `*.databricksapps.com` app domain. Most common triggers, in order: (1) **Incognito / InPrivate window** blocks third-party cookies by default: use a normal window; (2) **managed-laptop MDM policy** (`BlockThirdPartyCookies`) blocks them even in a normal window: add a site exception for `[*.]databricks.com` (Chrome: Settings → Privacy → Cookies → "Sites that can always use cookies"; Edge: same, or `CookiesAllowedForUrls` policy); (3) app opened **inside the workspace preview pane** (nested iframe): open the top-level `…databricksapps.com` URL. **On company-managed laptops, pre-test the embed in one attendee's actual browser/device profile during the T-1-week smoke test** — if MDM hard-blocks third-party cookies with no user override, fall back to opening the dashboard's `/embed/` URL in its own browser tab (linked from a tile) instead of inline, or screenshot the dashboard for the demo. |
 | **Warehouse name lookup fails** on `bundle deploy` | The bundle's `warehouse_id` is a lookup by name (`Serverless Starter Warehouse`); not every workspace has one. Always pass `--var warehouse_id=<id>`. |
 | **SQL warehouse 500s** after idle or cold-start | Reference App's `sql_utils.py` retries on `RequestError` and session expiry. Attendees writing their own backend should mirror that pattern. |
 | **Facilitator is not workspace admin** (cannot create Lakebase) | Two fallbacks in [`dab/README.md` section "Lakebase binding fallback"](../dab/README.md#lakebase-binding-fallback): admin pre-creates the instance, or comment out `lakebase.yml`. |

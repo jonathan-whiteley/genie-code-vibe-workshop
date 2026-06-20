@@ -169,19 +169,9 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Add these 10 benchmark questions to my Genie space, then run the benchmark and
-# MAGIC tell me how many Genie answered correctly:
-# MAGIC
-# MAGIC - Which 5 stores had the highest labor % of sales last week?
-# MAGIC - How has labor % of sales trended over the last 30 days across all stores?
-# MAGIC - Which region has the lowest labor % of sales this month?
-# MAGIC - Which stores are below their revenue forecast this week?
-# MAGIC - Show the revenue trend over the last 30 days.
-# MAGIC - How did labor cost track against its forecast this week?
-# MAGIC - Which 5 stores have the highest revenue this month?
-# MAGIC - Rank regions by total revenue this month.
-# MAGIC - What is the busiest day of week by revenue?
-# MAGIC - Which stores improved labor % of sales the most over the last 30 days?
+# MAGIC Come up with 10 benchmark questions for my Genie space based on the metric view's
+# MAGIC measures and dimensions, add them to the space, then run the benchmark and tell me
+# MAGIC how many Genie answered correctly.
 # MAGIC ```
 
 # COMMAND ----------
@@ -242,11 +232,12 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC Now give it Little Caesars branding and make it pop:
 # MAGIC - copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it in the header
+# MAGIC - copy the favicon from my workshop Git folder (branding/lce/favicon.svg) into the app's static assets and wire it up with a <link rel="icon"> in the page <head> so it shows in the browser tab
 # MAGIC - use LCE orange (#FF671B) as the accent throughout: buttons, links, active tabs, and KPI highlights
 # MAGIC - add a bold hero header on the Today tab with the logo and the store name
 # MAGIC - give the tiles and cards rounded corners, soft shadows, and a subtle hover lift
 # MAGIC - add a thin LCE-orange top accent bar and a dark navbar
-# MAGIC - title the app "Command Center | LCE"
+# MAGIC - set the browser tab title (the HTML <title> tag) to exactly "Command Center" with no store number
 # MAGIC
 # MAGIC Then redeploy.
 # MAGIC ```
@@ -287,7 +278,8 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC 2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. To avoid a "refused to connect" iframe error:
 # MAGIC    - use the dashboard's published EMBED url (the /embed/ link from the dashboard's Share then Embed), NOT the normal dashboard link; the normal workspace link sets X-Frame-Options and refuses to be framed.
-# MAGIC    - make sure the dashboard is Published with embedding enabled, and add my app's domain (the .databricksapps.com host of my app URL) to the dashboard's list of approved domains for embedding.
+# MAGIC    - make sure the dashboard is Published with embedding enabled.
+# MAGIC    - also add an "Open in Databricks" link above the iframe that opens the full dashboard in a new tab, so there's a fallback if the iframe doesn't render.
 # MAGIC ```
 
 # COMMAND ----------
