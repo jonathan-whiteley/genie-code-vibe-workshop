@@ -297,7 +297,7 @@ Save the app files one at a time, not in parallel (the Workspace Files API rate-
 ### Module 7: Job (BONUS) (2:35-2:50)
 
 ```text
-Create my daily job <my initials>-command-center-refresh at 6am ET with these tasks, run in order (each depends on the one before):
+Create my weekly job <my initials>-command-center-refresh, scheduled for 6am ET every Monday, with these tasks run in order (each depends on the one before):
 
 1. Validate the metric view: a SQL task that selects a few MEASURE() rows from my metric view and fails if it returns no rows (a freshness / quality gate).
 2. Refresh the dashboard: a dashboard task that refreshes my AI/BI dashboard so its datasets recompute.

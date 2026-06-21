@@ -347,14 +347,14 @@ print(session_setup_prompt)
 # MAGIC ## Module 7 (BONUS): Schedule a multi-task refresh job ⏰
 # MAGIC
 # MAGIC Automate the whole refresh as a multi-task job: validate the data, refresh the
-# MAGIC dashboard, then redeploy the app, so everything stays current overnight.
+# MAGIC dashboard, then redeploy the app, so everything stays current each week.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create my daily job <my initials>-command-center-refresh at 6am ET with these
-# MAGIC tasks, run in order (each depends on the one before):
+# MAGIC Create my weekly job <my initials>-command-center-refresh, scheduled for 6am ET
+# MAGIC every Monday, with these tasks run in order (each depends on the one before):
 # MAGIC
 # MAGIC 1. Validate the metric view: a SQL task that selects a few MEASURE() rows from
 # MAGIC    my metric view and fails if it returns no rows (a freshness / quality gate).
