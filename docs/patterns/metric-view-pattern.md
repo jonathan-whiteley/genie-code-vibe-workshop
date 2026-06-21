@@ -10,7 +10,7 @@ It spans two fact tables (`facts_sales_daypart`, `facts_labor_daypart`) plus the
 
 ### 1. The fan-out trap (most important)
 
-Both fact tables are at **daypart** grain (multiple rows per store per date: breakfast, lunch, dinner, etc.). If you join them directly on `(date, store_id)` at raw daypart grain and then aggregate, every sales row matches every labor row for the same store-date, so rows multiply. The cross-product inflates the labor and revenue sums unevenly, and `labor_pct_of_sales` comes out impossible (often around 200%).
+The two facts are at **different, finer-than-store-date grains**. `facts_sales_daypart` is one row per `(date, store_id, daypart)`. `facts_labor_daypart` is one row per `(date, store_id, daypart, role)`: it carries an extra `role` column (cook, cashier, lead, etc.), so it is finer still, with several rows per daypart. If you join them on `(date, store_id)` at raw grain and then aggregate, every sales row matches every labor row for the same store-date, so rows multiply (and labor's extra `role` rows make the blow-up worse). The cross-product inflates the labor and revenue sums unevenly, and `labor_pct_of_sales` comes out impossible (often around 200%).
 
 - **Fix**: pre-aggregate EACH fact table to exactly one row per `(date, store_id)` in its OWN subquery FIRST. Then join the two rollups on `(date, store_id)`, then join `dims_stores` for region. Never join raw daypart rows to raw daypart rows.
 - The reference YAML's `source` SELECT below shows exactly this: two `GROUP BY date, store_id` subqueries, joined `USING (date, store_id)`, then `dims_stores` joined `USING (store_id)`.
