@@ -29,7 +29,7 @@ Times are relative; facilitator sets the wall clock.
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
 | 2:10-2:35 | Module 6: Live AI | (A) `ai_query()` briefing function for the Genie space; (B) Company News feed in the app via the `web_search_mcp` MCP server |
-| 2:35-2:50 | Module 7 (BONUS): Job | Scheduled refresh job |
+| 2:35-2:50 | Module 7 (BONUS): Job | Multi-task refresh job: validate, refresh dashboard, redeploy app |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
 
 ---

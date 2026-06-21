@@ -26,7 +26,7 @@
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
 | 2:10-2:35 | Module 6: AI briefing | `ai_query()` briefing function your Genie space can call |
-| 2:35-2:50 | Module 7 (BONUS): Job | Scheduled refresh job |
+| 2:35-2:50 | Module 7 (BONUS): Job | Multi-task refresh job: validate, refresh dashboard, redeploy app |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
 
 Times are relative; your facilitator sets the wall clock.
@@ -297,9 +297,13 @@ Save the app files one at a time, not in parallel (the Workspace Files API rate-
 ### Module 7: Job (BONUS) (2:35-2:50)
 
 ```text
-Module 7. Add a daily job <initials>-command-center-refresh at 6am ET with these steps:
-- refresh the metric view's source rollups
-- redeploy my app
+Create my daily job <my initials>-command-center-refresh at 6am ET with these tasks, run in order (each depends on the one before):
+
+1. Validate the metric view: a SQL task that selects a few MEASURE() rows from my metric view and fails if it returns no rows (a freshness / quality gate).
+2. Refresh the dashboard: a dashboard task that refreshes my AI/BI dashboard so its datasets recompute.
+3. Redeploy the app: a task that redeploys my <my initials>-command-center app so it serves the latest.
+
+Add an email notification to me on failure. The job runs as me, so no extra permissions are needed.
 ```
 
 ---
