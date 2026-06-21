@@ -75,8 +75,8 @@ print(f"Your app will be: {INITIALS}-command-center")
 # MAGIC %md
 # MAGIC ## You are ready! 🎉
 # MAGIC
-# MAGIC Your `<initials>-command-center` app is deployed (open its URL, printed above, to
-# MAGIC confirm it loads) and the ai-dev-kit skills are installed.
+# MAGIC Your very own Operator Command Center app is deployed (open its URL, printed
+# MAGIC above, to confirm it loads) and the ai-dev-kit skills are installed.
 # MAGIC
 # MAGIC **Next steps:**
 # MAGIC
