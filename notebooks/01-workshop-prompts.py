@@ -97,7 +97,7 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
 # MAGIC
-# MAGIC Ask a few questions to test it, then tell me the space ID.
+# MAGIC Then tell me the space ID. Do not auto-run any questions; I'll test it in the Genie UI.
 # MAGIC
 # MAGIC If adding the sample questions through the genie tool fails, use the REST shape in docs/patterns/genie-space-pattern.md.
 # MAGIC ```
@@ -107,18 +107,16 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ### Module 2 follow-up: add a benchmark set 🎯
 # MAGIC
-# MAGIC Benchmarks measure how accurately Genie answers known questions. Add a set of 10,
-# MAGIC then run it to see how your space scores. Copy the prompt below.
+# MAGIC Benchmarks measure how accurately Genie answers known questions. Add a set of 10
+# MAGIC to your space, then run them in the Genie UI to see how it scores. Copy the prompt below.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ```text
 # MAGIC Come up with 10 benchmark questions for my Genie space based on the metric view's
-# MAGIC measures and dimensions, add them to the space, then run the benchmark and tell me
-# MAGIC how many Genie answered correctly.
-# MAGIC
-# MAGIC If writing the benchmark to the space is blocked by the safety layer, run the questions via the Conversation API instead (see docs/patterns/genie-space-pattern.md).
+# MAGIC measures and dimensions, and add them to the space. Do not run the benchmark;
+# MAGIC I'll run it in the Genie UI.
 # MAGIC ```
 
 # COMMAND ----------
@@ -259,7 +257,7 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create an AI briefing function for my Genie space, then test it.
+# MAGIC Create an AI briefing function for my Genie space.
 # MAGIC
 # MAGIC - Create a Unity Catalog SQL function named <my initials>_store_briefing,
 # MAGIC   in the same catalog/schema as my metric view (no args, RETURNS STRING).
@@ -271,8 +269,8 @@ print(session_setup_prompt)
 # MAGIC     healthy 20-35% band; one thing to watch today), and
 # MAGIC   - a "Next Best Action" recommendation.
 # MAGIC - Give it a clear COMMENT so Genie knows when to call it.
-# MAGIC - Add it to my Genie space as a callable function.
-# MAGIC - Test with: give me today's store briefing.
+# MAGIC - Add it to my Genie space as a callable function. Do not call it from here;
+# MAGIC   I'll try it in the Ask Genie panel.
 # MAGIC ```
 
 # COMMAND ----------
@@ -313,6 +311,8 @@ print(session_setup_prompt)
 # MAGIC - fetch live news from the web_search_mcp MCP server,
 # MAGIC - summarize the results with ai_query,
 # MAGIC - show 3 bullets in a bell-icon dropdown in the header.
+# MAGIC
+# MAGIC Save the app files one at a time, not in parallel (the Workspace Files API rate-limits bursty writes).
 # MAGIC ```
 
 # COMMAND ----------

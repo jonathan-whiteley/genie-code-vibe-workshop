@@ -60,6 +60,12 @@ result = client.call_tool("you-search", {...})  # synchronous
 - When editing JSX via the workspace API, `\u2197` and `\u00b7` render as literal escape text, not characters
 - **Solution**: Use the actual Unicode characters (`↗`, `·`) in the source
 
+### 7. Workspace Files API write rate limit: save files sequentially
+
+- The Workspace Files API has an undocumented but real per-workspace write rate limit: saving roughly 4 to 5 files in parallel in the same second triggers 429s.
+- This feature writes several files (`app.py`, `shell.jsx`, `Homebase.html`, `requirements.txt`), so **save them one at a time, not in parallel**. Sequential writes are fine.
+- This applies to any multi-file app edit (Modules 4, 5, 6), not just Company News.
+
 ---
 
 ## Final Working Implementation

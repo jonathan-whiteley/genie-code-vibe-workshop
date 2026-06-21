@@ -100,6 +100,8 @@ try:
 
     w.workspace.mkdirs(custom_skill_path)
     n = 0
+    # Upload one file at a time: the Workspace Files API rate-limits bursty
+    # parallel writes (4-5 in the same second can 429). Sequential is safe.
     for f in md_files:
         with urllib.request.urlopen(f["download_url"], timeout=30) as r:
             content = r.read()

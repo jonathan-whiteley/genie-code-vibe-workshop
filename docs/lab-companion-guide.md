@@ -132,15 +132,15 @@ Create a Genie space on my metric view.
 
 Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
 
-Ask a few questions to test it, then tell me the space ID.
+Then tell me the space ID. Do not auto-run any questions; I'll test it in the Genie UI.
 
 If adding the sample questions through the genie tool fails, use the REST shape in docs/patterns/genie-space-pattern.md.
 ```
 
-**Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Add 10, then run them to score your space.
+**Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Add 10 to your space, then run them in the Genie UI to score it.
 
 ```text
-Add these 10 benchmark questions to my Genie space, then run the benchmark and tell me how many Genie answered correctly:
+Add these 10 benchmark questions to my Genie space (do not run the benchmark; I'll run it in the Genie UI):
 
 - Which 5 stores had the highest labor % of sales last week?
 - How has labor % of sales trended over the last 30 days across all stores?
@@ -152,8 +152,6 @@ Add these 10 benchmark questions to my Genie space, then run the benchmark and t
 - Rank regions by total revenue this month.
 - What is the busiest day of week by revenue?
 - Which stores improved labor % of sales the most over the last 30 days?
-
-If writing the benchmark to the space is blocked by the safety layer, run the questions via the Conversation API instead (see docs/patterns/genie-space-pattern.md).
 ```
 
 ---
@@ -247,7 +245,7 @@ Give Genie a generative skill: a Unity Catalog function that calls Claude throug
 > **If the briefing returns a permission error:** the function runs `ai_query()` as **you** (Genie executes as the asking user), so your workshop group needs `CAN_QUERY` on the `databricks-claude-sonnet-4-6` endpoint. Genie Code can't grant that: flag it to your facilitator.
 
 ```text
-Create an AI briefing function for my Genie space, then test it.
+Create an AI briefing function for my Genie space.
 
 - Create a Unity Catalog SQL function named <my initials>_store_briefing,
   in the same catalog/schema as my metric view (no args, RETURNS STRING).
@@ -259,8 +257,8 @@ Create an AI briefing function for my Genie space, then test it.
     healthy 20-35% band; one thing to watch today), and
   - a "Next Best Action" recommendation.
 - Give it a clear COMMENT so Genie knows when to call it.
-- Add it to my Genie space as a callable function.
-- Test with: give me today's store briefing.
+- Add it to my Genie space as a callable function. Do not call it from here;
+  I'll try it in the Ask Genie panel.
 ```
 
 **Follow-up: make it one click.** Surface the briefing as a starter question so anyone can trigger it in the space and in your app's Ask Genie panel.
@@ -285,6 +283,8 @@ Follow the pattern in docs/patterns/mcp-company-news-pattern.md:
 - fetch live news from the web_search_mcp MCP server,
 - summarize the results with ai_query,
 - show 3 bullets in a bell-icon dropdown in the header.
+
+Save the app files one at a time, not in parallel (the Workspace Files API rate-limits bursty writes).
 ```
 
 ---

@@ -49,9 +49,14 @@ Each question is an OBJECT, not a string:
 - A plain string (or a plain string array for `sample_questions`) is rejected: each element must be an object.
 - Field names that were tried and rejected: `display_string`, `content`, `text`, `display_name`.
 
-### 5. Benchmark questions: run them via the Conversation API, not `serialized_space`
+### 5. Do not run Genie queries or benchmarks from a notebook: test in the UI
 
-Writing a `benchmarks` block into `serialized_space` is blocked by the workspace safety layer: it reads as a potentially destructive write (the same guard that blocks a merge-overwrite of an existing space). Do not seed or run Genie benchmark questions by PATCHing a `benchmarks` block onto the space. Run the benchmark programmatically through the **Genie Conversation API** instead: ask each benchmark question via the conversation endpoint and check the answers.
+Two limits make programmatic Genie testing impractical, so leave running to the Genie UI:
+
+- The Genie **Conversation API is rate-limited to about 5 queries per minute**. Any notebook- or agent-driven run (auto-testing sample questions, running a benchmark) queues or 429s.
+- Writing a `benchmarks` block into `serialized_space` is separately **blocked by the workspace safety layer**: it reads as a potentially destructive write (the same guard that blocks a merge-overwrite of an existing space).
+
+So generate the sample and benchmark questions and add them to the space, but **do not auto-run any of them** from a notebook. Run the benchmark and spot-check answers in the Genie UI.
 
 ---
 
@@ -96,4 +101,4 @@ w.api_client.do(
 3. Build the body as `{"serialized_space": json.dumps({...})}` with `version`, `config.sample_questions`, and `data_sources.tables` (include the metric view identifier).
 4. Build each sample question as `{"id": uuid.uuid4().hex, "question": [text]}`: 32-char dashless hex id, question as an array of strings.
 5. `GET /api/2.0/genie/spaces/{space_id}` to confirm the questions and data source registered.
-6. For benchmark questions, run them through the Genie Conversation API; do NOT PATCH a `benchmarks` block into `serialized_space` (the safety layer blocks it).
+6. Generate the sample and benchmark questions and add them to the space, but do NOT auto-run them from a notebook: the Genie API is ~5 QPM and a programmatic `benchmarks` write is safety-blocked. Run and test in the Genie UI.
