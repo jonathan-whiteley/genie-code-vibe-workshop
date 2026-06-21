@@ -173,10 +173,12 @@ Charts:
 - Traffic vs revenue by store: scatter, one point per store
 - Traffic by region: bar
 
-Give it Little Caesars branding and make it pop:
-- use LCE orange (#FF671B) as the primary accent
-- a bold, cool background and vibrant, high-contrast chart colors
-- a title with the Little Caesars feel
+Theme it for visual interest, like a polished editorial dashboard, and set the dashboard theme (not just per-widget colors):
+- Canvas background: warm off-white #FDF8F3; widget cards white #FFFFFF with a soft warm border #E8DDD4; left-align widget headers
+- Font: a serif family (Georgia) for that editorial feel
+- Visualization palette, in this order: #FF671B (LCE orange, lead), #7B9E6B, #8B4557, #D4A853, #5B8FA8, #D4785C, #6B5B8A, #3D7A6E
+- Selection / accent color: LCE orange #FF671B
+- A title with the Little Caesars feel
 
 Publish it and remember the dashboard ID.
 ```

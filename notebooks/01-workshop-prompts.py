@@ -146,10 +146,15 @@ print(session_setup_prompt)
 # MAGIC - Traffic vs revenue by store: scatter, one point per store
 # MAGIC - Traffic by region: bar
 # MAGIC
-# MAGIC Give it Little Caesars branding and make it pop:
-# MAGIC - use LCE orange (#FF671B) as the primary accent
-# MAGIC - a bold, cool background and vibrant, high-contrast chart colors
-# MAGIC - a title with the Little Caesars feel
+# MAGIC Theme it for visual interest, like a polished editorial dashboard, and set
+# MAGIC the dashboard theme (not just per-widget colors):
+# MAGIC - Canvas background: warm off-white #FDF8F3; widget cards white #FFFFFF with
+# MAGIC   a soft warm border #E8DDD4; left-align widget headers
+# MAGIC - Font: a serif family (Georgia) for that editorial feel
+# MAGIC - Visualization palette, in this order: #FF671B (LCE orange, lead), #7B9E6B,
+# MAGIC   #8B4557, #D4A853, #5B8FA8, #D4785C, #6B5B8A, #3D7A6E
+# MAGIC - Selection / accent color: LCE orange #FF671B
+# MAGIC - A title with the Little Caesars feel
 # MAGIC
 # MAGIC Publish it and tell me the dashboard ID.
 # MAGIC ```
