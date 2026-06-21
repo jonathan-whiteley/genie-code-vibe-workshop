@@ -8,20 +8,6 @@
 # MAGIC resources, and it creates and deploys your personal app with all the permissions
 # MAGIC and OBO scopes already wired. Once this notebook finishes, everything else in the
 # MAGIC workshop is pure prompting.
-# MAGIC
-# MAGIC ## Learning Objectives
-# MAGIC
-# MAGIC By the end of this setup you will have:
-# MAGIC - Installed the ai-dev-kit Genie Code skills into your workspace
-# MAGIC - Created your personal `<initials>-command-center` app from the shared template
-# MAGIC - Granted the app service principal access to the warehouse, catalog/schema,
-# MAGIC   and Lakebase
-# MAGIC - Set the genie, sql, and dashboards.genie OBO scopes on the app
-# MAGIC - Deployed the app and printed its URL
-# MAGIC
-# MAGIC > **Before you run:** clone this repo as a Workspace Git folder (Workspace >
-# MAGIC > Create > Git folder, paste the repo URL). Open this notebook from inside that
-# MAGIC > Git folder so the `%run ./utils/...` calls resolve correctly.
 
 # COMMAND ----------
 
@@ -36,17 +22,9 @@ dbutils.library.restartPython()
 # MAGIC %md
 # MAGIC ## Step 1: Enter your initials 🔤
 # MAGIC
-# MAGIC This is the only value you need to provide. Everything else (template app,
-# MAGIC facilitator config, warehouse, catalog) is read automatically. Your initials
-# MAGIC become the prefix for every resource you create today, so they must be unique
-# MAGIC within the workshop (use two or three lowercase letters, no spaces).
-# MAGIC
-# MAGIC Enter your initials in the widget at the top of the page, then continue to
+# MAGIC Your initials prefix every resource you create today, so they must be unique in
+# MAGIC the workshop. Enter two or three lowercase letters in the widget at the top, then
 # MAGIC **Run All**.
-# MAGIC
-# MAGIC > **Tip:** Use the same initials throughout the entire workshop. The session
-# MAGIC > setup prompt in Lab 01 will ask you to enter them once more so Genie Code
-# MAGIC > remembers them for the full chat.
 
 # COMMAND ----------
 
@@ -60,17 +38,14 @@ print(f"Your app will be: {INITIALS}-command-center")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 2: Install ai-dev-kit skills into Genie Code 🤖
+# MAGIC ## Step 2: Install the ai-dev-kit skills 🤖
 # MAGIC
-# MAGIC The ai-dev-kit skills are what give Genie Code the knowledge to build on
-# MAGIC Databricks: creating metric views, Genie spaces, AI/BI dashboards, and apps.
-# MAGIC Without them, Genie Code would not know the correct APIs or payload shapes.
-# MAGIC The utility script below installs them directly into your workspace so they
-# MAGIC are available the next time you open Genie Code.
+# MAGIC Installs the [ai-dev-kit](https://github.com/databricks-solutions/ai-dev-kit)
+# MAGIC skills into your workspace: the knowledge Genie Code uses to build on Databricks
+# MAGIC (metric views, Genie spaces, dashboards, apps).
 # MAGIC
-# MAGIC > **Note:** If the skills do not appear in Genie Code after this step, do a
-# MAGIC > hard refresh of the browser tab (Cmd+Shift+R / Ctrl+Shift+R) before starting
-# MAGIC > Lab 01.
+# MAGIC > If the skills do not appear in Genie Code afterward, hard-refresh the browser
+# MAGIC > (Cmd+Shift+R / Ctrl+Shift+R) before starting Lab 01.
 
 # COMMAND ----------
 
@@ -79,20 +54,17 @@ print(f"Your app will be: {INITIALS}-command-center")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 3: Create and deploy your app 🚀
+# MAGIC ## Step 3: Clone your app from a template 🚀
 # MAGIC
-# MAGIC This step clones the shared workshop app template under your initials, grants
-# MAGIC the app service principal the necessary warehouse and catalog/schema permissions
-# MAGIC (which also covers the metric view you will build in Module 1), attaches
-# MAGIC Lakebase, sets the genie/sql/dashboards.genie OBO scopes, and deploys the app.
+# MAGIC Clones a ready-made Databricks App template under your initials and deploys it,
+# MAGIC with all permissions and OBO scopes wired for you. It is the same kind of starter
+# MAGIC app you can browse on the [Databricks Developer Hub](https://developers.databricks.com/),
+# MAGIC which hosts templates for Genie analytics apps, Lakebase apps, and more.
 # MAGIC
-# MAGIC This is the only time permissions and scopes are configured. No prompt in Lab 01
-# MAGIC will ever ask Genie Code to grant permissions or set scopes, because they are
-# MAGIC already in place after this step completes.
+# MAGIC ![Databricks Developer Hub templates](https://raw.githubusercontent.com/jonathan-whiteley/genie-code-vibe-workshop/main/docs/images/developer-hub-templates.png)
 # MAGIC
-# MAGIC > **Important:** Do not run this cell a second time during the workshop. If
-# MAGIC > something looks wrong with your app, open the app URL (printed below when
-# MAGIC > the step finishes) to check it loads before re-running.
+# MAGIC > Run this once. If your app looks off later, open its URL (printed below) to
+# MAGIC > confirm it loads before re-running.
 
 # COMMAND ----------
 
@@ -103,20 +75,11 @@ print(f"Your app will be: {INITIALS}-command-center")
 # MAGIC %md
 # MAGIC ## You are ready! 🎉
 # MAGIC
-# MAGIC Setup is complete. Here is what was done for you:
-# MAGIC
-# MAGIC - Your `<initials>-command-center` app is deployed and wired. Open its URL
-# MAGIC   (printed above) to confirm it loads.
-# MAGIC - The ai-dev-kit skills are installed in your workspace.
+# MAGIC Your `<initials>-command-center` app is deployed (open its URL, printed above, to
+# MAGIC confirm it loads) and the ai-dev-kit skills are installed.
 # MAGIC
 # MAGIC **Next steps:**
 # MAGIC
-# MAGIC 1. Open Genie Code and start a **new chat** (hard refresh if the
-# MAGIC    skills do not appear in the tool list).
-# MAGIC 2. Open **Lab 01: Build Your Command Center with Genie Code** and follow the
-# MAGIC    module prompts from top to bottom.
-# MAGIC 3. Start with the session setup prompt to give Genie Code your initials and
-# MAGIC    resource names, then work through Modules 1-6.
-# MAGIC
-# MAGIC > **Tip:** Keep this notebook open in a separate tab. If you ever need to
-# MAGIC > check your app URL or re-run a utility, it is right here.
+# MAGIC 1. Open Genie Code and start a **new chat** (hard-refresh if the skills are missing).
+# MAGIC 2. Open the **`01-workshop-prompts`** notebook and work through it from the
+# MAGIC    session setup prompt onward.
