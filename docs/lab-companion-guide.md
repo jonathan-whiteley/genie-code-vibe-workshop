@@ -24,8 +24,9 @@
 | 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
 | 1:05-1:15 | Break | |
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
-| 1:45-2:25 | Module 5: Embed | Genie + dashboard live in the app |
-| 2:25-2:50 | Module 6 (BONUS): Job | Scheduled refresh job |
+| 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
+| 2:10-2:35 | Module 6: AI briefing | `ai_query()` briefing function your Genie space can call |
+| 2:35-2:50 | Module 7 (BONUS): Job | Scheduled refresh job |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
 
 Times are relative; your facilitator sets the wall clock.
@@ -235,10 +236,63 @@ My app already has an Ask Genie panel wired to a Genie space, and a home page wi
 
 ---
 
-### Module 6: Job (BONUS) (2:25-2:50)
+### Module 6: Live AI in your Command Center (2:10-2:35)
+
+Two AI features: **A**, a store briefing your Genie space can generate with `ai_query()`; and **B**, a Company News feed in the app fetched live through the `web_search_mcp` MCP server.
+
+#### A: the store briefing (Genie function)
+
+Give Genie a generative skill: a Unity Catalog function that calls Claude through `ai_query()` over your metric view and returns a plain-language briefing of the latest day plus a recommended Next Best Action. Once it's registered with your Genie space, Genie can call it on request, including from the **Ask Genie** panel in your app: no app code change, because the panel already runs as you.
+
+> **If the briefing returns a permission error:** the function runs `ai_query()` as **you** (Genie executes as the asking user), so your workshop group needs `CAN_QUERY` on the `databricks-claude-sonnet-4-6` endpoint. Genie Code can't grant that: flag it to your facilitator.
 
 ```text
-Module 6. Add a daily job <initials>-command-center-refresh at 6am ET with these steps:
+Create an AI briefing function for my Genie space, then test it.
+
+- Create a Unity Catalog SQL function named <my initials>_store_briefing,
+  in the same catalog/schema as my metric view (no args, RETURNS STRING).
+- It selects my store's latest-day metric-view numbers: revenue,
+  forecast revenue, labor % of sales, traffic, and prior-day revenue.
+- It passes those to ai_query() on databricks-claude-sonnet-4-6 and
+  returns, under 100 words:
+  - a 3-bullet briefing (revenue vs forecast; is labor % of sales in the
+    healthy 20-35% band; one thing to watch today), and
+  - a "Next Best Action" recommendation.
+- Give it a clear COMMENT so Genie knows when to call it.
+- Add it to my Genie space as a callable function.
+- Test with: give me today's store briefing.
+```
+
+**Follow-up: make it one click.** Surface the briefing as a starter question so anyone can trigger it in the space and in your app's Ask Genie panel.
+
+```text
+Add "Give me today's store briefing" as a starter question in two
+places, then redeploy the app:
+- as a sample question on my Genie space, and
+- as a suggested question in my app's Ask Genie panel UI.
+```
+
+#### B: a live Company News feed (MCP)
+
+Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `notebooks/utils/mcp-company-news-runbook.md`.
+
+> **If it 403s:** the app must call the MCP server as its **service principal**, which the admin grants access to. The forwarded user token does not have MCP scope.
+
+```text
+Add a "Company News" feature to my app, then redeploy.
+
+Follow the pattern in notebooks/utils/mcp-company-news-runbook.md:
+- fetch live news from the web_search_mcp MCP server,
+- summarize the results with ai_query,
+- show 3 bullets in a bell-icon dropdown in the header.
+```
+
+---
+
+### Module 7: Job (BONUS) (2:35-2:50)
+
+```text
+Module 7. Add a daily job <initials>-command-center-refresh at 6am ET with these steps:
 - refresh the metric view's source rollups
 - redeploy my app
 ```

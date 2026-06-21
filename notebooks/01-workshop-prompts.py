@@ -13,7 +13,8 @@
 # MAGIC - **Module 3:** an AI/BI dashboard on the metric view
 # MAGIC - **Module 4:** your app (deployed in Lab 00), confirmed and branded
 # MAGIC - **Module 5:** your Genie space and dashboard embedded in the app
-# MAGIC - **Module 6 (bonus):** a scheduled job that refreshes everything
+# MAGIC - **Module 6:** live AI in your Command Center: an `ai_query()` briefing function + a Company News feed via MCP web search
+# MAGIC - **Module 7 (bonus):** a scheduled job that refreshes everything
 
 # COMMAND ----------
 
@@ -285,7 +286,93 @@ print(session_setup_prompt)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Module 6 (BONUS): Schedule a refresh job ⏰
+# MAGIC ## Module 6: Bring live AI into your Command Center 🤖
+# MAGIC
+# MAGIC Two AI features here:
+# MAGIC - **A: a store briefing** your Genie space can generate with `ai_query()` over your metric view
+# MAGIC - **B: a Company News feed** in the app, fetched live through the `web_search_mcp` MCP server
+# MAGIC
+# MAGIC > **Pre-reqs (facilitator/admin):** Feature A runs `ai_query()` as the asking user, so
+# MAGIC > your workshop group needs `CAN_QUERY` on `databricks-claude-sonnet-4-6`. Feature B's
+# MAGIC > app calls the `web_search_mcp` MCP server as the app's **service principal**, which the
+# MAGIC > admin must grant access to. Genie Code cannot grant either; flag permission errors to
+# MAGIC > your facilitator.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### A: the store briefing (Genie function) 📋
+# MAGIC
+# MAGIC A Unity Catalog function that calls Claude through `ai_query()` over your metric view
+# MAGIC and returns a plain-language briefing of the latest day plus a recommended Next Best
+# MAGIC Action. Register it with your Genie space and Genie can call it on request, including
+# MAGIC from the **Ask Genie** panel in your app: no app code change, because the panel already
+# MAGIC runs as you.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Create an AI briefing function for my Genie space, then test it.
+# MAGIC
+# MAGIC - Create a Unity Catalog SQL function named <my initials>_store_briefing,
+# MAGIC   in the same catalog/schema as my metric view (no args, RETURNS STRING).
+# MAGIC - It selects my store's latest-day metric-view numbers: revenue,
+# MAGIC   forecast revenue, labor % of sales, traffic, and prior-day revenue.
+# MAGIC - It passes those to ai_query() on databricks-claude-sonnet-4-6 and
+# MAGIC   returns, under 100 words:
+# MAGIC   - a 3-bullet briefing (revenue vs forecast; is labor % of sales in the
+# MAGIC     healthy 20-35% band; one thing to watch today), and
+# MAGIC   - a "Next Best Action" recommendation.
+# MAGIC - Give it a clear COMMENT so Genie knows when to call it.
+# MAGIC - Add it to my Genie space as a callable function.
+# MAGIC - Test with: give me today's store briefing.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### A follow-up: make it one click 🎯
+# MAGIC
+# MAGIC Surface the briefing as a starter question so anyone can trigger it instantly,
+# MAGIC in the space and in your app's Ask Genie panel.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Add "Give me today's store briefing" as a starter question in two
+# MAGIC places, then redeploy the app:
+# MAGIC - as a sample question on my Genie space, and
+# MAGIC - as a suggested question in my app's Ask Genie panel UI.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### B: a live Company News feed (MCP) 📰
+# MAGIC
+# MAGIC Add a Company News feature to your app that pulls live headlines through the
+# MAGIC `web_search_mcp` MCP server and summarizes them with `ai_query()`. There is a proven
+# MAGIC pattern (and the gotchas that bite you) in your workshop Git folder at
+# MAGIC `notebooks/utils/mcp-company-news-runbook.md`: the prompt below points Genie Code at it.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Add a "Company News" feature to my app, then redeploy.
+# MAGIC
+# MAGIC Follow the pattern in notebooks/utils/mcp-company-news-runbook.md:
+# MAGIC - fetch live news from the web_search_mcp MCP server,
+# MAGIC - summarize the results with ai_query,
+# MAGIC - show 3 bullets in a bell-icon dropdown in the header.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Module 7 (BONUS): Schedule a refresh job ⏰
 # MAGIC
 # MAGIC Automate the refresh so the data and app stay current.
 
