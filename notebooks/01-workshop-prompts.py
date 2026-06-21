@@ -122,21 +122,17 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create my Command Center metric view at store x date grain, from just two tables: facts_sales_daypart and facts_labor_daypart.
+# MAGIC Create my Command Center metric view at store x date grain, following
+# MAGIC the pattern in notebooks/patterns/metric-view-runbook.md.
 # MAGIC
-# MAGIC Roll each table up to one row per store per date in its own subquery first (sum revenue, forecast revenue, and traffic from sales; sum labor cost and forecast labor cost from labor), then join the two rollups on date and store, and join dims_stores for region. Do not create any separate or intermediary view, only the single metric view.
-# MAGIC
-# MAGIC Measures:
-# MAGIC - revenue
-# MAGIC - forecast revenue
-# MAGIC - traffic
-# MAGIC - labor cost
-# MAGIC - forecast labor cost
-# MAGIC - labor % of sales (labor cost / revenue)
-# MAGIC
-# MAGIC Dimensions: store, region, date, day-of-week.
-# MAGIC
-# MAGIC Run a SELECT to confirm it returns rows and that labor % of sales is realistic (around 20 to 35%).
+# MAGIC - Name it <my initials>_command_center_metrics, over facts_sales_daypart
+# MAGIC   and facts_labor_daypart plus dims_stores. One metric view, no
+# MAGIC   intermediary views.
+# MAGIC - Measures: revenue, forecast revenue, traffic, labor cost,
+# MAGIC   forecast labor cost, labor % of sales.
+# MAGIC - Dimensions: store, region, date, day-of-week.
+# MAGIC - Then run the runbook's verification SELECT to confirm it returns rows
+# MAGIC   and labor % of sales is realistic (20-35%, not ~200%).
 # MAGIC ```
 
 # COMMAND ----------
@@ -273,14 +269,16 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC My app already has an Ask Genie panel wired to a Genie space, and a home page with 3 tiles. Make these two changes, then redeploy:
+# MAGIC My app already has an Ask Genie panel and a home page with 3 tiles.
+# MAGIC Make these two changes, then redeploy:
 # MAGIC
-# MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from the Genie step). Do not rebuild the panel or its auth; just point it at my space ID.
+# MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from
+# MAGIC    the Genie step), following notebooks/patterns/genie-swap-runbook.md.
+# MAGIC    Just point it at my space ID; do not rebuild the panel or its auth.
 # MAGIC
-# MAGIC 2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. To avoid a "refused to connect" iframe error:
-# MAGIC    - use the dashboard's published EMBED url (the /embed/ link from the dashboard's Share then Embed), NOT the normal dashboard link; the normal workspace link sets X-Frame-Options and refuses to be framed.
-# MAGIC    - make sure the dashboard is Published with embedding enabled.
-# MAGIC    - also add an "Open in Databricks" link above the iframe that opens the full dashboard in a new tab, so there's a fallback if the iframe doesn't render.
+# MAGIC 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
+# MAGIC    following notebooks/patterns/dashboard-embed-runbook.md (use the
+# MAGIC    /embed/ URL, and add an "Open in Databricks" fallback link above it).
 # MAGIC ```
 
 # COMMAND ----------
@@ -355,7 +353,7 @@ print(session_setup_prompt)
 # MAGIC Add a Company News feature to your app that pulls live headlines through the
 # MAGIC `web_search_mcp` MCP server and summarizes them with `ai_query()`. There is a proven
 # MAGIC pattern (and the gotchas that bite you) in your workshop Git folder at
-# MAGIC `notebooks/utils/mcp-company-news-runbook.md`: the prompt below points Genie Code at it.
+# MAGIC `notebooks/patterns/mcp-company-news-runbook.md`: the prompt below points Genie Code at it.
 
 # COMMAND ----------
 
@@ -363,7 +361,7 @@ print(session_setup_prompt)
 # MAGIC ```text
 # MAGIC Add a "Company News" feature to my app, then redeploy.
 # MAGIC
-# MAGIC Follow the pattern in notebooks/utils/mcp-company-news-runbook.md:
+# MAGIC Follow the pattern in notebooks/patterns/mcp-company-news-runbook.md:
 # MAGIC - fetch live news from the web_search_mcp MCP server,
 # MAGIC - summarize the results with ai_query,
 # MAGIC - show 3 bullets in a bell-icon dropdown in the header.

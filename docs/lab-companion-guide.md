@@ -110,21 +110,17 @@ Now paste each module prompt in order; the agent already knows your initials and
 > **Note:** Genie Code runs the CREATE statement for you, but you need CREATE on the schema. If it is denied, ask the facilitator to grant your group CREATE on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
 
 ```text
-Create my Command Center metric view at store x date grain, from just two tables: facts_sales_daypart and facts_labor_daypart.
+Create my Command Center metric view at store x date grain, following
+the pattern in notebooks/patterns/metric-view-runbook.md.
 
-Roll each table up to one row per store per date in its own subquery first (sum revenue, forecast revenue, and traffic from sales; sum labor cost and forecast labor cost from labor), then join the two rollups on date and store, and join dims_stores for region. Do not create any separate or intermediary view, only the single metric view.
-
-Measures:
-- revenue
-- forecast revenue
-- traffic
-- labor cost
-- forecast labor cost
-- labor % of sales (labor cost / revenue)
-
-Dimensions: store, region, date, day-of-week.
-
-Run a SELECT to confirm it returns rows and that labor % of sales is realistic (around 20 to 35%).
+- Name it <my initials>_command_center_metrics, over facts_sales_daypart
+  and facts_labor_daypart plus dims_stores. One metric view, no
+  intermediary views.
+- Measures: revenue, forecast revenue, traffic, labor cost,
+  forecast labor cost, labor % of sales.
+- Dimensions: store, region, date, day-of-week.
+- Then run the runbook's verification SELECT to confirm it returns rows
+  and labor % of sales is realistic (20-35%, not ~200%).
 ```
 
 ---
@@ -216,20 +212,23 @@ Restyle the Today tab in dark mode: a deep dark background with light text, and 
 
 ---
 
-### Module 5: Embed Genie + Dashboard (1:45-2:25)
+### Module 5: Embed Genie + Dashboard (1:45-2:10)
 
 Your app already has an Ask Genie panel and a home page with 3 tiles. You are swapping in your own Genie space and adding your dashboard below the tiles.
 
 > **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on your app by the 00-setup notebook, and the Ask Genie panel already uses on-behalf-of-user auth. Do not rebuild the panel or change scopes.
 
 ```text
-My app already has an Ask Genie panel wired to a Genie space, and a home page with 3 tiles. Make these two changes, then redeploy:
+My app already has an Ask Genie panel and a home page with 3 tiles.
+Make these two changes, then redeploy:
 
-1. Swap the Ask Genie panel to use MY Genie space (the space ID from Module 2). Do not rebuild the panel or its auth; just point it at my space ID.
+1. Swap the Ask Genie panel to use MY Genie space (the space ID from
+   Module 2), following notebooks/patterns/genie-swap-runbook.md.
+   Just point it at my space ID; do not rebuild the panel or its auth.
 
-2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. To avoid a "refused to connect" iframe error:
-   - use the dashboard's published EMBED url (the /embed/ link from the dashboard's Share then Embed), NOT the normal dashboard link; the normal workspace link sets X-Frame-Options and refuses to be framed.
-   - make sure the dashboard is Published with embedding enabled, and add my app's domain (the .databricksapps.com host of my app URL) to the dashboard's list of approved domains for embedding.
+2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
+   following notebooks/patterns/dashboard-embed-runbook.md (use the
+   /embed/ URL, and add an "Open in Databricks" fallback link above it).
 ```
 
 > **If running low on time:** the Genie space swap is the higher-impact change, so do that first.
@@ -274,14 +273,14 @@ places, then redeploy the app:
 
 #### B: a live Company News feed (MCP)
 
-Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `notebooks/utils/mcp-company-news-runbook.md`.
+Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `notebooks/patterns/mcp-company-news-runbook.md`.
 
 > **If it 403s:** the app must call the MCP server as its **service principal**, which the admin grants access to. The forwarded user token does not have MCP scope.
 
 ```text
 Add a "Company News" feature to my app, then redeploy.
 
-Follow the pattern in notebooks/utils/mcp-company-news-runbook.md:
+Follow the pattern in notebooks/patterns/mcp-company-news-runbook.md:
 - fetch live news from the web_search_mcp MCP server,
 - summarize the results with ai_query,
 - show 3 bullets in a bell-icon dropdown in the header.
