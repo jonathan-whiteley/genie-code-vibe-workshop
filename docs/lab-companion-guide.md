@@ -128,9 +128,13 @@ the pattern in docs/patterns/metric-view-pattern.md.
 ### Module 2: Genie Space (0:25-0:45)
 
 ```text
-Create a Genie space on my metric view.
+Create a Genie space on two kinds of source so it can answer both governed-KPI and finer-grained questions:
+- my metric view (<my initials>_command_center_metrics), and
+- the raw tables in ioc_sandbox.vibe_workshop (dims_stores, dims_items, dims_employees, facts_sales_daypart, facts_labor_daypart, facts_sales_inventory_daily, facts_purchase_orders, facts_customer_feedback).
 
-Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
+Add a space instruction: use the metric view for the governed KPIs (revenue, forecast, traffic, labor cost, labor % of sales at store x date grain); use the raw tables for detail the metric view does not cover (SKU / inventory, employees, purchase orders, customer feedback / sentiment, and daypart or role breakdowns).
+
+Add 6 sample questions that span both: a couple of KPI questions and a couple of detail questions.
 
 Then tell me the space ID. Do not auto-run any questions; I'll test it in the Genie UI.
 

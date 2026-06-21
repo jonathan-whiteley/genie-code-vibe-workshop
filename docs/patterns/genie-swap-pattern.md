@@ -47,6 +47,8 @@ genie_space_id=os.getenv("GENIE_SPACE_ID", "") or ws_cfg.get("genie_space_id", "
 
 `get_settings()` is `@lru_cache(maxsize=1)` and config is read ONCE at app boot. Changing `GENIE_SPACE_ID` (or the shared file) does nothing until the app is redeployed or restarted. `routers/genie.py` also caches the resolved `GenieInfo` in-process, so a restart is the clean way to pick up a new space.
 
+**Symptom:** after Module 5 the app's wiring banner still names the old or shared space. First redeploy/restart so `get_settings()` re-reads. If it still shows the old space, the precedence patch (gotcha #1 / `clone_app` Step 3b) is not in your clone's `lib/config.py`, so the shared `config.json` is still winning: patch that line or re-clone with `overwrite_source=true`, then redeploy.
+
 ### 3. OBO auth: Genie spaces are user-permissioned
 
 The panel must call Genie with the LOGGED-IN USER's token, not the app service principal. Databricks Apps forwards the user identity in the `X-Forwarded-Access-Token` header; `routers/genie.py` reads that header and calls the Genie REST API with `Authorization: Bearer <user_token>`.

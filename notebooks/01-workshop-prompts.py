@@ -86,16 +86,28 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ## Module 2: Create a Genie space on the metric view 🧞
 # MAGIC
-# MAGIC A Genie space lets anyone ask questions in natural language, grounded in your
-# MAGIC governed measures.
+# MAGIC A Genie space lets anyone ask questions in natural language. It is grounded in
+# MAGIC your governed measures (the metric view) and can also reach the raw tables for
+# MAGIC finer detail (SKU, employees, feedback, daypart) the metric view does not expose.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create a Genie space on my metric view.
+# MAGIC Create a Genie space on two kinds of source so it can answer both governed-KPI
+# MAGIC and finer-grained questions:
+# MAGIC - my metric view (<my initials>_command_center_metrics), and
+# MAGIC - the raw tables in ioc_sandbox.vibe_workshop (dims_stores, dims_items,
+# MAGIC   dims_employees, facts_sales_daypart, facts_labor_daypart,
+# MAGIC   facts_sales_inventory_daily, facts_purchase_orders, facts_customer_feedback).
 # MAGIC
-# MAGIC Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
+# MAGIC Add a space instruction: use the metric view for the governed KPIs (revenue,
+# MAGIC forecast, traffic, labor cost, labor % of sales at store x date grain); use the
+# MAGIC raw tables for detail the metric view does not cover (SKU / inventory, employees,
+# MAGIC purchase orders, customer feedback / sentiment, and daypart or role breakdowns).
+# MAGIC
+# MAGIC Add 6 sample questions that span both: a couple of KPI questions and a couple of
+# MAGIC detail questions.
 # MAGIC
 # MAGIC Then tell me the space ID. Do not auto-run any questions; I'll test it in the Genie UI.
 # MAGIC

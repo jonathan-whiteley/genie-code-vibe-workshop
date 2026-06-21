@@ -38,7 +38,7 @@ The PATCH body is `{"serialized_space": "<json string>"}`. The value is `json.du
 }
 ```
 
-Send the **complete** structure: `sample_questions` live under `config`, and you must include `data_sources.tables` (the metric view identifier) so the PATCH does not drop the space's data source.
+Send the **complete** structure: `sample_questions` live under `config`, and you must include `data_sources.tables` so the PATCH does not drop the space's data sources. List **every** source the space should reach: the metric view AND the raw tables (the metric view answers governed KPIs; the raw tables answer SKU / inventory, employee, feedback, and daypart-level questions the metric view does not expose). Add a `config` instruction telling Genie to prefer the metric view for KPIs and the raw tables for detail.
 
 ### 4. The sample-question object shape is strict
 
