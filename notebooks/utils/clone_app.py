@@ -2,36 +2,13 @@
 # MAGIC %md
 # MAGIC # Helper: Clone the Command Center App from the Template
 # MAGIC
-# MAGIC Called by `attendee_setup` via `%run`. It does the steps the in-workspace
-# MAGIC coding agent (Genie Code) refuses to do: it copies the app source
-# MAGIC (including binary assets), creates your app, binds its service principal
-# MAGIC (SP) to the shared resources, grants the SP the warehouse and Unity Catalog
-# MAGIC access it needs, and deploys.
-# MAGIC
-# MAGIC **What it solves that the agent cannot:**
-# MAGIC - `apps update` resource bindings and `user_api_scopes` (permission calls).
-# MAGIC - SQL `GRANT` on the catalog and schema (covers the tables and the metric view).
-# MAGIC - Warehouse `CAN_USE` (a workspace-level permission, set via REST).
-# MAGIC - Two runtime gotchas baked in: a faithful binary-safe source copy, and the
-# MAGIC   `use_cloud_fetch=False` SQL-connector fix the Apps runtime requires.
-# MAGIC
-# MAGIC **Prerequisites:** the facilitator has deployed the `command-center-dev`
-# MAGIC template app, and the attendee group already has `SELECT` on the schema,
-# MAGIC `CAN_USE` on the warehouse, and `CAN_CONNECT` on Lakebase.
-# MAGIC
-# MAGIC Running this standalone (not through `attendee_setup`)? Run
-# MAGIC `%pip install -q --upgrade "databricks-sdk>=0.40"` then
-# MAGIC `dbutils.library.restartPython()` in cells above first. `attendee_setup`
-# MAGIC already does this, so do not repeat it when called via `%run`.
+# MAGIC Clones the template app, binds its service principal, grants the SP warehouse and Unity Catalog access, and deploys: the privileged steps Genie Code cannot do.
+# MAGIC Called by `00-setup` via `%run` (which installs the SDK and restarts Python first).
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 0: Configuration
-# MAGIC
-# MAGIC Set your initials. Everything else (catalog, schema, tables, warehouse,
-# MAGIC Lakebase, OBO scopes) is read from the template app in Step 1, so there is
-# MAGIC a single source of truth and nothing to keep in sync by hand.
+# MAGIC ## Configure and read the template
 
 # COMMAND ----------
 
@@ -56,20 +33,7 @@ w = WorkspaceClient()
 ME = w.current_user.me().user_name
 NEW_APP_SOURCE = f"/Workspace/Users/{ME}/{NEW_APP}"
 
-print(f"Template : {TEMPLATE_APP}")
-print(f"New app  : {NEW_APP}")
-print(f"You      : {ME}")
-print(f"Source   : {NEW_APP_SOURCE}")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 1: Read the template app
-# MAGIC
-# MAGIC The resources (warehouse, the 8 UC tables, Lakebase), the OBO scopes, and
-# MAGIC the source path all come from the template. We reuse them verbatim.
-
-# COMMAND ----------
+print(f"New app  : {NEW_APP}  (source: {NEW_APP_SOURCE})")
 
 template = w.api_client.do("GET", f"/api/2.0/apps/{TEMPLATE_APP}")
 
@@ -93,20 +57,12 @@ if not TEMPLATE_SOURCE:
         "source path (e.g. the dab/src/app folder in your cloned Git folder)."
     )
 
-print(f"Template source : {TEMPLATE_SOURCE}")
-print(f"Resources ({len(RESOURCES)}):")
-for r in RESOURCES:
-    print(f"  [{_resource_kind(r)}] {r.get('name')}")
-print(f"OBO scopes      : {USER_API_SCOPES}")
+print(f"Read template: {len(RESOURCES)} resources, scopes {USER_API_SCOPES}, source {TEMPLATE_SOURCE}")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 2: Copy the source (binary-safe)
-# MAGIC
-# MAGIC `shutil.copytree` copies the whole tree, including the TTF fonts and SVGs
-# MAGIC an editor-based agent cannot write. This is the reliable way to get a
-# MAGIC faithful copy of an app that ships static assets.
+# MAGIC ## Copy and patch the source
 
 # COMMAND ----------
 
@@ -118,28 +74,12 @@ if os.path.exists(NEW_APP_SOURCE):
         shutil.rmtree(NEW_APP_SOURCE)
         print(f"Removed existing {NEW_APP_SOURCE} (overwrite_source=true).")
     else:
-        print(
-            f"Source already exists: {NEW_APP_SOURCE}\n"
-            "Leaving it in place. Set the 'overwrite_source' widget to true to "
-            "replace it with a fresh copy of the template."
-        )
+        print(f"Source already exists; leaving in place (set overwrite_source=true to replace): {NEW_APP_SOURCE}")
 
 if not os.path.exists(NEW_APP_SOURCE):
     shutil.copytree(TEMPLATE_SOURCE, NEW_APP_SOURCE)
     n_files = sum(len(files) for _, _, files in os.walk(NEW_APP_SOURCE))
     print(f"Copied {n_files} files to {NEW_APP_SOURCE}")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 3: Patch `use_cloud_fetch=False`
-# MAGIC
-# MAGIC The Apps runtime cannot reach the cloud-fetch storage endpoint, so the
-# MAGIC Databricks SQL connector fails with `Max retries exceeded` on every query
-# MAGIC unless cloud fetch is disabled. Idempotent: skips if the template already
-# MAGIC has the fix or does not use the SQL connector.
-
-# COMMAND ----------
 
 DEPS_PATH = os.path.join(NEW_APP_SOURCE, "lib", "deps.py")
 
@@ -161,24 +101,10 @@ else:
         print("Patched use_cloud_fetch=False into lib/deps.py")
     else:
         print(
-            "Could not find the dbsql.connect(...) anchor in lib/deps.py. "
+            "WARNING: dbsql.connect(...) anchor not found in lib/deps.py. "
             "If the app queries SQL and fails with 'Max retries exceeded', add "
             "use_cloud_fetch=False to the connect() call by hand."
         )
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 3b: Patch `genie_space_id` precedence
-# MAGIC
-# MAGIC Every cloned app reads the facilitator's shared
-# MAGIC `/Workspace/Shared/command-center/config.json`, and `lib/config.py` gives that
-# MAGIC file priority over the per-app `GENIE_SPACE_ID` env var. So an attendee's own
-# MAGIC Genie space (set in their app env) is ignored in favor of the shared space.
-# MAGIC This flips the precedence for `genie_space_id` only: the env var wins, the shared
-# MAGIC file is the fallback. Idempotent.
-
-# COMMAND ----------
 
 CONFIG_PY_PATH = os.path.join(NEW_APP_SOURCE, "lib", "config.py")
 
@@ -204,10 +130,7 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 4: Create the app (idempotent)
-# MAGIC
-# MAGIC Creates the app shell and its service principal. Code is deployed later in
-# MAGIC Step 8. Re-running is safe: an existing app is left in place.
+# MAGIC ## Create the app, bind resources, grant access
 
 # COMMAND ----------
 
@@ -220,18 +143,6 @@ except Exception:
     w.apps.create(App(name=NEW_APP, description=f"Operator Command Center (clone of {TEMPLATE_APP})")).result()
     print(f"Created app '{NEW_APP}'.")
 
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 5: Bind resources + OBO scopes, and read the SP
-# MAGIC
-# MAGIC The PATCH below is the privileged call the agent blocks. It binds the
-# MAGIC warehouse, the 8 tables, and Lakebase to the app SP, and sets the OBO
-# MAGIC scopes (genie, sql, dashboards.genie). The binding is what grants the SP
-# MAGIC its resource access. Resources MUST be bound before the code deploy.
-
-# COMMAND ----------
-
 app_info = w.api_client.do("GET", f"/api/2.0/apps/{NEW_APP}")
 # The OAuth client id of the app's SP is the principal used for grants below.
 SP_ID = app_info.get("service_principal_client_id") or app_info.get("id")
@@ -243,26 +154,6 @@ result = w.api_client.do(
     body={"resources": RESOURCES, "user_api_scopes": USER_API_SCOPES},
 )
 print(f"Bound {len(result.get('resources', []))} resources; scopes: {result.get('user_api_scopes')}")
-for r in result.get("resources", []):
-    print(f"  [{_resource_kind(r)}] {r.get('name')}")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 6: Grant the SP Unity Catalog access
-# MAGIC
-# MAGIC A table-level resource binding still needs `USE CATALOG` and `USE SCHEMA`
-# MAGIC up the chain, or queries fail. We grant at the SCHEMA level rather than
-# MAGIC table by table, so a single `SELECT ON SCHEMA` covers the 8 tables, the
-# MAGIC `command_center_metrics` metric view, and anything added later. The catalog
-# MAGIC and schema are derived from the bound `uc_securable` resources, so there is
-# MAGIC a single source of truth.
-# MAGIC
-# MAGIC If you do not own the catalog (the shared workshop catalog is owned by the
-# MAGIC facilitator), these GRANTs will be denied. That is expected: the cell
-# MAGIC catches it and prints the exact statements for the facilitator to run.
-
-# COMMAND ----------
 
 from databricks.sdk.service.sql import StatementState
 
@@ -318,16 +209,6 @@ else:
         for stmt in failed:
             print(f"  {stmt};")
 
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 7: Grant the SP `CAN_USE` on the warehouse
-# MAGIC
-# MAGIC Warehouse access is a workspace-level permission, not Unity Catalog, so it
-# MAGIC is set via the permissions REST API (additive: existing grants are kept).
-
-# COMMAND ----------
-
 if not WAREHOUSE_ID:
     print("No sql_warehouse resource bound; skipping warehouse permission.")
 else:
@@ -348,9 +229,7 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 8: Start compute and deploy
-# MAGIC
-# MAGIC A freshly created app is STOPPED. It must be ACTIVE before deploy.
+# MAGIC ## Start compute and deploy
 
 # COMMAND ----------
 
@@ -381,8 +260,6 @@ elif compute_state == "STARTING":
     wait_for_compute({"ACTIVE"})
 print("Compute is ACTIVE.")
 
-# COMMAND ----------
-
 deployment = w.apps.deploy(app_name=NEW_APP, app_deployment=AppDeployment(source_code_path=NEW_APP_SOURCE))
 print(f"Deployment started: {deployment.deployment_id}")
 
@@ -400,7 +277,7 @@ print(f"Deployment finished: {state}")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Step 9: Verify
+# MAGIC ## Verify and save the session
 
 # COMMAND ----------
 
@@ -418,17 +295,6 @@ print(f"SP id      : {final.get('service_principal_client_id') or final.get('id'
 print("=" * 60)
 if url:
     print(f"\nOpen your app: {url}")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Step 10: Save your session for Lab 01
-# MAGIC
-# MAGIC Persists your initials (and app URL) to a small workspace file so the
-# MAGIC `01-workshop-prompts` lab can auto-fill your prompts. You will not have to
-# MAGIC retype your initials.
-
-# COMMAND ----------
 
 import base64
 import json as _json
@@ -452,23 +318,3 @@ w.api_client.do(
 )
 print(f"Saved {SESSION_PATH}")
 print(_session)
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Metric view, Lakebase, Genie, and the dashboard
-# MAGIC
-# MAGIC - **Metric view (`command_center_metrics`):** covered by the `SELECT ON
-# MAGIC   SCHEMA` grant in Step 6. The SP can query it directly, the same as the
-# MAGIC   tables, with no extra step. (If the app reaches the metric view only via
-# MAGIC   Genie or the dashboard, those run as you over OBO and need no SP grant.)
-# MAGIC - **Lakebase:** the template's `database` resource came across in Step 5, so
-# MAGIC   the SP has `CAN_CONNECT_AND_CREATE` on the instance. The write-back tables
-# MAGIC   were granted to `PUBLIC` by the facilitator setup, so the SP can read and
-# MAGIC   write them with no extra step.
-# MAGIC - **Genie space and AI/BI dashboard:** the app calls Genie with your own
-# MAGIC   token (OBO, via `X-Forwarded-Access-Token`) and embeds the dashboard as
-# MAGIC   you, so the SP does not need access to them: you own both. There is no
-# MAGIC   upfront grant to make. If you ever switch the app off OBO, grant the SP
-# MAGIC   `CAN_RUN` on the space and `CAN_READ` on the dashboard from their
-# MAGIC   permission dialogs once they exist.
