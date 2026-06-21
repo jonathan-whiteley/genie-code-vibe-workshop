@@ -279,20 +279,24 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create an AI briefing function for my Genie space.
+# MAGIC Create an AI store-briefing function and register it with my Genie space,
+# MAGIC following docs/patterns/genie-space-pattern.md. Genie calls functions as
+# MAGIC SELECT * FROM func(), which dictates the shape:
 # MAGIC
-# MAGIC - Create a Unity Catalog SQL function named <my initials>_store_briefing,
-# MAGIC   in the same catalog/schema as my metric view (no args, RETURNS STRING).
-# MAGIC - It selects my store's latest-day metric-view numbers: revenue,
-# MAGIC   forecast revenue, labor % of sales, traffic, and prior-day revenue.
-# MAGIC - It passes those to ai_query() on databricks-claude-sonnet-4-6 and
-# MAGIC   returns, under 100 words:
-# MAGIC   - a 3-bullet briefing (revenue vs forecast; is labor % of sales in the
-# MAGIC     healthy 20-35% band; one thing to watch today), and
-# MAGIC   - a "Next Best Action" recommendation.
-# MAGIC - Give it a clear COMMENT so Genie knows when to call it.
-# MAGIC - Add it to my Genie space as a callable function. Do not call it from here;
-# MAGIC   I'll try it in the Ask Genie panel.
+# MAGIC - Create a UC function <my initials>_store_briefing() in my metric view's
+# MAGIC   catalog/schema that RETURNS TABLE (briefing STRING). Use inline subqueries,
+# MAGIC   NOT CTEs. Read my store's latest-day numbers (revenue, forecast revenue,
+# MAGIC   labor % of sales, traffic, prior-day revenue) from the metric view and pass
+# MAGIC   them to ai_query() on databricks-claude-sonnet-4-6 for a 3-bullet manager
+# MAGIC   briefing plus a "Next Best Action", under 100 words. Use chr(36) for any $
+# MAGIC   in string literals, and create the function via executeCode (not editAsset).
+# MAGIC - Register it in my Genie space as a sql_example instruction
+# MAGIC   (addInstructionsToSpace) mapping a question to
+# MAGIC   SELECT * FROM <cat>.<sch>.<my initials>_store_briefing(). Do NOT use
+# MAGIC   serialized_space sql_functions (it creates a broken certified answer).
+# MAGIC - Optionally add "Give me today's store briefing" as a sample question chip.
+# MAGIC
+# MAGIC Do not call it from here; I'll try it in the Ask Genie panel.
 # MAGIC ```
 
 # COMMAND ----------

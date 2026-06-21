@@ -257,20 +257,13 @@ Give Genie a generative skill: a Unity Catalog function that calls Claude throug
 > **If the briefing returns a permission error:** the function runs `ai_query()` as **you** (Genie executes as the asking user), so your workshop group needs `CAN_QUERY` on the `databricks-claude-sonnet-4-6` endpoint. Genie Code can't grant that: flag it to your facilitator.
 
 ```text
-Create an AI briefing function for my Genie space.
+Create an AI store-briefing function and register it with my Genie space, following docs/patterns/genie-space-pattern.md. Genie calls functions as SELECT * FROM func(), which dictates the shape:
 
-- Create a Unity Catalog SQL function named <my initials>_store_briefing,
-  in the same catalog/schema as my metric view (no args, RETURNS STRING).
-- It selects my store's latest-day metric-view numbers: revenue,
-  forecast revenue, labor % of sales, traffic, and prior-day revenue.
-- It passes those to ai_query() on databricks-claude-sonnet-4-6 and
-  returns, under 100 words:
-  - a 3-bullet briefing (revenue vs forecast; is labor % of sales in the
-    healthy 20-35% band; one thing to watch today), and
-  - a "Next Best Action" recommendation.
-- Give it a clear COMMENT so Genie knows when to call it.
-- Add it to my Genie space as a callable function. Do not call it from here;
-  I'll try it in the Ask Genie panel.
+- Create a UC function <my initials>_store_briefing() in my metric view's catalog/schema that RETURNS TABLE (briefing STRING). Use inline subqueries, NOT CTEs. Read my store's latest-day numbers (revenue, forecast revenue, labor % of sales, traffic, prior-day revenue) from the metric view and pass them to ai_query() on databricks-claude-sonnet-4-6 for a 3-bullet manager briefing plus a "Next Best Action", under 100 words. Use chr(36) for any $ in string literals, and create the function via executeCode (not editAsset).
+- Register it in my Genie space as a sql_example instruction (addInstructionsToSpace) mapping a question to SELECT * FROM <cat>.<sch>.<my initials>_store_briefing(). Do NOT use serialized_space sql_functions (it creates a broken certified answer).
+- Optionally add "Give me today's store briefing" as a sample question chip.
+
+Do not call it from here; I'll try it in the Ask Genie panel.
 ```
 
 **Follow-up: make it one click.** Surface the briefing as a starter question so anyone can trigger it in the space and in your app's Ask Genie panel.
