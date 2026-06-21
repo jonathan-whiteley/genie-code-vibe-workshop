@@ -13,7 +13,8 @@
 # MAGIC - **Module 3:** an AI/BI dashboard on the metric view
 # MAGIC - **Module 4:** your app (deployed in Lab 00), confirmed and branded
 # MAGIC - **Module 5:** your Genie space and dashboard embedded in the app
-# MAGIC - **Module 6 (bonus):** a scheduled job that refreshes everything
+# MAGIC - **Module 6:** live AI in your Command Center: an `ai_query()` briefing function + a Company News feed via MCP web search
+# MAGIC - **Module 7 (bonus):** a scheduled job that refreshes everything
 
 # COMMAND ----------
 
@@ -121,21 +122,17 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create my Command Center metric view at store x date grain, from just two tables: facts_sales_daypart and facts_labor_daypart.
+# MAGIC Create my Command Center metric view at store x date grain, following
+# MAGIC the pattern in notebooks/patterns/metric-view-pattern.md.
 # MAGIC
-# MAGIC Roll each table up to one row per store per date in its own subquery first (sum revenue, forecast revenue, and traffic from sales; sum labor cost and forecast labor cost from labor), then join the two rollups on date and store, and join dims_stores for region. Do not create any separate or intermediary view, only the single metric view.
-# MAGIC
-# MAGIC Measures:
-# MAGIC - revenue
-# MAGIC - forecast revenue
-# MAGIC - traffic
-# MAGIC - labor cost
-# MAGIC - forecast labor cost
-# MAGIC - labor % of sales (labor cost / revenue)
-# MAGIC
-# MAGIC Dimensions: store, region, date, day-of-week.
-# MAGIC
-# MAGIC Run a SELECT to confirm it returns rows and that labor % of sales is realistic (around 20 to 35%).
+# MAGIC - Name it <my initials>_command_center_metrics, over facts_sales_daypart
+# MAGIC   and facts_labor_daypart plus dims_stores. One metric view, no
+# MAGIC   intermediary views.
+# MAGIC - Measures: revenue, forecast revenue, traffic, labor cost,
+# MAGIC   forecast labor cost, labor % of sales.
+# MAGIC - Dimensions: store, region, date, day-of-week.
+# MAGIC - Then run the pattern's verification SELECT to confirm it returns rows
+# MAGIC   and labor % of sales is realistic (20-35%, not ~200%).
 # MAGIC ```
 
 # COMMAND ----------
@@ -169,19 +166,9 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Add these 10 benchmark questions to my Genie space, then run the benchmark and
-# MAGIC tell me how many Genie answered correctly:
-# MAGIC
-# MAGIC - Which 5 stores had the highest labor % of sales last week?
-# MAGIC - How has labor % of sales trended over the last 30 days across all stores?
-# MAGIC - Which region has the lowest labor % of sales this month?
-# MAGIC - Which stores are below their revenue forecast this week?
-# MAGIC - Show the revenue trend over the last 30 days.
-# MAGIC - How did labor cost track against its forecast this week?
-# MAGIC - Which 5 stores have the highest revenue this month?
-# MAGIC - Rank regions by total revenue this month.
-# MAGIC - What is the busiest day of week by revenue?
-# MAGIC - Which stores improved labor % of sales the most over the last 30 days?
+# MAGIC Come up with 10 benchmark questions for my Genie space based on the metric view's
+# MAGIC measures and dimensions, add them to the space, then run the benchmark and tell me
+# MAGIC how many Genie answered correctly.
 # MAGIC ```
 
 # COMMAND ----------
@@ -242,11 +229,12 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC Now give it Little Caesars branding and make it pop:
 # MAGIC - copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it in the header
+# MAGIC - copy the favicon from my workshop Git folder (branding/lce/favicon.svg) into the app's static assets and wire it up with a <link rel="icon"> in the page <head> so it shows in the browser tab
 # MAGIC - use LCE orange (#FF671B) as the accent throughout: buttons, links, active tabs, and KPI highlights
 # MAGIC - add a bold hero header on the Today tab with the logo and the store name
 # MAGIC - give the tiles and cards rounded corners, soft shadows, and a subtle hover lift
 # MAGIC - add a thin LCE-orange top accent bar and a dark navbar
-# MAGIC - title the app "Command Center | LCE"
+# MAGIC - set the browser tab title (the HTML <title> tag) to exactly "Command Center" with no store number
 # MAGIC
 # MAGIC Then redeploy.
 # MAGIC ```
@@ -281,19 +269,108 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC My app already has an Ask Genie panel wired to a Genie space, and a home page with 3 tiles. Make these two changes, then redeploy:
+# MAGIC My app already has an Ask Genie panel and a home page with 3 tiles.
+# MAGIC Make these two changes, then redeploy:
 # MAGIC
-# MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from the Genie step). Do not rebuild the panel or its auth; just point it at my space ID.
+# MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from
+# MAGIC    the Genie step), following notebooks/patterns/genie-swap-pattern.md.
+# MAGIC    Just point it at my space ID; do not rebuild the panel or its auth.
 # MAGIC
-# MAGIC 2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. To avoid a "refused to connect" iframe error:
-# MAGIC    - use the dashboard's published EMBED url (the /embed/ link from the dashboard's Share then Embed), NOT the normal dashboard link; the normal workspace link sets X-Frame-Options and refuses to be framed.
-# MAGIC    - make sure the dashboard is Published with embedding enabled, and add my app's domain (the .databricksapps.com host of my app URL) to the dashboard's list of approved domains for embedding.
+# MAGIC 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
+# MAGIC    following notebooks/patterns/dashboard-embed-pattern.md (use the
+# MAGIC    /embed/ URL, and add an "Open in Databricks" fallback link above it).
 # MAGIC ```
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Module 6 (BONUS): Schedule a refresh job ⏰
+# MAGIC ## Module 6: Bring live AI into your Command Center 🤖
+# MAGIC
+# MAGIC Two AI features here:
+# MAGIC - **A: a store briefing** your Genie space can generate with `ai_query()` over your metric view
+# MAGIC - **B: a Company News feed** in the app, fetched live through the `web_search_mcp` MCP server
+# MAGIC
+# MAGIC > **Pre-reqs (facilitator/admin):** Feature A runs `ai_query()` as the asking user, so
+# MAGIC > your workshop group needs `CAN_QUERY` on `databricks-claude-sonnet-4-6`. Feature B's
+# MAGIC > app calls the `web_search_mcp` MCP server as the app's **service principal**, which the
+# MAGIC > admin must grant access to. Genie Code cannot grant either; flag permission errors to
+# MAGIC > your facilitator.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### A: the store briefing (Genie function) 📋
+# MAGIC
+# MAGIC A Unity Catalog function that calls Claude through `ai_query()` over your metric view
+# MAGIC and returns a plain-language briefing of the latest day plus a recommended Next Best
+# MAGIC Action. Register it with your Genie space and Genie can call it on request, including
+# MAGIC from the **Ask Genie** panel in your app: no app code change, because the panel already
+# MAGIC runs as you.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Create an AI briefing function for my Genie space, then test it.
+# MAGIC
+# MAGIC - Create a Unity Catalog SQL function named <my initials>_store_briefing,
+# MAGIC   in the same catalog/schema as my metric view (no args, RETURNS STRING).
+# MAGIC - It selects my store's latest-day metric-view numbers: revenue,
+# MAGIC   forecast revenue, labor % of sales, traffic, and prior-day revenue.
+# MAGIC - It passes those to ai_query() on databricks-claude-sonnet-4-6 and
+# MAGIC   returns, under 100 words:
+# MAGIC   - a 3-bullet briefing (revenue vs forecast; is labor % of sales in the
+# MAGIC     healthy 20-35% band; one thing to watch today), and
+# MAGIC   - a "Next Best Action" recommendation.
+# MAGIC - Give it a clear COMMENT so Genie knows when to call it.
+# MAGIC - Add it to my Genie space as a callable function.
+# MAGIC - Test with: give me today's store briefing.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### A follow-up: make it one click 🎯
+# MAGIC
+# MAGIC Surface the briefing as a starter question so anyone can trigger it instantly,
+# MAGIC in the space and in your app's Ask Genie panel.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Add "Give me today's store briefing" as a starter question in two
+# MAGIC places, then redeploy the app:
+# MAGIC - as a sample question on my Genie space, and
+# MAGIC - as a suggested question in my app's Ask Genie panel UI.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### B: a live Company News feed (MCP) 📰
+# MAGIC
+# MAGIC Add a Company News feature to your app that pulls live headlines through the
+# MAGIC `web_search_mcp` MCP server and summarizes them with `ai_query()`. There is a proven
+# MAGIC pattern (and the gotchas that bite you) in your workshop Git folder at
+# MAGIC `notebooks/patterns/mcp-company-news-pattern.md`: the prompt below points Genie Code at it.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Add a "Company News" feature to my app, then redeploy.
+# MAGIC
+# MAGIC Follow the pattern in notebooks/patterns/mcp-company-news-pattern.md:
+# MAGIC - fetch live news from the web_search_mcp MCP server,
+# MAGIC - summarize the results with ai_query,
+# MAGIC - show 3 bullets in a bell-icon dropdown in the header.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Module 7 (BONUS): Schedule a refresh job ⏰
 # MAGIC
 # MAGIC Automate the refresh so the data and app stay current.
 

@@ -27,15 +27,16 @@ Times are relative; facilitator sets the wall clock.
 | 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
 | 1:05-1:15 | Break | |
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
-| 1:45-2:25 | Module 5: Embed | Genie + dashboard live in the app |
-| 2:25-2:50 | Module 6 (BONUS): Job | Scheduled refresh job |
+| 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
+| 2:10-2:35 | Module 6: Live AI | (A) `ai_query()` briefing function for the Genie space; (B) Company News feed in the app via the `web_search_mcp` MCP server |
+| 2:35-2:50 | Module 7 (BONUS): Job | Scheduled refresh job |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
 
 ---
 
 ## Pre-Workshop Checklist
 
-> **Source of truth:** [`dab/README.md`](../dab/README.md) holds the deploy commands and gotchas. This section is everything that must be true **before** you run that runbook.
+> **Source of truth:** [`dab/README.md`](../dab/README.md) holds the deploy commands and gotchas. This section is everything that must be true **before** you run that pattern.
 
 ### T-1 week: features + permissions + deploy
 
@@ -46,10 +47,13 @@ Times are relative; facilitator sets the wall clock.
 | **Databricks Apps** | Hosts the Command Center App |
 | **Genie spaces** | Natural-language Q&A pillar |
 | **Metric Views** (Unity Catalog) | The spine: governed KPIs defined once, reused by Genie and the dashboard |
-| **Foundation Model API + AI Gateway** with `databricks-claude-sonnet-4-6` | Single endpoint for `ai_query()` in the app; confirm attendee group has `CAN_USE` |
+| **Foundation Model API + AI Gateway** with `databricks-claude-sonnet-4-6` | One endpoint, two uses: it backs the Genie Code agent, and in Module 6 attendees call `ai_query()` from a Genie-registered UC function. Because Genie runs queries as the asking **user**, the **attendee group needs `CAN_QUERY`** on this endpoint (Serving → endpoint → Permissions) |
 | **Lakebase** (Postgres preview) | Write-back persistence (release POs, replies, schedule approvals) |
+| **AI/BI dashboard embedding allowlist** | Module 5 embeds the dashboard as an iframe in each attendee's app. Without this, every attendee hits a "refused to connect" / approved-domains error |
 
-> **Note on AI Gateway:** the endpoint serves `ai_query()` in the reference app only. The attendee agent (Genie Code) does not require an AI Gateway route; skills run within Genie Code's built-in agent runtime.
+> **Note on `ai_query()` permissions (Module 6):** in Module 6 each attendee creates a UC function that wraps `ai_query()` and registers it with their Genie space. Genie executes that function as the **asking user** (and the app's Ask Genie panel forwards the user's token via OBO), so the call inherits the attendee's permissions, not the app service principal's. This is why the approach is a Genie function and not an app feature: it sidesteps having to grant each `<initials>-command-center` app SP query access. The one grant you do need is **`CAN_QUERY` on `databricks-claude-sonnet-4-6` for the attendee group** (see checklist). Genie Code itself does not require an AI Gateway route; its skills run within Genie Code's built-in agent runtime.
+
+> **Note on dashboard embedding (admin-only, do once):** the approved-domains allowlist is a **workspace-admin setting** attendees cannot change. Set it once for the whole workshop: **Settings → Security → External access → Embed dashboards → Allow approved domains → Manage**, add **`*.databricksapps.com`**, Save. The single `*` matches any subdomain depth (CSP grammar), so this one entry covers every attendee's `<initials>-command-center-<id>.<cloud>.databricksapps.com` app host: no per-attendee step. Takes effect within ~2 minutes (pod cache); a hard refresh / incognito tab picks it up. This is the only thing attendees need from the admin in Module 5: they just use the dashboard's `/embed/` URL. Internal refs: `go/iframe`, `go/embedded-analytics`.
 
 #### Attendee pre-req: single setup notebook
 
@@ -127,7 +131,7 @@ Warehouse `CAN_USE`, Genie `CAN_VIEW`, and endpoint `CAN_USE` grants are set via
 
 ### Deploy the reference build
 
-Full runbook with explanations: [`dab/README.md`](../dab/README.md). After `databricks auth login --profile lce`, from the repo root:
+Full pattern with explanations: [`dab/README.md`](../dab/README.md). After `databricks auth login --profile lce`, from the repo root:
 
 ```bash
 # 1. Pre-create catalog/schema + 8 empty UC tables (once per workspace).
@@ -179,10 +183,14 @@ The App reads `/Workspace/Shared/command-center/config.json` (written by the set
 
 - [ ] Attendee permissions confirmed (everyone can reach the workspace, create Git folders, and has the entitlements above)
 - [ ] `command-center-dev` template app is deployed and running (attendees' `notebooks/00-setup` notebook copies from it)
+- [ ] Dashboard embedding allowlist set: `*.databricksapps.com` added under Settings → Security → External access → Embed dashboards (admin-only; without it Module 5 iframes fail for everyone)
+- [ ] **`ai_query()` endpoint grant for Module 6:** the attendee group has `CAN_QUERY` on `databricks-claude-sonnet-4-6` (Serving → endpoint → Permissions). Module 6's briefing function runs `ai_query()` as the asking user via Genie, so without this the briefing returns a permission error. Genie Code cannot grant this
+- [ ] **MCP web search for Module 6 (Feature B):** the `web_search_mcp` UC connection (managed MCP server) exists in the workshop workspace, and each attendee app service principal has access to it (admin-configured; the app calls the MCP server as its SP, not the user). Note the URL is workspace-specific: `https://<workspace-host>/api/2.0/mcp/external/web_search_mcp`. Pattern + gotchas: [`notebooks/patterns/mcp-company-news-pattern.md`](../notebooks/patterns/mcp-company-news-pattern.md)
 - [ ] Send attendees the **Lab Companion Guide** and workshop env values: workspace URL, catalog, warehouse name, AI Gateway endpoint, branding folder (`branding/lce/`)
 - [ ] Remind attendees to clone the repo as a Git folder, run `notebooks/00-setup`, and open a new chat before the session
 - [ ] Warm the SQL warehouse by running the reference dashboard once
 - [ ] Smoke-test the reference Genie space with 2-3 revenue and labor questions
+- [ ] **Pre-test the dashboard iframe embed in a company-managed-laptop browser profile** (Chrome/Edge, normal window). If MDM hard-blocks third-party cookies with no user override, decide the fallback now (open `/embed/` in its own tab from a tile, or screenshot) rather than discovering it live: see the troubleshooting table row on the approved-domains/cookie error
 - [ ] Confirm at least one test-attendee run of `notebooks/00-setup` completed successfully (app deployed, wiring green)
 
 ---
@@ -249,6 +257,10 @@ Sorted by likelihood. Highest-impact items first.
 | **Metric view DDL syntax error** | The `CREATE OR REPLACE VIEW ... WITH METRICS LANGUAGE YAML` syntax may be runtime-version-dependent. Confirm the DDL against the `databricks-metric-views` skill in the target workspace T-1 week. The T-1-week smoke test (verify the metric view returns rows) catches this before the workshop. |
 | **MEASURE() or identifier() over a metric view fails at runtime** | At first deploy, verify that dashboard datasets and Genie example SQLs using `MEASURE(...)` and `identifier(:catalog||'.'||:schema||'.command_center_metrics')` resolve over the metric view. If the runtime rejects those constructs, hardcode the fully-qualified table name as a fallback. |
 | **Embed 403s: "Invalid scope" or "PermissionDenied"** on attendee apps | Genie spaces are user-permissioned: use OBO auth (`X-Forwarded-Access-Token` header) instead of the App service principal. Declare `user_api_scopes: [genie, sql, dashboards.genie]` on the App resource, then redeploy and re-consent on first open. Reference pattern: [`dab/src/app/routers/genie.py`](../dab/src/app/routers/genie.py). |
+| **Dashboard iframe blank / "refused to connect" / approved-domains error** even though the allowlist is set | Basic dashboard embedding rides the viewer's Databricks **session cookie**, which the browser treats as a **third-party cookie** relative to the `*.databricksapps.com` app domain. Most common triggers, in order: (1) **Incognito / InPrivate window** blocks third-party cookies by default: use a normal window; (2) **managed-laptop MDM policy** (`BlockThirdPartyCookies`) blocks them even in a normal window: add a site exception for `[*.]databricks.com` (Chrome: Settings → Privacy → Cookies → "Sites that can always use cookies"; Edge: same, or `CookiesAllowedForUrls` policy); (3) app opened **inside the workspace preview pane** (nested iframe): open the top-level `…databricksapps.com` URL. **On company-managed laptops, pre-test the embed in one attendee's actual browser/device profile during the T-1-week smoke test** — if MDM hard-blocks third-party cookies with no user override, fall back to opening the dashboard's `/embed/` URL in its own browser tab (linked from a tile) instead of inline, or screenshot the dashboard for the demo. |
+| **Module 6 briefing fails: "PermissionDenied" / "does not have permission to query endpoint"** | The Genie-registered briefing function runs `ai_query()` as the **asking user** (Genie is user-permissioned; the app's Ask Genie panel forwards the user token via OBO). Grant the **attendee group `CAN_QUERY`** on `databricks-claude-sonnet-4-6` (Serving → endpoint → Permissions). Set this before the session: see the pre-req checklist. Genie Code cannot grant it. |
+| **Module 6 function not invoked / Genie answers from tables instead** | Genie calls a registered function only when its purpose is clear. Make sure the UC function has a descriptive `COMMENT`, and that it was actually added to the space's functions (not just created in UC). The Module 6 follow-up adds a "Give me today's store briefing" sample question that reliably triggers it. |
+| **Module 6 Feature B (Company News) 403s or returns empty** | The app must call `web_search_mcp` as its **service principal** (`lib/deps.py` `workspace_client`); the forwarded user token lacks MCP scope and 403s. Confirm the app SP has admin-granted access to the connection. Other documented traps (router-vs-inline, `:param` regex on URLs, markdown fences in `ai_query` output) and the working code are in [`notebooks/patterns/mcp-company-news-pattern.md`](../notebooks/patterns/mcp-company-news-pattern.md). |
 | **Warehouse name lookup fails** on `bundle deploy` | The bundle's `warehouse_id` is a lookup by name (`Serverless Starter Warehouse`); not every workspace has one. Always pass `--var warehouse_id=<id>`. |
 | **SQL warehouse 500s** after idle or cold-start | Reference App's `sql_utils.py` retries on `RequestError` and session expiry. Attendees writing their own backend should mirror that pattern. |
 | **Facilitator is not workspace admin** (cannot create Lakebase) | Two fallbacks in [`dab/README.md` section "Lakebase binding fallback"](../dab/README.md#lakebase-binding-fallback): admin pre-creates the instance, or comment out `lakebase.yml`. |
@@ -372,6 +384,6 @@ The script will not touch the catalog itself or anything outside the workshop's 
 |---|---|
 | **Lab Companion Guide** (attendee-facing: setup, prompts, tips) | [`docs/lab-companion-guide.md`](lab-companion-guide.md) |
 | **README** (repo overview, quick start, schema) | [`README.md`](../README.md) |
-| **Operational runbook** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md): source of truth for ops |
+| **Operational pattern** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md): source of truth for ops |
 | **Metric view definition** | [`metric-views/command_center_metrics.yaml`](../metric-views/command_center_metrics.yaml) |
 | **Repo** | https://github.com/jonathan-whiteley/genie-code-vibe-workshop |

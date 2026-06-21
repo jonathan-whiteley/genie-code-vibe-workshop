@@ -24,8 +24,9 @@
 | 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
 | 1:05-1:15 | Break | |
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
-| 1:45-2:25 | Module 5: Embed | Genie + dashboard live in the app |
-| 2:25-2:50 | Module 6 (BONUS): Job | Scheduled refresh job |
+| 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
+| 2:10-2:35 | Module 6: AI briefing | `ai_query()` briefing function your Genie space can call |
+| 2:35-2:50 | Module 7 (BONUS): Job | Scheduled refresh job |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
 
 Times are relative; your facilitator sets the wall clock.
@@ -109,21 +110,17 @@ Now paste each module prompt in order; the agent already knows your initials and
 > **Note:** Genie Code runs the CREATE statement for you, but you need CREATE on the schema. If it is denied, ask the facilitator to grant your group CREATE on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
 
 ```text
-Create my Command Center metric view at store x date grain, from just two tables: facts_sales_daypart and facts_labor_daypart.
+Create my Command Center metric view at store x date grain, following
+the pattern in notebooks/patterns/metric-view-pattern.md.
 
-Roll each table up to one row per store per date in its own subquery first (sum revenue, forecast revenue, and traffic from sales; sum labor cost and forecast labor cost from labor), then join the two rollups on date and store, and join dims_stores for region. Do not create any separate or intermediary view, only the single metric view.
-
-Measures:
-- revenue
-- forecast revenue
-- traffic
-- labor cost
-- forecast labor cost
-- labor % of sales (labor cost / revenue)
-
-Dimensions: store, region, date, day-of-week.
-
-Run a SELECT to confirm it returns rows and that labor % of sales is realistic (around 20 to 35%).
+- Name it <my initials>_command_center_metrics, over facts_sales_daypart
+  and facts_labor_daypart plus dims_stores. One metric view, no
+  intermediary views.
+- Measures: revenue, forecast revenue, traffic, labor cost,
+  forecast labor cost, labor % of sales.
+- Dimensions: store, region, date, day-of-week.
+- Then run the pattern's verification SELECT to confirm it returns rows
+  and labor % of sales is realistic (20-35%, not ~200%).
 ```
 
 ---
@@ -215,30 +212,86 @@ Restyle the Today tab in dark mode: a deep dark background with light text, and 
 
 ---
 
-### Module 5: Embed Genie + Dashboard (1:45-2:25)
+### Module 5: Embed Genie + Dashboard (1:45-2:10)
 
 Your app already has an Ask Genie panel and a home page with 3 tiles. You are swapping in your own Genie space and adding your dashboard below the tiles.
 
 > **Important:** the genie, sql, and dashboards.genie OBO scopes are already set on your app by the 00-setup notebook, and the Ask Genie panel already uses on-behalf-of-user auth. Do not rebuild the panel or change scopes.
 
 ```text
-My app already has an Ask Genie panel wired to a Genie space, and a home page with 3 tiles. Make these two changes, then redeploy:
+My app already has an Ask Genie panel and a home page with 3 tiles.
+Make these two changes, then redeploy:
 
-1. Swap the Ask Genie panel to use MY Genie space (the space ID from Module 2). Do not rebuild the panel or its auth; just point it at my space ID.
+1. Swap the Ask Genie panel to use MY Genie space (the space ID from
+   Module 2), following notebooks/patterns/genie-swap-pattern.md.
+   Just point it at my space ID; do not rebuild the panel or its auth.
 
-2. Embed my published AI/BI dashboard as an iframe on the home page, directly below the 3 tiles. To avoid a "refused to connect" iframe error:
-   - use the dashboard's published EMBED url (the /embed/ link from the dashboard's Share then Embed), NOT the normal dashboard link; the normal workspace link sets X-Frame-Options and refuses to be framed.
-   - make sure the dashboard is Published with embedding enabled, and add my app's domain (the .databricksapps.com host of my app URL) to the dashboard's list of approved domains for embedding.
+2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
+   following notebooks/patterns/dashboard-embed-pattern.md (use the
+   /embed/ URL, and add an "Open in Databricks" fallback link above it).
 ```
 
 > **If running low on time:** the Genie space swap is the higher-impact change, so do that first.
 
 ---
 
-### Module 6: Job (BONUS) (2:25-2:50)
+### Module 6: Live AI in your Command Center (2:10-2:35)
+
+Two AI features: **A**, a store briefing your Genie space can generate with `ai_query()`; and **B**, a Company News feed in the app fetched live through the `web_search_mcp` MCP server.
+
+#### A: the store briefing (Genie function)
+
+Give Genie a generative skill: a Unity Catalog function that calls Claude through `ai_query()` over your metric view and returns a plain-language briefing of the latest day plus a recommended Next Best Action. Once it's registered with your Genie space, Genie can call it on request, including from the **Ask Genie** panel in your app: no app code change, because the panel already runs as you.
+
+> **If the briefing returns a permission error:** the function runs `ai_query()` as **you** (Genie executes as the asking user), so your workshop group needs `CAN_QUERY` on the `databricks-claude-sonnet-4-6` endpoint. Genie Code can't grant that: flag it to your facilitator.
 
 ```text
-Module 6. Add a daily job <initials>-command-center-refresh at 6am ET with these steps:
+Create an AI briefing function for my Genie space, then test it.
+
+- Create a Unity Catalog SQL function named <my initials>_store_briefing,
+  in the same catalog/schema as my metric view (no args, RETURNS STRING).
+- It selects my store's latest-day metric-view numbers: revenue,
+  forecast revenue, labor % of sales, traffic, and prior-day revenue.
+- It passes those to ai_query() on databricks-claude-sonnet-4-6 and
+  returns, under 100 words:
+  - a 3-bullet briefing (revenue vs forecast; is labor % of sales in the
+    healthy 20-35% band; one thing to watch today), and
+  - a "Next Best Action" recommendation.
+- Give it a clear COMMENT so Genie knows when to call it.
+- Add it to my Genie space as a callable function.
+- Test with: give me today's store briefing.
+```
+
+**Follow-up: make it one click.** Surface the briefing as a starter question so anyone can trigger it in the space and in your app's Ask Genie panel.
+
+```text
+Add "Give me today's store briefing" as a starter question in two
+places, then redeploy the app:
+- as a sample question on my Genie space, and
+- as a suggested question in my app's Ask Genie panel UI.
+```
+
+#### B: a live Company News feed (MCP)
+
+Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `notebooks/patterns/mcp-company-news-pattern.md`.
+
+> **If it 403s:** the app must call the MCP server as its **service principal**, which the admin grants access to. The forwarded user token does not have MCP scope.
+
+```text
+Add a "Company News" feature to my app, then redeploy.
+
+Follow the pattern in notebooks/patterns/mcp-company-news-pattern.md:
+- fetch live news from the web_search_mcp MCP server,
+- summarize the results with ai_query,
+- show 3 bullets in a bell-icon dropdown in the header.
+```
+
+---
+
+### Module 7: Job (BONUS) (2:35-2:50)
+
+```text
+Module 7. Add a daily job <initials>-command-center-refresh at 6am ET with these steps:
 - refresh the metric view's source rollups
 - redeploy my app
 ```
@@ -301,5 +354,5 @@ Pre-filled values used throughout the workshop. The **Session setup** prompt at 
 | | |
 |---|---|
 | **Facilitator Plan** (deploy checklist, agenda, troubleshooting) | [`docs/facilitator-plan.md`](facilitator-plan.md) |
-| **Operational runbook** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md) |
+| **Operational pattern** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md) |
 | **Repo** | https://github.com/jonathan-whiteley/genie-code-vibe-workshop |
