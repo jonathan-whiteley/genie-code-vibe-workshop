@@ -21,7 +21,7 @@
 | 0:00-0:10 | Welcome + demo | See finished app; get env values + session-setup prompt |
 | 0:10-0:25 | Module 1: Metric View | Governed KPIs defined over landed tables |
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
-| 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
+| 0:45-1:05 | Module 3: AI/BI Dashboard | Insight charts across every measure and dimension (no KPI tiles) |
 | 1:05-1:15 | Break | |
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
@@ -161,27 +161,24 @@ If writing the benchmark to the space is blocked by the safety layer, run the qu
 ### Module 3: AI/BI Dashboard (0:45-1:05)
 
 ```text
-Create a rich AI/BI dashboard on my metric view.
+Create a visual-first AI/BI dashboard on my metric view. No KPI counter tiles:
+lead with charts that surface insight, and use every measure and dimension
+across the page.
 
-Start with a row of KPI counters (latest day):
-- total revenue
-- labor % of sales
-- revenue vs forecast
-- traffic
-
-Then add these charts:
-- revenue trend, last 30 days (line)
-- labor % of sales, last 30 days (line)
-- revenue by region (bar)
-- revenue vs forecast by store (bar)
-- labor cost vs forecast by store (bar)
-- revenue by day-of-week (bar)
+Charts:
+- Revenue share by region: pie / donut
+- Revenue trend, last 30 days: line
+- Revenue vs forecast revenue by store: grouped bar
+- Labor % of sales by store: bar, sorted high to low, flag the healthy 20-35% band
+- Labor cost vs forecast labor cost, last 30 days: line, two series
+- Revenue by day-of-week: bar
+- Traffic vs revenue by store: scatter, one point per store
+- Traffic by region: bar
 
 Give it Little Caesars branding and make it pop:
-- use the LCE orange (#FF671B) as the primary accent across the charts
-- set a bold, cool dashboard background color
-- use vibrant, high-contrast colors so the charts really stand out
-- add a title with the Little Caesars feel
+- use LCE orange (#FF671B) as the primary accent
+- a bold, cool background and vibrant, high-contrast chart colors
+- a title with the Little Caesars feel
 
 Publish it and remember the dashboard ID.
 ```

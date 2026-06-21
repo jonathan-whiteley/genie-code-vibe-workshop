@@ -24,7 +24,7 @@ Times are relative; facilitator sets the wall clock.
 | 0:00-0:10 | Welcome + demo | See finished app; get env values + session-setup prompt |
 | 0:10-0:25 | Module 1: Metric View | Governed KPIs defined over landed tables |
 | 0:25-0:45 | Module 2: Genie Space | Natural-language Q&A on the metric view |
-| 0:45-1:05 | Module 3: AI/BI Dashboard | 4 widgets driven by the metric view |
+| 0:45-1:05 | Module 3: AI/BI Dashboard | Insight charts across every measure and dimension (no KPI tiles) |
 | 1:05-1:15 | Break | |
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |

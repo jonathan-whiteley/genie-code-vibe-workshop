@@ -133,27 +133,25 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create a rich AI/BI dashboard on my metric view.
+# MAGIC Create a visual-first AI/BI dashboard on my metric view. No KPI counter
+# MAGIC tiles: lead with charts that surface insight, and use every measure and
+# MAGIC dimension across the page.
 # MAGIC
-# MAGIC Start with a row of KPI counters (latest day):
-# MAGIC - total revenue
-# MAGIC - labor % of sales
-# MAGIC - revenue vs forecast
-# MAGIC - traffic
-# MAGIC
-# MAGIC Then add these charts:
-# MAGIC - revenue trend, last 30 days (line)
-# MAGIC - labor % of sales, last 30 days (line)
-# MAGIC - revenue by region (bar)
-# MAGIC - revenue vs forecast by store (bar)
-# MAGIC - labor cost vs forecast by store (bar)
-# MAGIC - revenue by day-of-week (bar)
+# MAGIC Charts:
+# MAGIC - Revenue share by region: pie / donut
+# MAGIC - Revenue trend, last 30 days: line
+# MAGIC - Revenue vs forecast revenue by store: grouped bar
+# MAGIC - Labor % of sales by store: bar, sorted high to low, flag the healthy
+# MAGIC   20-35% band
+# MAGIC - Labor cost vs forecast labor cost, last 30 days: line, two series
+# MAGIC - Revenue by day-of-week: bar
+# MAGIC - Traffic vs revenue by store: scatter, one point per store
+# MAGIC - Traffic by region: bar
 # MAGIC
 # MAGIC Give it Little Caesars branding and make it pop:
-# MAGIC - use the LCE orange (#FF671B) as the primary accent across the charts
-# MAGIC - set a bold, cool dashboard background color
-# MAGIC - use vibrant, high-contrast colors so the charts really stand out
-# MAGIC - add a title with the Little Caesars feel
+# MAGIC - use LCE orange (#FF671B) as the primary accent
+# MAGIC - a bold, cool background and vibrant, high-contrast chart colors
+# MAGIC - a title with the Little Caesars feel
 # MAGIC
 # MAGIC Publish it and tell me the dashboard ID.
 # MAGIC ```
