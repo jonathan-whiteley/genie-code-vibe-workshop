@@ -133,6 +133,8 @@ Create a Genie space on my metric view.
 Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
 
 Ask a few questions to test it, then tell me the space ID.
+
+If adding the sample questions through the genie tool fails, use the REST shape in docs/patterns/genie-space-pattern.md.
 ```
 
 **Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Add 10, then run them to score your space.

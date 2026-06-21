@@ -98,6 +98,8 @@ print(session_setup_prompt)
 # MAGIC Add 6 sample questions grounded in the metric view measures (revenue, forecast, labor cost, labor % of sales).
 # MAGIC
 # MAGIC Ask a few questions to test it, then tell me the space ID.
+# MAGIC
+# MAGIC If adding the sample questions through the genie tool fails, use the REST shape in docs/patterns/genie-space-pattern.md.
 # MAGIC ```
 
 # COMMAND ----------
