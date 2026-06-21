@@ -42,7 +42,8 @@ print(f"Your app will be: {INITIALS}-command-center")
 # MAGIC
 # MAGIC Installs the [ai-dev-kit](https://github.com/databricks-solutions/ai-dev-kit)
 # MAGIC skills into your workspace: the knowledge Genie Code uses to build on Databricks
-# MAGIC (metric views, Genie spaces, dashboards, apps).
+# MAGIC (metric views, Genie spaces, dashboards, apps). It also installs this workshop's
+# MAGIC own `command-center-patterns` skill (the field-tested patterns in `docs/patterns/`).
 # MAGIC
 # MAGIC > If the skills do not appear in Genie Code afterward, hard-refresh the browser
 # MAGIC > (Cmd+Shift+R / Ctrl+Shift+R) before starting Lab 01.

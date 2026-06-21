@@ -71,6 +71,53 @@ if cloned:
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## Install the workshop's custom patterns skill
+# MAGIC Ships `docs/patterns/` from this repo as a Genie Code skill
+# MAGIC (`command-center-patterns`) so the agent loads this workshop's metric-view,
+# MAGIC dashboard-embed, Genie-swap, MCP, and Genie-space patterns natively, right
+# MAGIC alongside the ai-dev-kit skills. Same target folder, same upload mechanism.
+
+# COMMAND ----------
+
+import base64
+import json
+import urllib.request
+
+from databricks.sdk.service.workspace import ImportFormat
+
+CUSTOM_SKILL = "command-center-patterns"
+PATTERNS_API = (
+    "https://api.github.com/repos/jonathan-whiteley/genie-code-vibe-workshop"
+    "/contents/docs/patterns?ref=main"
+)
+custom_skill_path = f"/Users/{ME}/.assistant/skills/{CUSTOM_SKILL}"
+
+try:
+    req = urllib.request.Request(PATTERNS_API, headers={"Accept": "application/vnd.github.v3+json"})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        listing = json.loads(resp.read())
+    md_files = [f for f in listing if f.get("type") == "file" and f["name"].endswith(".md")]
+
+    w.workspace.mkdirs(custom_skill_path)
+    n = 0
+    for f in md_files:
+        with urllib.request.urlopen(f["download_url"], timeout=30) as r:
+            content = r.read()
+        w.workspace.import_(
+            path=f"{custom_skill_path}/{f['name']}",
+            content=base64.b64encode(content).decode(),
+            format=ImportFormat.AUTO,
+            overwrite=True,
+        )
+        n += 1
+    print(f"Installed custom skill '{CUSTOM_SKILL}' ({n} files) to /Workspace{custom_skill_path}")
+except Exception as e:
+    print(f"Could not install the custom patterns skill: {e}\n")
+    print(f"Manual: copy docs/patterns/*.md into /Workspace{custom_skill_path}/")
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## After this step
 # MAGIC Skills load when you open a **new chat thread**. Once setup finishes,
 # MAGIC open Genie Code, start a new chat, and hard refresh the browser if the
