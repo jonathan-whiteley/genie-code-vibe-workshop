@@ -197,6 +197,8 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ```text
 # MAGIC Restyle the Today tab in dark mode: a deep dark background with light text, and keep the LCE orange (#FF671B) accents popping against it. Leave the other tabs as they are. Then redeploy.
+# MAGIC
+# MAGIC Follow docs/patterns/app-editing-pattern.md: audit each component's background/color/border for contrast first (the Card defaults to a white background), override CSS tokens in :root instead of hunting inline colors, and edit the files with Python open() then verify on disk before redeploying.
 # MAGIC ```
 
 # COMMAND ----------

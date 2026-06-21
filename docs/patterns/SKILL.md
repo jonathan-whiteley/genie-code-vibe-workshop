@@ -10,9 +10,10 @@ Field-tested patterns for the Operator Command Center workshop. Each one distill
 | When you are... | Open | It covers |
 |---|---|---|
 | Building the governed metric view (Module 1) | `metric-view-pattern.md` | The fan-out trap (pre-aggregate each fact to one row per store-date before joining; labor has an extra `role` grain), the YAML/DDL shape, `MEASURE()` query syntax, and verification |
+| Branding, dark mode, or any multi-file app edit (Modules 4-6) | `app-editing-pattern.md` | Writing app files reliably (Python `open()` over `editAsset`, verify-then-deploy) and a dark-mode / rebrand technique (contrast audit first, CSS token overrides) |
 | Embedding the AI/BI dashboard as an iframe in the app (Module 5) | `dashboard-embed-pattern.md` | `/embed` URL vs `X-Frame-Options`, the admin-only `*.databricksapps.com` allowlist, and the third-party-cookie / managed-laptop failure chain |
 | Pointing the app's Ask Genie panel at your own space (Module 5) | `genie-swap-pattern.md` | The shared-config vs per-app env precedence bug, the `lru_cache` restart requirement, and the OBO scopes behind the 403 "Invalid scope" |
 | Adding a Company News feed via MCP (Module 6) | `mcp-company-news-pattern.md` | Calling the `web_search_mcp` managed MCP server from the app as its service principal, inline endpoint, the `:param`/URL trap, and fence-stripping |
-| Creating a Genie space and adding sample questions / benchmarks (Module 2) | `genie-space-pattern.md` | The REST shapes (`PATCH /api/2.0/genie/spaces/{id}`, the `serialized_space` JSON string), the required 32-char question ids, and running benchmarks via the Conversation API |
+| Creating a Genie space and adding sample questions / benchmarks (Module 2) | `genie-space-pattern.md` | The REST shapes (`PATCH /api/2.0/genie/spaces/{id}`, the `serialized_space` JSON string), the required 32-char question ids, and why testing and benchmarks run in the Genie UI (not from a notebook) |
 
 These are specific to this workshop's schema, app, and resources; they complement, not replace, the ai-dev-kit skills.
