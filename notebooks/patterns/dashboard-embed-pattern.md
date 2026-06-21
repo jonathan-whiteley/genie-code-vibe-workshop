@@ -40,7 +40,7 @@ On company-managed laptops, **pre-test the embed in a real attendee browser/devi
 
 ### 3. Not the same as a Genie 403
 
-A **403 "Invalid scope" / `PermissionDenied`** on a Genie embed is a **different problem** (on-behalf-of-user auth scopes, `user_api_scopes: [genie, sql, dashboards.genie]`). That is covered by the Genie swap runbook, not this one. This runbook is only about the dashboard iframe and the cookie/allowlist chain above.
+A **403 "Invalid scope" / `PermissionDenied`** on a Genie embed is a **different problem** (on-behalf-of-user auth scopes, `user_api_scopes: [genie, sql, dashboards.genie]`). That is covered by the Genie swap pattern, not this one. This pattern is only about the dashboard iframe and the cookie/allowlist chain above.
 
 ---
 
@@ -76,4 +76,4 @@ Sketch:
 6. **Test in a normal (non-incognito) window** on a real attendee/managed-laptop profile.
 7. If still blank: check incognito, then MDM cookie policy (add `[*.]databricks.com` exception), then whether you are inside the workspace preview pane (open the top-level `databricksapps.com` URL).
 8. If MDM hard-blocks with no override: fall back to the `/embed/` URL in its own tab, or screenshot.
-9. Remember: a 403 "Invalid scope" is a Genie auth issue, not this; see the Genie swap runbook.
+9. Remember: a 403 "Invalid scope" is a Genie auth issue, not this; see the Genie swap pattern.

@@ -111,7 +111,7 @@ Now paste each module prompt in order; the agent already knows your initials and
 
 ```text
 Create my Command Center metric view at store x date grain, following
-the pattern in notebooks/patterns/metric-view-runbook.md.
+the pattern in notebooks/patterns/metric-view-pattern.md.
 
 - Name it <my initials>_command_center_metrics, over facts_sales_daypart
   and facts_labor_daypart plus dims_stores. One metric view, no
@@ -119,7 +119,7 @@ the pattern in notebooks/patterns/metric-view-runbook.md.
 - Measures: revenue, forecast revenue, traffic, labor cost,
   forecast labor cost, labor % of sales.
 - Dimensions: store, region, date, day-of-week.
-- Then run the runbook's verification SELECT to confirm it returns rows
+- Then run the pattern's verification SELECT to confirm it returns rows
   and labor % of sales is realistic (20-35%, not ~200%).
 ```
 
@@ -223,11 +223,11 @@ My app already has an Ask Genie panel and a home page with 3 tiles.
 Make these two changes, then redeploy:
 
 1. Swap the Ask Genie panel to use MY Genie space (the space ID from
-   Module 2), following notebooks/patterns/genie-swap-runbook.md.
+   Module 2), following notebooks/patterns/genie-swap-pattern.md.
    Just point it at my space ID; do not rebuild the panel or its auth.
 
 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
-   following notebooks/patterns/dashboard-embed-runbook.md (use the
+   following notebooks/patterns/dashboard-embed-pattern.md (use the
    /embed/ URL, and add an "Open in Databricks" fallback link above it).
 ```
 
@@ -273,14 +273,14 @@ places, then redeploy the app:
 
 #### B: a live Company News feed (MCP)
 
-Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `notebooks/patterns/mcp-company-news-runbook.md`.
+Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `notebooks/patterns/mcp-company-news-pattern.md`.
 
 > **If it 403s:** the app must call the MCP server as its **service principal**, which the admin grants access to. The forwarded user token does not have MCP scope.
 
 ```text
 Add a "Company News" feature to my app, then redeploy.
 
-Follow the pattern in notebooks/patterns/mcp-company-news-runbook.md:
+Follow the pattern in notebooks/patterns/mcp-company-news-pattern.md:
 - fetch live news from the web_search_mcp MCP server,
 - summarize the results with ai_query,
 - show 3 bullets in a bell-icon dropdown in the header.
@@ -354,5 +354,5 @@ Pre-filled values used throughout the workshop. The **Session setup** prompt at 
 | | |
 |---|---|
 | **Facilitator Plan** (deploy checklist, agenda, troubleshooting) | [`docs/facilitator-plan.md`](facilitator-plan.md) |
-| **Operational runbook** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md) |
+| **Operational pattern** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](../dab/README.md) |
 | **Repo** | https://github.com/jonathan-whiteley/genie-code-vibe-workshop |
