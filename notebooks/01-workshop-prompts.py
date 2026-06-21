@@ -238,8 +238,11 @@ print(session_setup_prompt)
 # MAGIC Make these two changes, then redeploy:
 # MAGIC
 # MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from
-# MAGIC    the Genie step), following docs/patterns/genie-swap-pattern.md.
-# MAGIC    Just point it at my space ID; do not rebuild the panel or its auth.
+# MAGIC    the Genie step), following docs/patterns/genie-swap-pattern.md. Set
+# MAGIC    GENIE_SPACE_ID to my space and make sure it wins over the shared
+# MAGIC    config.json: in lib/config.py the genie_space_id line must read the
+# MAGIC    GENIE_SPACE_ID env var first (env, then shared file as fallback); fix
+# MAGIC    that one line if it is the other way round. Do not rebuild the panel or its auth.
 # MAGIC
 # MAGIC 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
 # MAGIC    following docs/patterns/dashboard-embed-pattern.md (use the
