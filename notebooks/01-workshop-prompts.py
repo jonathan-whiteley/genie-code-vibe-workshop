@@ -117,6 +117,8 @@ print(session_setup_prompt)
 # MAGIC Come up with 10 benchmark questions for my Genie space based on the metric view's
 # MAGIC measures and dimensions, add them to the space, then run the benchmark and tell me
 # MAGIC how many Genie answered correctly.
+# MAGIC
+# MAGIC If writing the benchmark to the space is blocked by the safety layer, run the questions via the Conversation API instead (see docs/patterns/genie-space-pattern.md).
 # MAGIC ```
 
 # COMMAND ----------

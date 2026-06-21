@@ -152,6 +152,8 @@ Add these 10 benchmark questions to my Genie space, then run the benchmark and t
 - Rank regions by total revenue this month.
 - What is the busiest day of week by revenue?
 - Which stores improved labor % of sales the most over the last 30 days?
+
+If writing the benchmark to the space is blocked by the safety layer, run the questions via the Conversation API instead (see docs/patterns/genie-space-pattern.md).
 ```
 
 ---
