@@ -169,6 +169,41 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## Step 3b: Patch `genie_space_id` precedence
+# MAGIC
+# MAGIC Every cloned app reads the facilitator's shared
+# MAGIC `/Workspace/Shared/command-center/config.json`, and `lib/config.py` gives that
+# MAGIC file priority over the per-app `GENIE_SPACE_ID` env var. So an attendee's own
+# MAGIC Genie space (set in their app env) is ignored in favor of the shared space.
+# MAGIC This flips the precedence for `genie_space_id` only: the env var wins, the shared
+# MAGIC file is the fallback. Idempotent.
+
+# COMMAND ----------
+
+CONFIG_PY_PATH = os.path.join(NEW_APP_SOURCE, "lib", "config.py")
+
+if not os.path.exists(CONFIG_PY_PATH):
+    print(f"No {CONFIG_PY_PATH}; skipping.")
+else:
+    with open(CONFIG_PY_PATH) as f:
+        content = f.read()
+
+    OLD = 'genie_space_id=ws_cfg.get("genie_space_id") or os.getenv("GENIE_SPACE_ID", "")'
+    NEW = 'genie_space_id=os.getenv("GENIE_SPACE_ID", "") or ws_cfg.get("genie_space_id", "")'
+
+    if NEW in content:
+        print("genie_space_id priority already patched; skipping.")
+    elif OLD in content:
+        content = content.replace(OLD, NEW)
+        with open(CONFIG_PY_PATH, "w") as f:
+            f.write(content)
+        print("Patched config.py: GENIE_SPACE_ID env var now takes priority over shared config.")
+    else:
+        print("WARNING: Expected genie_space_id line not found in config.py; manual review needed.")
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## Step 4: Create the app (idempotent)
 # MAGIC
 # MAGIC Creates the app shell and its service principal. Code is deployed later in
