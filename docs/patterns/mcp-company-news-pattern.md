@@ -27,11 +27,11 @@ result = client.call_tool("you-search", {...})  # synchronous
 
 ## Key Gotchas & Fixes
 
-### 1. Package availability in Apps runtime
+### 1. Package availability: works in the Apps runtime, NOT in a notebook
 
-- `databricks-mcp` and `mcp` must be in `requirements.txt`
-- Verify they actually persist after edits (workspace file writes via API can silently fail)
-- The packages install fine in the Apps runtime — no dependency conflict
+- `databricks-mcp` and `mcp` must be in `requirements.txt`. They install fine in the Apps runtime (its isolated pip env from `requirements.txt`), no dependency conflict.
+- **Do NOT try to test `DatabricksMCPClient` from a Serverless notebook cell.** `databricks-mcp` / `mcp` conflict with the notebook's system `typing_extensions` (too old) and fail with `cannot import name 'Sentinel'`. Test the feature in the deployed app, not a notebook.
+- Verify the `requirements.txt` edit actually persisted (workspace file writes via the API can silently fail).
 
 ### 2. Router registration crash
 
@@ -39,11 +39,11 @@ result = client.call_tool("you-search", {...})  # synchronous
 - **Solution**: Put the endpoint inline in `app.py` instead of a separate router file
 - If you import a module but forget `app.include_router(x.router)`, the endpoint returns 404 silently (FastAPI serves `{"detail":"Not Found"}` as valid JSON)
 
-### 3. Auth: SP vs. user token
+### 3. Auth: use the app service principal, and grant it on the Connection
 
-- The user's forwarded token (`x-forwarded-access-token`) gets **403** on MCP endpoints — the app's `user_api_scopes` (`sql`, `genie`, `dashboards.genie`) don't cover MCP
-- **Solution**: Use the app's **service principal** `WorkspaceClient` from `lib/deps.py`
-- MCP connection permissions are handled by Admin
+- The user's forwarded token (`x-forwarded-access-token`) gets **403** on MCP endpoints. The app's `user_api_scopes` (`sql`, `genie`, `dashboards.genie`) have nothing to do with MCP: they only cover user-forwarded OBO tokens.
+- **Solution**: call the MCP server with the app's **service principal** `WorkspaceClient` from `lib/deps.py` (`workspace_client()`), which uses the app SP's credentials.
+- **MCP permissions live on the Connection, not the app.** Grant the app SP access at **`/explore/connections/web_search_mcp` → Permissions** tab. That is the grant the SP `WorkspaceClient` relies on.
 
 ### 4. `lib/sql_utils` `:param` regex
 
@@ -65,6 +65,20 @@ result = client.call_tool("you-search", {...})  # synchronous
 - The Workspace Files API has an undocumented but real per-workspace write rate limit: saving roughly 4 to 5 files in parallel in the same second triggers 429s.
 - This feature writes several files (`app.py`, `shell.jsx`, `Homebase.html`, `requirements.txt`), so **save them one at a time, not in parallel**. Sequential writes are fine.
 - This applies to any multi-file app edit (Modules 4, 5, 6), not just Company News.
+
+### 8. `$` in SQL string literals corrupts through `editAsset`
+
+- Any `$` inside a single-quoted SQL string (the `ai_query` prompt text) is dropped when the SQL is applied as an `editAsset` patch.
+- **Solution**: write the SQL via `executeCode(language='sql')` directly, or replace `'$'` with `chr(36)` in the source so the cell runs reproducibly.
+
+### 9. Re-permissioning needs a redeploy
+
+- After you grant the SP access on the Connection, the already-running app process does NOT pick it up. A **redeploy** spawns a fresh worker with the new token grants in effect.
+
+### 10. Surface the error field in the frontend during setup
+
+- The endpoint returns `{"bullets": [], "error": "ExceptionType: message"}`, but that is invisible if the UI only shows a generic "No news available."
+- **Solution**: during setup, stash `d.error` on `window._newsError` (or render it) so you see the real exception instead of guessing across redeploys.
 
 ---
 
@@ -257,8 +271,8 @@ Add to the `<style>` block:
 
 ## Permissions Required
 
-- No new `app.yaml` resources or `user_api_scopes` needed
-- MCP connection permissions are managed by Admin (SP access to `web_search_mcp` is pre-configured)
+- No new `app.yaml` resources or `user_api_scopes` needed (`user_api_scopes` do not apply to MCP)
+- The app **service principal** must be granted access to the Connection at `/explore/connections/web_search_mcp` → Permissions (admin-managed). Redeploy after granting so a fresh worker picks up the grant.
 - Existing SQL warehouse resource handles `ai_query`
 
 ---
