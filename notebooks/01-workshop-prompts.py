@@ -146,14 +146,14 @@ print(session_setup_prompt)
 # MAGIC - Traffic vs revenue by store: scatter, one point per store
 # MAGIC - Traffic by region: bar
 # MAGIC
-# MAGIC Theme it for visual interest, like a polished editorial dashboard, and set
-# MAGIC the dashboard theme (not just per-widget colors):
-# MAGIC - Canvas background: warm off-white #FDF8F3; widget cards white #FFFFFF with
-# MAGIC   a soft warm border #E8DDD4; left-align widget headers
-# MAGIC - Font: a serif family (Georgia) for that editorial feel
-# MAGIC - Visualization palette, in this order: #FF671B (LCE orange, lead), #7B9E6B,
+# MAGIC Theme it for visual interest, like a polished editorial dashboard. Set the
+# MAGIC dashboard theme with both light and dark variants (not just per-widget colors):
+# MAGIC - Canvas background: light #FDF8F3, dark #1A1210
+# MAGIC - Widget cards: light #FFFFFF, dark #2A1F1A; borders light #E8DDD4, dark #3D2E24
+# MAGIC - Font color: light #3B2316, dark #F5EDE6; serif family (Georgia); left-align headers
+# MAGIC - Selection / accent: light #FF671B (LCE orange), dark #FF8A4C
+# MAGIC - Visualization palette (same in both): #FF671B (LCE orange, lead), #7B9E6B,
 # MAGIC   #8B4557, #D4A853, #5B8FA8, #D4785C, #6B5B8A, #3D7A6E
-# MAGIC - Selection / accent color: LCE orange #FF671B
 # MAGIC - A title with the Little Caesars feel
 # MAGIC
 # MAGIC Publish it and tell me the dashboard ID.

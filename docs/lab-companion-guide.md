@@ -173,11 +173,12 @@ Charts:
 - Traffic vs revenue by store: scatter, one point per store
 - Traffic by region: bar
 
-Theme it for visual interest, like a polished editorial dashboard, and set the dashboard theme (not just per-widget colors):
-- Canvas background: warm off-white #FDF8F3; widget cards white #FFFFFF with a soft warm border #E8DDD4; left-align widget headers
-- Font: a serif family (Georgia) for that editorial feel
-- Visualization palette, in this order: #FF671B (LCE orange, lead), #7B9E6B, #8B4557, #D4A853, #5B8FA8, #D4785C, #6B5B8A, #3D7A6E
-- Selection / accent color: LCE orange #FF671B
+Theme it for visual interest, like a polished editorial dashboard. Set the dashboard theme with both light and dark variants (not just per-widget colors):
+- Canvas background: light #FDF8F3, dark #1A1210
+- Widget cards: light #FFFFFF, dark #2A1F1A; borders light #E8DDD4, dark #3D2E24
+- Font color: light #3B2316, dark #F5EDE6; serif family (Georgia); left-align headers
+- Selection / accent: light #FF671B (LCE orange), dark #FF8A4C
+- Visualization palette (same in both): #FF671B (LCE orange, lead), #7B9E6B, #8B4557, #D4A853, #5B8FA8, #D4785C, #6B5B8A, #3D7A6E
 - A title with the Little Caesars feel
 
 Publish it and remember the dashboard ID.
