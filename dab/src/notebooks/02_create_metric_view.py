@@ -21,10 +21,10 @@ SCHEMA = dbutils.widgets.get("schema")
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC ## Inline YAML definition (kept in sync with metric-views/command_center_metrics.yaml)
+# MAGIC ## Inline YAML definition (kept in sync with data/metric-views/command_center_metrics.yaml)
 
 # COMMAND ----------
-# The metric view YAML (kept in sync with metric-views/command_center_metrics.yaml).
+# The metric view YAML (kept in sync with data/metric-views/command_center_metrics.yaml).
 # Source tables use parameterized catalog/schema so the same notebook works across
 # any target catalog without editing.
 METRIC_YAML = r'''

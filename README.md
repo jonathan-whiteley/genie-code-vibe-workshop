@@ -89,10 +89,9 @@ genie-code-vibe-workshop/
 │   ├── README.md
 │   ├── ddl.sql                            CREATE TABLE statements for the 8 workshop tables
 │   ├── generate_data.py                   Faker + Databricks Connect; --company lce | qsr_mexican
-│   └── requirements.txt
-│
-├── metric-views/
-│   └── command_center_metrics.yaml        The Metric View spine (YAML authored for ai-dev-kit skill)
+│   ├── requirements.txt
+│   └── metric-views/
+│       └── command_center_metrics.yaml    The Metric View spine (YAML authored for ai-dev-kit skill)
 │
 ├── dab/                                   Facilitator's deployable bundle
 │   ├── databricks.yml                     Targets: dev (jdub_demo), lce (ioc_sandbox)
@@ -131,7 +130,7 @@ The metric view joins `facts_sales_daypart` and `facts_labor_daypart` (each pre-
 
 Every downstream surface (the Genie space, the AI/BI dashboard, and the embedded App) draws from these same governed measures. Raw source tables remain in the schema so Genie can drill into daypart, role, or SKU detail when a question requires finer grain.
 
-Authored in YAML at `metric-views/command_center_metrics.yaml` and created via the ai-dev-kit metric-views skill in Module 1.
+Authored in YAML at `data/metric-views/command_center_metrics.yaml` and created via the ai-dev-kit metric-views skill in Module 1.
 
 ---
 
@@ -184,5 +183,5 @@ The App's catalog, schema, and Genie space ID are published to `/Workspace/Share
 | **Facilitator Plan** (deploy checklist, agenda, troubleshooting) | [`docs/facilitator-plan.md`](docs/facilitator-plan.md) |
 | **Lab Companion Guide** (attendee-facing: setup, prompts, tips) | [`docs/lab-companion-guide.md`](docs/lab-companion-guide.md) |
 | **Operational runbook** (deploy commands, gotchas, fallbacks) | [`dab/README.md`](dab/README.md) |
-| **Metric view definition** | [`metric-views/command_center_metrics.yaml`](metric-views/command_center_metrics.yaml) |
+| **Metric view definition** | [`data/metric-views/command_center_metrics.yaml`](data/metric-views/command_center_metrics.yaml) |
 | **Repo** | https://github.com/jonathan-whiteley/genie-code-vibe-workshop |

@@ -123,7 +123,7 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ```text
 # MAGIC Create my Command Center metric view at store x date grain, following
-# MAGIC the pattern in notebooks/patterns/metric-view-pattern.md.
+# MAGIC the pattern in docs/patterns/metric-view-pattern.md.
 # MAGIC
 # MAGIC - Name it <my initials>_command_center_metrics, over facts_sales_daypart
 # MAGIC   and facts_labor_daypart plus dims_stores. One metric view, no
@@ -273,11 +273,11 @@ print(session_setup_prompt)
 # MAGIC Make these two changes, then redeploy:
 # MAGIC
 # MAGIC 1. Swap the Ask Genie panel to use MY Genie space (the space ID from
-# MAGIC    the Genie step), following notebooks/patterns/genie-swap-pattern.md.
+# MAGIC    the Genie step), following docs/patterns/genie-swap-pattern.md.
 # MAGIC    Just point it at my space ID; do not rebuild the panel or its auth.
 # MAGIC
 # MAGIC 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
-# MAGIC    following notebooks/patterns/dashboard-embed-pattern.md (use the
+# MAGIC    following docs/patterns/dashboard-embed-pattern.md (use the
 # MAGIC    /embed/ URL, and add an "Open in Databricks" fallback link above it).
 # MAGIC ```
 
@@ -353,7 +353,7 @@ print(session_setup_prompt)
 # MAGIC Add a Company News feature to your app that pulls live headlines through the
 # MAGIC `web_search_mcp` MCP server and summarizes them with `ai_query()`. There is a proven
 # MAGIC pattern (and the gotchas that bite you) in your workshop Git folder at
-# MAGIC `notebooks/patterns/mcp-company-news-pattern.md`: the prompt below points Genie Code at it.
+# MAGIC `docs/patterns/mcp-company-news-pattern.md`: the prompt below points Genie Code at it.
 
 # COMMAND ----------
 
@@ -361,7 +361,7 @@ print(session_setup_prompt)
 # MAGIC ```text
 # MAGIC Add a "Company News" feature to my app, then redeploy.
 # MAGIC
-# MAGIC Follow the pattern in notebooks/patterns/mcp-company-news-pattern.md:
+# MAGIC Follow the pattern in docs/patterns/mcp-company-news-pattern.md:
 # MAGIC - fetch live news from the web_search_mcp MCP server,
 # MAGIC - summarize the results with ai_query,
 # MAGIC - show 3 bullets in a bell-icon dropdown in the header.

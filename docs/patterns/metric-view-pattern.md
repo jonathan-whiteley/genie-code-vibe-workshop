@@ -46,7 +46,7 @@ Dashboards parameterize the view with `identifier(:catalog || '.' || :schema || 
 
 ## Reference Implementation
 
-The canonical working metric view (`metric-views/command_center_metrics.yaml`), verbatim:
+The canonical working metric view (`data/metric-views/command_center_metrics.yaml`), verbatim:
 
 ```yaml
 version: "0.1"
