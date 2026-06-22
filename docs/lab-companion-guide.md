@@ -134,16 +134,12 @@ Create a Genie space on two kinds of source so it can answer both governed-KPI a
 Add a space instruction: use the metric view for the governed KPIs (revenue, forecast, traffic, labor cost, labor % of sales at store x date grain); use the raw tables for detail the metric view does not cover (SKU / inventory, employees, purchase orders, customer feedback / sentiment, and daypart or role breakdowns).
 
 Add 6 sample questions that span both: a couple of KPI questions and a couple of detail questions.
-
-Then tell me the space ID. Do not auto-run any questions; I'll test it in the Genie UI.
-
-If adding the sample questions through the genie tool fails, use the REST shape in docs/patterns/genie-space-pattern.md.
 ```
 
 **Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Generate 10 and add them to your space, then run them in the Genie UI to score it.
 
 ```text
-Come up with 10 benchmark questions for my Genie space based on the metric view's measures and dimensions, and add them to the space. Do not run the benchmark; I'll run it in the Genie UI.
+Come up with 10 benchmark questions for my Genie space based on the metric view's measures and dimensions, and add them to the space.
 ```
 
 ---
@@ -151,19 +147,15 @@ Come up with 10 benchmark questions for my Genie space based on the metric view'
 ### Module 3: AI/BI Dashboard (0:45-1:05)
 
 ```text
-Create a visual-first AI/BI dashboard on my metric view. No KPI counter tiles:
-lead with charts that surface insight, and use every measure and dimension
-across the page.
+Create a visual-first AI/BI dashboard on my metric view. No KPI counter tiles,
+just a handful of charts that surface insight.
 
 Charts:
 - Revenue share by region: pie / donut
 - Revenue trend, last 30 days: line
-- Revenue vs forecast revenue by store: grouped bar
-- Labor % of sales by store: bar, sorted high to low, flag the healthy 20-35% band
-- Labor cost vs forecast labor cost, last 30 days: line, two series
+- Revenue vs forecast revenue by store: bar
+- Labor % of sales by store: bar, sorted high to low
 - Revenue by day-of-week: bar
-- Traffic vs revenue by store: scatter, one point per store
-- Traffic by region: bar
 
 Theme it for visual interest, like a polished editorial dashboard. Set the dashboard theme with both light and dark variants (not just per-widget colors):
 - Canvas background: light #FDF8F3, dark #1A1210

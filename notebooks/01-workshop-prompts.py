@@ -107,10 +107,6 @@ print(session_setup_prompt)
 # MAGIC
 # MAGIC Add 6 sample questions that span both: a couple of KPI questions and a couple of
 # MAGIC detail questions.
-# MAGIC
-# MAGIC Then tell me the space ID. Do not auto-run any questions; I'll test it in the Genie UI.
-# MAGIC
-# MAGIC If adding the sample questions through the genie tool fails, use the REST shape in docs/patterns/genie-space-pattern.md.
 # MAGIC ```
 
 # COMMAND ----------
@@ -126,8 +122,7 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ```text
 # MAGIC Come up with 10 benchmark questions for my Genie space based on the metric view's
-# MAGIC measures and dimensions, and add them to the space. Do not run the benchmark;
-# MAGIC I'll run it in the Genie UI.
+# MAGIC measures and dimensions, and add them to the space.
 # MAGIC ```
 
 # COMMAND ----------
@@ -143,19 +138,14 @@ print(session_setup_prompt)
 # MAGIC %md
 # MAGIC ```text
 # MAGIC Create a visual-first AI/BI dashboard on my metric view. No KPI counter
-# MAGIC tiles: lead with charts that surface insight, and use every measure and
-# MAGIC dimension across the page.
+# MAGIC tiles, just a handful of charts that surface insight.
 # MAGIC
 # MAGIC Charts:
 # MAGIC - Revenue share by region: pie / donut
 # MAGIC - Revenue trend, last 30 days: line
-# MAGIC - Revenue vs forecast revenue by store: grouped bar
-# MAGIC - Labor % of sales by store: bar, sorted high to low, flag the healthy
-# MAGIC   20-35% band
-# MAGIC - Labor cost vs forecast labor cost, last 30 days: line, two series
+# MAGIC - Revenue vs forecast revenue by store: bar
+# MAGIC - Labor % of sales by store: bar, sorted high to low
 # MAGIC - Revenue by day-of-week: bar
-# MAGIC - Traffic vs revenue by store: scatter, one point per store
-# MAGIC - Traffic by region: bar
 # MAGIC
 # MAGIC Theme it for visual interest, like a polished editorial dashboard. Set the
 # MAGIC dashboard theme with both light and dark variants (not just per-widget colors):
