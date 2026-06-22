@@ -199,7 +199,7 @@ Then redeploy.
 ```text
 Restyle the Today tab in dark mode: a deep dark background with light text, and keep the LCE orange (#FF671B) accents popping against it. Leave the other tabs as they are. Then redeploy.
 
-Follow docs/patterns/app-editing-pattern.md: audit each component's background/color/border for contrast first (the Card defaults to a white background), override CSS tokens in :root instead of hunting inline colors, and edit the files with Python open() then verify on disk before redeploying.
+Follow docs/patterns/app-editing-pattern.md for the contrast and editing gotchas.
 ```
 
 ---
@@ -219,8 +219,7 @@ Make these two changes, then redeploy:
    my space ID; do not rebuild the panel or its auth.
 
 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
-   following docs/patterns/dashboard-embed-pattern.md (use the
-   /embed/ URL, and add an "Open in Databricks" fallback link above it).
+   following docs/patterns/dashboard-embed-pattern.md.
 ```
 
 > **If running low on time:** the Genie space swap is the higher-impact change, so do that first.
@@ -238,11 +237,9 @@ Give Genie a generative skill: a Unity Catalog function that calls Claude throug
 > **If the briefing returns a permission error:** the function runs `ai_query()` as **you** (Genie executes as the asking user), so your workshop group needs `CAN_QUERY` on the `databricks-claude-sonnet-4-6` endpoint. Genie Code can't grant that: flag it to your facilitator.
 
 ```text
-Create an AI store-briefing function and register it with my Genie space, following docs/patterns/genie-space-pattern.md. Genie calls functions as SELECT * FROM func(), which dictates the shape:
+Create an AI store-briefing function named <my initials>_store_briefing and register it with my Genie space, following docs/patterns/genie-space-pattern.md (it has the function shape and the registration steps).
 
-- Create a UC function <my initials>_store_briefing() in my metric view's catalog/schema that RETURNS TABLE (briefing STRING). Use inline subqueries, NOT CTEs. Read my store's latest-day numbers (revenue, forecast revenue, labor % of sales, traffic, prior-day revenue) from the metric view and pass them to ai_query() on databricks-claude-sonnet-4-6 for a 3-bullet manager briefing plus a "Next Best Action", under 100 words. Use chr(36) for any $ in string literals, and create the function via executeCode (not editAsset).
-- Register it in my Genie space as a sql_example instruction (addInstructionsToSpace) mapping a question to SELECT * FROM <cat>.<sch>.<my initials>_store_briefing(). Do NOT use serialized_space sql_functions (it creates a broken certified answer).
-- Optionally add "Give me today's store briefing" as a sample question chip.
+The function reads my store's latest-day numbers from the metric view (revenue, forecast revenue, labor % of sales, traffic, prior-day revenue) and passes them to ai_query() on databricks-claude-sonnet-4-6 for a 3-bullet manager briefing plus a "Next Best Action", under 100 words.
 
 Do not call it from here; I'll try it in the Ask Genie panel.
 ```
@@ -269,8 +266,6 @@ Follow the pattern in docs/patterns/mcp-company-news-pattern.md:
 - fetch live news from the web_search_mcp MCP server,
 - summarize the results with ai_query,
 - show 3 bullets in a bell-icon dropdown in the header.
-
-Save the app files one at a time, not in parallel (the Workspace Files API rate-limits bursty writes).
 ```
 
 ---

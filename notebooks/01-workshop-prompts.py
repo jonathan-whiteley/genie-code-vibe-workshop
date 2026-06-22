@@ -209,7 +209,7 @@ print(session_setup_prompt)
 # MAGIC ```text
 # MAGIC Restyle the Today tab in dark mode: a deep dark background with light text, and keep the LCE orange (#FF671B) accents popping against it. Leave the other tabs as they are. Then redeploy.
 # MAGIC
-# MAGIC Follow docs/patterns/app-editing-pattern.md: audit each component's background/color/border for contrast first (the Card defaults to a white background), override CSS tokens in :root instead of hunting inline colors, and edit the files with Python open() then verify on disk before redeploying.
+# MAGIC Follow docs/patterns/app-editing-pattern.md for the contrast and editing gotchas.
 # MAGIC ```
 
 # COMMAND ----------
@@ -236,8 +236,7 @@ print(session_setup_prompt)
 # MAGIC    at my space ID; do not rebuild the panel or its auth.
 # MAGIC
 # MAGIC 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
-# MAGIC    following docs/patterns/dashboard-embed-pattern.md (use the
-# MAGIC    /embed/ URL, and add an "Open in Databricks" fallback link above it).
+# MAGIC    following docs/patterns/dashboard-embed-pattern.md.
 # MAGIC ```
 
 # COMMAND ----------
@@ -270,22 +269,14 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create an AI store-briefing function and register it with my Genie space,
-# MAGIC following docs/patterns/genie-space-pattern.md. Genie calls functions as
-# MAGIC SELECT * FROM func(), which dictates the shape:
+# MAGIC Create an AI store-briefing function named <my initials>_store_briefing and
+# MAGIC register it with my Genie space, following docs/patterns/genie-space-pattern.md
+# MAGIC (it has the function shape and the registration steps).
 # MAGIC
-# MAGIC - Create a UC function <my initials>_store_briefing() in my metric view's
-# MAGIC   catalog/schema that RETURNS TABLE (briefing STRING). Use inline subqueries,
-# MAGIC   NOT CTEs. Read my store's latest-day numbers (revenue, forecast revenue,
-# MAGIC   labor % of sales, traffic, prior-day revenue) from the metric view and pass
-# MAGIC   them to ai_query() on databricks-claude-sonnet-4-6 for a 3-bullet manager
-# MAGIC   briefing plus a "Next Best Action", under 100 words. Use chr(36) for any $
-# MAGIC   in string literals, and create the function via executeCode (not editAsset).
-# MAGIC - Register it in my Genie space as a sql_example instruction
-# MAGIC   (addInstructionsToSpace) mapping a question to
-# MAGIC   SELECT * FROM <cat>.<sch>.<my initials>_store_briefing(). Do NOT use
-# MAGIC   serialized_space sql_functions (it creates a broken certified answer).
-# MAGIC - Optionally add "Give me today's store briefing" as a sample question chip.
+# MAGIC The function reads my store's latest-day numbers from the metric view (revenue,
+# MAGIC forecast revenue, labor % of sales, traffic, prior-day revenue) and passes them
+# MAGIC to ai_query() on databricks-claude-sonnet-4-6 for a 3-bullet manager briefing
+# MAGIC plus a "Next Best Action", under 100 words.
 # MAGIC
 # MAGIC Do not call it from here; I'll try it in the Ask Genie panel.
 # MAGIC ```
@@ -328,8 +319,6 @@ print(session_setup_prompt)
 # MAGIC - fetch live news from the web_search_mcp MCP server,
 # MAGIC - summarize the results with ai_query,
 # MAGIC - show 3 bullets in a bell-icon dropdown in the header.
-# MAGIC
-# MAGIC Save the app files one at a time, not in parallel (the Workspace Files API rate-limits bursty writes).
 # MAGIC ```
 
 # COMMAND ----------
