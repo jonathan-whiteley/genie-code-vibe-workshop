@@ -30,6 +30,10 @@
 # MAGIC   granted its service principal the warehouse, catalog and schema (which covers
 # MAGIC   the tables and the metric view), and set the genie, sql, and
 # MAGIC   dashboards.genie scopes. So no prompt here asks Genie Code to grant anything.
+# MAGIC - This workshop also ships a `command-center-patterns` skill: field-tested
+# MAGIC   patterns for the trickier steps (metric view, dashboard embed, Genie swap,
+# MAGIC   MCP feed, Genie functions). Genie Code loads it automatically; the hardest
+# MAGIC   prompts also name the exact pattern file.
 # MAGIC - Always read what Genie Code generates before you run it.
 
 # COMMAND ----------
@@ -68,16 +72,17 @@ print(session_setup_prompt)
 
 # MAGIC %md
 # MAGIC ```text
-# MAGIC Create my Command Center metric view at store x date grain, following
-# MAGIC the pattern in docs/patterns/metric-view-pattern.md.
+# MAGIC Create my Command Center metric view at store x date grain.
 # MAGIC
 # MAGIC - Name it <my initials>_command_center_metrics, over facts_sales_daypart
 # MAGIC   and facts_labor_daypart plus dims_stores. One metric view, no
 # MAGIC   intermediary views.
+# MAGIC - Pre-aggregate each fact table to one row per store per date in its own
+# MAGIC   subquery before joining (the daypart and role grain double-counts otherwise).
 # MAGIC - Measures: revenue, forecast revenue, traffic, labor cost,
 # MAGIC   forecast labor cost, labor % of sales.
 # MAGIC - Dimensions: store, region, date, day-of-week.
-# MAGIC - Then run the pattern's verification SELECT.
+# MAGIC - Then run a verification SELECT.
 # MAGIC ```
 
 # COMMAND ----------

@@ -39,6 +39,8 @@ Every prompt below is in a **code block**: hit the copy button, paste into **Gen
 
 Prompts are short on purpose. The agent has **ai-dev-kit** skills loaded: it knows how to build metric views, Genie spaces, dashboards, apps, and jobs on Databricks. Tell it *what*; the skills know *how*. **Always read what it generates before running it.**
 
+This workshop also ships a **`command-center-patterns`** skill: field-tested patterns for the trickier steps (metric view, dashboard embed, Genie swap, MCP feed, Genie functions). Genie Code loads it automatically, and the hardest prompts also name the exact pattern file.
+
 ---
 
 ## Pre-Work (complete before the workshop)
@@ -110,16 +112,17 @@ Now paste each module prompt in order; the agent already knows your initials and
 > **Note:** Genie Code runs the CREATE statement for you, but you need CREATE on the schema. If it is denied, ask the facilitator to grant your group CREATE on `ioc_sandbox.vibe_workshop`, or create the view in your own sandbox schema.
 
 ```text
-Create my Command Center metric view at store x date grain, following
-the pattern in docs/patterns/metric-view-pattern.md.
+Create my Command Center metric view at store x date grain.
 
 - Name it <my initials>_command_center_metrics, over facts_sales_daypart
   and facts_labor_daypart plus dims_stores. One metric view, no
   intermediary views.
+- Pre-aggregate each fact table to one row per store per date in its own
+  subquery before joining (the daypart and role grain double-counts otherwise).
 - Measures: revenue, forecast revenue, traffic, labor cost,
   forecast labor cost, labor % of sales.
 - Dimensions: store, region, date, day-of-week.
-- Then run the pattern's verification SELECT.
+- Then run a verification SELECT.
 ```
 
 ---
