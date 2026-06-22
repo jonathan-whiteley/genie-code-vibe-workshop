@@ -215,11 +215,8 @@ My app already has an Ask Genie panel and a home page with 3 tiles.
 Make these two changes, then redeploy:
 
 1. Swap the Ask Genie panel to use MY Genie space (the space ID from
-   Module 2), following docs/patterns/genie-swap-pattern.md. Set
-   GENIE_SPACE_ID to my space and make sure it wins over the shared
-   config.json: in lib/config.py the genie_space_id line must read the
-   GENIE_SPACE_ID env var first (env, then shared file as fallback); fix
-   that one line if it is the other way round. Do not rebuild the panel or its auth.
+   Module 2), following docs/patterns/genie-swap-pattern.md. Point it at
+   my space ID; do not rebuild the panel or its auth.
 
 2. Embed my published AI/BI dashboard as an iframe below the 3 tiles,
    following docs/patterns/dashboard-embed-pattern.md (use the
