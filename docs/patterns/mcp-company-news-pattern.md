@@ -192,7 +192,7 @@ const NewsDropdown = () => {
       .catch(() => { setNews([]); setHidden(true); });
   }, [open]);
 
-  const LCE_ORANGE = '#FF5F00';
+  const LCE_ORANGE = '#FF671B';
   const LCE_ORANGE_LIGHT = '#FFF3E8';
   const LCE_ORANGE_MED = '#FFD6AD';
 

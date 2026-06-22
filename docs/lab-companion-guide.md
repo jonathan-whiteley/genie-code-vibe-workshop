@@ -25,7 +25,7 @@
 | 1:05-1:15 | Break | |
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
-| 2:10-2:35 | Module 6: AI briefing | `ai_query()` briefing function your Genie space can call |
+| 2:10-2:35 | Module 6: Live AI | (A) `ai_query()` briefing function for the Genie space; (B) Company News feed in the app via the `web_search_mcp` MCP server |
 | 2:35-2:50 | Module 7 (BONUS): Job | Multi-task refresh job: validate, refresh dashboard, redeploy app |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
 
@@ -141,21 +141,10 @@ Then tell me the space ID. Do not auto-run any questions; I'll test it in the Ge
 If adding the sample questions through the genie tool fails, use the REST shape in docs/patterns/genie-space-pattern.md.
 ```
 
-**Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Add 10 to your space, then run them in the Genie UI to score it.
+**Follow-up: add a benchmark set.** Benchmarks measure how accurately Genie answers known questions. Generate 10 and add them to your space, then run them in the Genie UI to score it.
 
 ```text
-Add these 10 benchmark questions to my Genie space (do not run the benchmark; I'll run it in the Genie UI):
-
-- Which 5 stores had the highest labor % of sales last week?
-- How has labor % of sales trended over the last 30 days across all stores?
-- Which region has the lowest labor % of sales this month?
-- Which stores are below their revenue forecast this week?
-- Show the revenue trend over the last 30 days.
-- How did labor cost track against its forecast this week?
-- Which 5 stores have the highest revenue this month?
-- Rank regions by total revenue this month.
-- What is the busiest day of week by revenue?
-- Which stores improved labor % of sales the most over the last 30 days?
+Come up with 10 benchmark questions for my Genie space based on the metric view's measures and dimensions, and add them to the space. Do not run the benchmark; I'll run it in the Genie UI.
 ```
 
 ---
@@ -185,7 +174,7 @@ Theme it for visual interest, like a polished editorial dashboard. Set the dashb
 - Visualization palette (same in both): #FF671B (LCE orange, lead), #7B9E6B, #8B4557, #D4A853, #5B8FA8, #D4785C, #6B5B8A, #3D7A6E
 - A title with the Little Caesars feel
 
-Publish it and remember the dashboard ID.
+Publish it and tell me the dashboard ID.
 ```
 
 ---
@@ -201,11 +190,12 @@ Open its URL and confirm it loads.
 
 Now give it Little Caesars branding and make it pop:
 - copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it in the header
+- copy the favicon from my workshop Git folder (branding/lce/favicon.svg) into the app's static assets and wire it up with a <link rel="icon"> in the page <head> so it shows in the browser tab
 - use LCE orange (#FF671B) as the accent throughout: buttons, links, active tabs, and KPI highlights
 - add a bold hero header on the Today tab with the logo and the store name
 - give the tiles and cards rounded corners, soft shadows, and a subtle hover lift
 - add a thin LCE-orange top accent bar and a dark navbar
-- title the app "Command Center | LCE"
+- set the browser tab title (the HTML <title> tag) to exactly "Command Center" with no store number
 
 Then redeploy.
 ```
