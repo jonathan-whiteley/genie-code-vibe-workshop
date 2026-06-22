@@ -9,17 +9,20 @@
 # MAGIC and OBO scopes already wired. Once this notebook finishes, everything else in the
 # MAGIC workshop is pure prompting.
 # MAGIC
-# MAGIC **To start: type your initials into the `initials` widget at the top of this
-# MAGIC notebook, then Run All.**
+# MAGIC **To start: run the first code cell below (Step 1) once. That makes the
+# MAGIC `initials` widget appear at the top of the notebook. Type your initials into
+# MAGIC it, then click Run All.** (The first run errors until the widget has a value;
+# MAGIC that is expected.)
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Step 1: Enter your initials 🔤
 # MAGIC
-# MAGIC Your initials prefix every resource you create today, so they must be unique in
-# MAGIC the workshop. Enter two or three lowercase letters in the widget at the top, then
-# MAGIC **Run All**.
+# MAGIC **Run this cell once** to create the `initials` widget at the top of the
+# MAGIC notebook. Then type your initials into that widget (two or three lowercase
+# MAGIC letters, unique in the workshop) and click **Run All**. Your initials prefix
+# MAGIC every resource you create today.
 
 # COMMAND ----------
 

@@ -222,8 +222,12 @@ else:
     if failed:
         print(
             "\nYou lack grant authority on this catalog (expected for the shared "
-            "workshop catalog). Send your facilitator your SP id and ask them to "
-            f"run these as a catalog owner (SP id: {SP_ID}):\n"
+            "workshop catalog). A catalog owner / metastore admin must run the "
+            "statements below. They target this app's SERVICE PRINCIPAL "
+            f"(SP id: {SP_ID}) on purpose: granting to a user group like "
+            "`account users` does NOT cover the app SP, since a service principal "
+            "is not a member of that group. The app reads tables as this SP, so "
+            "these must grant the SP id specifically:\n"
         )
         for stmt in failed:
             print(f"  {stmt};")
