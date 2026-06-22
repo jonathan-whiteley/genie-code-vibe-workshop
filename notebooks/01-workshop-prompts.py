@@ -245,19 +245,41 @@ print(session_setup_prompt)
 # MAGIC ## Module 6: Bring live AI into your Command Center 🤖
 # MAGIC
 # MAGIC Two AI features here:
-# MAGIC - **A: a store briefing** your Genie space can generate with `ai_query()` over your metric view
-# MAGIC - **B: a Company News feed** in the app, fetched live through the `web_search_mcp` MCP server
+# MAGIC - **A: a Company News feed** in the app, fetched live through the `web_search_mcp` MCP server
+# MAGIC - **B: a store briefing** your Genie space can generate with `ai_query()` over your metric view
 # MAGIC
-# MAGIC > **Pre-reqs (facilitator/admin):** Feature A runs `ai_query()` as the asking user, so
-# MAGIC > your workshop group needs `CAN_QUERY` on `databricks-claude-sonnet-4-6`. Feature B's
-# MAGIC > app calls the `web_search_mcp` MCP server as the app's **service principal**, which the
-# MAGIC > admin must grant access to. Genie Code cannot grant either; flag permission errors to
-# MAGIC > your facilitator.
+# MAGIC > **Pre-reqs (facilitator/admin):** Feature A's app calls the `web_search_mcp` MCP
+# MAGIC > server as the app's **service principal**, which the admin must grant access to.
+# MAGIC > Feature B runs `ai_query()` as the asking user, so your workshop group needs
+# MAGIC > `CAN_QUERY` on `databricks-claude-sonnet-4-6`. Genie Code cannot grant either;
+# MAGIC > flag permission errors to your facilitator.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### A: the store briefing (Genie function) 📋
+# MAGIC ### A: a live Company News feed (MCP) 📰
+# MAGIC
+# MAGIC Add a Company News feature to your app that pulls live headlines through the
+# MAGIC `web_search_mcp` MCP server and summarizes them with `ai_query()`. There is a proven
+# MAGIC pattern (and the gotchas that bite you) in your workshop Git folder at
+# MAGIC `docs/patterns/mcp-company-news-pattern.md`: the prompt below points Genie Code at it.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ```text
+# MAGIC Add a "Company News" feature to my app, then redeploy.
+# MAGIC
+# MAGIC Follow the pattern in docs/patterns/mcp-company-news-pattern.md:
+# MAGIC - fetch live news from the web_search_mcp MCP server,
+# MAGIC - summarize the results with ai_query,
+# MAGIC - show 3 bullets in a bell-icon dropdown in the header.
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### B: the store briefing (Genie function) 📋
 # MAGIC
 # MAGIC A Unity Catalog function that calls Claude through `ai_query()` over your metric view
 # MAGIC and returns a plain-language briefing of the latest day plus a recommended Next Best
@@ -284,7 +306,7 @@ print(session_setup_prompt)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### A follow-up: make it one click 🎯
+# MAGIC ### B follow-up: make it one click 🎯
 # MAGIC
 # MAGIC Surface the briefing as a starter question so anyone can trigger it instantly,
 # MAGIC in the space and in your app's Ask Genie panel.
@@ -297,28 +319,6 @@ print(session_setup_prompt)
 # MAGIC places, then redeploy the app:
 # MAGIC - as a sample question on my Genie space, and
 # MAGIC - as a suggested question in my app's Ask Genie panel UI.
-# MAGIC ```
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ### B: a live Company News feed (MCP) 📰
-# MAGIC
-# MAGIC Add a Company News feature to your app that pulls live headlines through the
-# MAGIC `web_search_mcp` MCP server and summarizes them with `ai_query()`. There is a proven
-# MAGIC pattern (and the gotchas that bite you) in your workshop Git folder at
-# MAGIC `docs/patterns/mcp-company-news-pattern.md`: the prompt below points Genie Code at it.
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ```text
-# MAGIC Add a "Company News" feature to my app, then redeploy.
-# MAGIC
-# MAGIC Follow the pattern in docs/patterns/mcp-company-news-pattern.md:
-# MAGIC - fetch live news from the web_search_mcp MCP server,
-# MAGIC - summarize the results with ai_query,
-# MAGIC - show 3 bullets in a bell-icon dropdown in the header.
 # MAGIC ```
 
 # COMMAND ----------

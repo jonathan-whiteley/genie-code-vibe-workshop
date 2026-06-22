@@ -25,7 +25,7 @@
 | 1:05-1:15 | Break | |
 | 1:15-1:45 | Module 4: App polish | `<initials>-command-center` already deployed; verify it loads + optional branding tweaks |
 | 1:45-2:10 | Module 5: Embed | Genie + dashboard live in the app |
-| 2:10-2:35 | Module 6: Live AI | (A) `ai_query()` briefing function for the Genie space; (B) Company News feed in the app via the `web_search_mcp` MCP server |
+| 2:10-2:35 | Module 6: Live AI | (A) Company News feed in the app via the `web_search_mcp` MCP server; (B) `ai_query()` briefing function for the Genie space |
 | 2:35-2:50 | Module 7 (BONUS): Job | Multi-task refresh job: validate, refresh dashboard, redeploy app |
 | 2:50-3:00 | Demo round + wrap | Share App URL |
 
@@ -228,9 +228,24 @@ Make these two changes, then redeploy:
 
 ### Module 6: Live AI in your Command Center (2:10-2:35)
 
-Two AI features: **A**, a store briefing your Genie space can generate with `ai_query()`; and **B**, a Company News feed in the app fetched live through the `web_search_mcp` MCP server.
+Two AI features: **A**, a Company News feed in the app fetched live through the `web_search_mcp` MCP server; and **B**, a store briefing your Genie space can generate with `ai_query()`.
 
-#### A: the store briefing (Genie function)
+#### A: a live Company News feed (MCP)
+
+Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `docs/patterns/mcp-company-news-pattern.md`.
+
+> **If it 403s:** the app must call the MCP server as its **service principal**, which the admin grants access to. The forwarded user token does not have MCP scope.
+
+```text
+Add a "Company News" feature to my app, then redeploy.
+
+Follow the pattern in docs/patterns/mcp-company-news-pattern.md:
+- fetch live news from the web_search_mcp MCP server,
+- summarize the results with ai_query,
+- show 3 bullets in a bell-icon dropdown in the header.
+```
+
+#### B: the store briefing (Genie function)
 
 Give Genie a generative skill: a Unity Catalog function that calls Claude through `ai_query()` over your metric view and returns a plain-language briefing of the latest day plus a recommended Next Best Action. Once it's registered with your Genie space, Genie can call it on request, including from the **Ask Genie** panel in your app: no app code change, because the panel already runs as you.
 
@@ -251,21 +266,6 @@ Add "Give me today's store briefing" as a starter question in two
 places, then redeploy the app:
 - as a sample question on my Genie space, and
 - as a suggested question in my app's Ask Genie panel UI.
-```
-
-#### B: a live Company News feed (MCP)
-
-Add a Company News feature to your app that pulls live headlines through the `web_search_mcp` MCP server and summarizes them with `ai_query()`. The prompt points Genie Code at a proven pattern (with the gotchas already solved) in `docs/patterns/mcp-company-news-pattern.md`.
-
-> **If it 403s:** the app must call the MCP server as its **service principal**, which the admin grants access to. The forwarded user token does not have MCP scope.
-
-```text
-Add a "Company News" feature to my app, then redeploy.
-
-Follow the pattern in docs/patterns/mcp-company-news-pattern.md:
-- fetch live news from the web_search_mcp MCP server,
-- summarize the results with ai_query,
-- show 3 bullets in a bell-icon dropdown in the header.
 ```
 
 ---
