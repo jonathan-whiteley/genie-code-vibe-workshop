@@ -8,14 +8,9 @@
 # MAGIC resources, and it creates and deploys your personal app with all the permissions
 # MAGIC and OBO scopes already wired. Once this notebook finishes, everything else in the
 # MAGIC workshop is pure prompting.
-
-# COMMAND ----------
-
-# MAGIC %pip install -q --upgrade "databricks-sdk>=0.40"
-
-# COMMAND ----------
-
-dbutils.library.restartPython()
+# MAGIC
+# MAGIC **To start: type your initials into the `initials` widget at the top of this
+# MAGIC notebook, then Run All.**
 
 # COMMAND ----------
 
@@ -34,6 +29,14 @@ if not INITIALS:
     raise ValueError("Set the 'initials' widget at the top, then Run All.")
 print(f"Setting up for: {INITIALS}")
 print(f"Your app will be: {INITIALS}-command-center")
+
+# COMMAND ----------
+
+# MAGIC %pip install -q --upgrade "databricks-sdk>=0.40"
+
+# COMMAND ----------
+
+dbutils.library.restartPython()
 
 # COMMAND ----------
 
