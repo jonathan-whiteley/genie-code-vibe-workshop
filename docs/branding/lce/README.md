@@ -82,7 +82,7 @@ variables (defined in `colors_and_type.css`). Drop this block into
 Logo swap (in `app/shell.jsx` Logo component):
 
 ```jsx
-<img src="branding/lce/logo.svg" alt="LCE" />
+<img src="logo.svg" alt="LCE" />
 <span>Operator Command Center</span>
 ```
 

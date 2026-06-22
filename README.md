@@ -55,7 +55,7 @@ Genie Code already ships with built-in intelligence about your workspace and you
 | Storage | lakebase, vector-search |
 | Reference | docs, dbsql, pdf-generation |
 
-This workshop adds a few of its own **project patterns** in [`docs/patterns/`](docs/patterns/) that the module prompts point Genie Code at for the trickier steps (the metric view, the dashboard embed, the Genie swap, and the MCP company-news feed).
+This workshop adds a few of its own **project patterns** in [`docs/patterns/`](docs/patterns/) that the module prompts point Genie Code at for the trickier steps.
 </details>
 
 ---
@@ -123,10 +123,11 @@ Five steps from a fresh workspace to a fully-wired reference deployment. See [`d
 genie-code-vibe-workshop/
 ├── README.md                              This file
 │
-├── docs/                                  Guides, design docs, and reusable patterns
+├── docs/                                  Guides, design docs, branding, and reusable patterns
 │   ├── facilitator-plan.md                Pre-workshop checklist, agenda, risks, prompts
 │   ├── lab-companion-guide.md             Attendee-facing: session setup, modules, prompts
-│   └── patterns/                          Reference patterns the prompts point Genie Code at
+│   ├── patterns/                          Reference patterns the prompts point Genie Code at
+│   └── branding/lce/                      LCE branding: logo, favicon, palette guide
 │
 ├── notebooks/                             Attendee notebooks (run from a Workspace Git folder)
 │   ├── 00-setup.py                        Pre-req: install skills + create/deploy your app
@@ -141,15 +142,13 @@ genie-code-vibe-workshop/
 │   └── metric-views/
 │       └── command_center_metrics.yaml    The governed KPI definition (created in Module 1)
 │
-├── dab/                                   Facilitator's deployable bundle
-│   ├── databricks.yml                     Targets: dev (jdub_demo), lce (ioc_sandbox)
-│   ├── resources/                         job · dashboard · app · lakebase YAMLs
-│   └── src/
-│       ├── notebooks/                     Setup tasks: create metric view, create Genie space
-│       ├── dashboards/                    operator_command_center.lvdash.json
-│       └── app/                           command-center-dev reference App (attendee template)
-│
-└── branding/lce/                          LCE branding: logo, favicon, palette guide
+└── dab/                                   Facilitator's deployable bundle
+    ├── databricks.yml                     Targets: dev (jdub_demo), lce (ioc_sandbox)
+    ├── resources/                         job · dashboard · app · lakebase YAMLs
+    └── src/
+        ├── notebooks/                     Setup tasks: create metric view, create Genie space
+        ├── dashboards/                    operator_command_center.lvdash.json
+        └── app/                           command-center-dev reference App (attendee template)
 ```
 </details>
 
@@ -189,7 +188,7 @@ The App's catalog, schema, and Genie space ID are published to `/Workspace/Share
 ## Reusing for another customer
 
 1. Add an entry to `COMPANY_CONFIGS` in `data/generate_data.py` (store roster + item catalog + review templates)
-2. Drop logo + colors into `branding/<customer>/`
+2. Drop logo + colors into `docs/branding/<customer>/`
 3. Deploy with `--var company=<key>` (e.g. `databricks bundle deploy -t prod --var company=acme`)
 4. The KPI measures, Genie questions, dashboard widgets, and App structure stay constant; the brand surface is the only delta
 

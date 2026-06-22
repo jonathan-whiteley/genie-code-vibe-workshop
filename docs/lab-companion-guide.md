@@ -189,8 +189,8 @@ My app <initials>-command-center is already deployed (the setup notebook created
 Open its URL and confirm it loads.
 
 Now give it Little Caesars branding and make it pop:
-- copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it in the header
-- copy the favicon from my workshop Git folder (branding/lce/favicon.svg) into the app's static assets and wire it up with a <link rel="icon"> in the page <head> so it shows in the browser tab
+- copy the LCE logo from my workshop Git folder (docs/branding/lce/logo.svg) into the app's static assets and use it in the header
+- copy the favicon from my workshop Git folder (docs/branding/lce/favicon.svg) into the app's static assets and wire it up with a <link rel="icon"> in the page <head> so it shows in the browser tab
 - use LCE orange (#FF671B) as the accent throughout: buttons, links, active tabs, and KPI highlights
 - add a bold hero header on the Today tab with the logo and the store name
 - give the tiles and cards rounded corners, soft shadows, and a subtle hover lift
@@ -316,7 +316,7 @@ Pre-filled values used throughout the workshop. The **Session setup** prompt at 
 | SQL warehouse name | `serverless` |
 | Model endpoint (for `ai_query()`) | `databricks-claude-sonnet-4-6` |
 | Metric view name | `<initials>_command_center_metrics` |
-| LCE branding folder (in repo) | `branding/lce/` |
+| LCE branding folder (in repo) | `docs/branding/lce/` |
 | App template | `command-center-dev` |
 | **Captured during workshop:** | |
 | Your Genie space ID | `<GENIE_SPACE_ID>` |

@@ -121,7 +121,7 @@ Warehouse `CAN_USE`, Genie `CAN_VIEW`, and endpoint `CAN_USE` grants are set via
 
 #### Other prep
 
-- [ ] Branding assets in `branding/lce/` (logo SVG + brand color hex) already shipped in repo
+- [ ] Branding assets in `docs/branding/lce/` (logo SVG + brand color hex) already shipped in repo
 - [ ] Workspace quotas verified (defaults fit); edge cases in [`dab/README.md` section "Common gotchas"](../dab/README.md#common-deploy-gotchas)
 - [ ] **Metric view smoke test:** run `SELECT * FROM ioc_sandbox.vibe_workshop.command_center_metrics LIMIT 5` (must return rows)
 - [ ] **Genie smoke test:** ask the reference Genie space 2-3 revenue and labor questions; verify answers
@@ -186,7 +186,7 @@ The App reads `/Workspace/Shared/command-center/config.json` (written by the set
 - [ ] Dashboard embedding allowlist set: `*.databricksapps.com` added under Settings → Security → External access → Embed dashboards (admin-only; without it Module 5 iframes fail for everyone)
 - [ ] **`ai_query()` endpoint grant for Module 6:** the attendee group has `CAN_QUERY` on `databricks-claude-sonnet-4-6` (Serving → endpoint → Permissions). Module 6's briefing function runs `ai_query()` as the asking user via Genie, so without this the briefing returns a permission error. Genie Code cannot grant this
 - [ ] **MCP web search for Module 6 (Feature B):** the `web_search_mcp` UC connection (managed MCP server) exists in the workshop workspace, and each attendee app service principal has access to it (admin-configured; the app calls the MCP server as its SP, not the user). Note the URL is workspace-specific: `https://<workspace-host>/api/2.0/mcp/external/web_search_mcp`. Pattern + gotchas: [`docs/patterns/mcp-company-news-pattern.md`](patterns/mcp-company-news-pattern.md)
-- [ ] Send attendees the **Lab Companion Guide** and workshop env values: workspace URL, catalog, warehouse name, AI Gateway endpoint, branding folder (`branding/lce/`)
+- [ ] Send attendees the **Lab Companion Guide** and workshop env values: workspace URL, catalog, warehouse name, AI Gateway endpoint, branding folder (`docs/branding/lce/`)
 - [ ] Remind attendees to clone the repo as a Git folder, run `notebooks/00-setup`, and open a new chat before the session
 - [ ] Warm the SQL warehouse by running the reference dashboard once
 - [ ] Smoke-test the reference Genie space with 2-3 revenue and labor questions

@@ -191,8 +191,8 @@ print(session_setup_prompt)
 # MAGIC Open its URL and confirm it loads.
 # MAGIC
 # MAGIC Now give it Little Caesars branding and make it pop:
-# MAGIC - copy the LCE logo from my workshop Git folder (branding/lce/logo.svg) into the app's static assets and use it in the header
-# MAGIC - copy the favicon from my workshop Git folder (branding/lce/favicon.svg) into the app's static assets and wire it up with a <link rel="icon"> in the page <head> so it shows in the browser tab
+# MAGIC - copy the LCE logo from my workshop Git folder (docs/branding/lce/logo.svg) into the app's static assets and use it in the header
+# MAGIC - copy the favicon from my workshop Git folder (docs/branding/lce/favicon.svg) into the app's static assets and wire it up with a <link rel="icon"> in the page <head> so it shows in the browser tab
 # MAGIC - use LCE orange (#FF671B) as the accent throughout: buttons, links, active tabs, and KPI highlights
 # MAGIC - add a bold hero header on the Today tab with the logo and the store name
 # MAGIC - give the tiles and cards rounded corners, soft shadows, and a subtle hover lift
