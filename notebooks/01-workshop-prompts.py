@@ -28,7 +28,7 @@
 # MAGIC - Genie Code will NOT run permission or grant commands, and it cannot bind app
 # MAGIC   resources or set app OBO scopes. That is why Lab 00 already created your app,
 # MAGIC   granted its service principal the warehouse, catalog and schema (which covers
-# MAGIC   the tables and the metric view) and Lakebase, and set the genie, sql, and
+# MAGIC   the tables and the metric view), and set the genie, sql, and
 # MAGIC   dashboards.genie scopes. So no prompt here asks Genie Code to grant anything.
 # MAGIC - Always read what Genie Code generates before you run it.
 

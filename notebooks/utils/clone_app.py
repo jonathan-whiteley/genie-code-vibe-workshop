@@ -148,12 +148,31 @@ app_info = w.api_client.do("GET", f"/api/2.0/apps/{NEW_APP}")
 SP_ID = app_info.get("service_principal_client_id") or app_info.get("id")
 print(f"App SP client id : {SP_ID}")
 
+# Bind only the warehouse + OBO scopes here. Skip two resource kinds the attendee
+# cannot bind, and does not need to:
+# - uc_securable (the 8 tables + metric view): binding a table GRANTS the app SP
+#   SELECT, which requires the binder to own / have MANAGE on the catalog. On a
+#   fresh or facilitator-owned catalog the attendee does not, so the bind
+#   hard-fails ("nobody has USE CATALOG ... you don't have MANAGE to grant it").
+#   Table access instead comes from the SELECT ON SCHEMA grant in the next step,
+#   which prints a facilitator fallback if the attendee lacks grant authority.
+# - database (Lakebase): admin-only bind, and no module uses it (write-back is out
+#   of scope; the app's Lakebase pool is lazy, so the app still starts).
+SKIP_KINDS = ("uc_securable", "database")
+BIND_RESOURCES = [r for r in RESOURCES if not any(k in r for k in SKIP_KINDS)]
+skipped = [r for r in RESOURCES if any(k in r for k in SKIP_KINDS)]
+
 result = w.api_client.do(
     "PATCH",
     f"/api/2.0/apps/{NEW_APP}",
-    body={"resources": RESOURCES, "user_api_scopes": USER_API_SCOPES},
+    body={"resources": BIND_RESOURCES, "user_api_scopes": USER_API_SCOPES},
 )
 print(f"Bound {len(result.get('resources', []))} resources; scopes: {result.get('user_api_scopes')}")
+if skipped:
+    print(
+        f"Skipped {len(skipped)} resource binding(s): UC tables get SELECT ON SCHEMA "
+        "in the next step; Lakebase is admin-only and unused (write-back stays read-only)."
+    )
 
 from databricks.sdk.service.sql import StatementState
 

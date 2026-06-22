@@ -65,7 +65,7 @@ Each attendee runs one notebook before the workshop. It handles both skills inst
 2. Attendee opens `notebooks/00-setup`, sets their initials widget, and clicks **Run All**.
 3. The notebook orchestrates two helpers:
    - `notebooks/utils/install_genie_code_skills.py`: installs ai-dev-kit skills into `/Users/<username>/.assistant/skills/` (delegates to the official ai-dev-kit installer).
-   - `notebooks/utils/clone_app.py`: copies the `command-center-dev` template, creates the attendee's `<initials>-command-center` app, binds its service principal to the warehouse, catalog/schema (SELECT ON SCHEMA covers all 8 tables and the metric view), and Lakebase, sets OBO scopes (genie, sql, dashboards.genie), and deploys.
+   - `notebooks/utils/clone_app.py`: copies the `command-center-dev` template, creates the attendee's `<initials>-command-center` app, binds the warehouse and grants its service principal `SELECT ON SCHEMA` (covers all 8 tables and the metric view), sets OBO scopes (genie, sql, dashboards.genie), and deploys. (It does not bind the per-table or Lakebase resources: those need catalog/admin grant authority the attendee lacks, and the schema grant + lazy Lakebase pool cover what the app needs.)
 4. Attendee opens Genie Code, starts a **new chat thread**, and verifies skills loaded.
 
 The attendee's app is fully created, permissioned, and deployed BEFORE the live session. Module 4 in the workshop is now app verification and optional polish, not app creation.
@@ -114,7 +114,7 @@ Warehouse `CAN_USE`, Genie `CAN_VIEW`, and endpoint `CAN_USE` grants are set via
 
 **Each attendee's App service principal** (created by `notebooks/00-setup` during pre-req)
 - Same shape as the reference App SP, scoped to attendee's own resources
-- `clone_app.py` binds the SP via app resources and runs GRANT USE CATALOG / USE SCHEMA / SELECT ON SCHEMA automatically
+- `clone_app.py` binds the warehouse and grants the SP USE CATALOG / USE SCHEMA / SELECT ON SCHEMA automatically
 - If the attendee group lacks grant authority on the shared facilitator-owned catalog, `clone_app.py` prints the exact GRANT statements with the SP id; the facilitator pastes them into a SQL warehouse as catalog owner
 - The SELECT ON SCHEMA grant covers all 8 tables and the `command_center_metrics` metric view in a single statement
 - Attendees need permission to create Workspace Git folders and Databricks Apps in their own scope
@@ -246,7 +246,7 @@ Sorted by likelihood. Highest-impact items first.
 | **First-time deploy fails:** `SCHEMA_DOES_NOT_EXIST` or `TABLE_OR_VIEW_NOT_FOUND` | Run `dab/scripts/bootstrap.py` (from repo root, or `scripts/bootstrap.py` from `dab/`) **before** `bundle deploy`. App's `uc_securable` bindings are validated at deploy time, so the 8 tables must exist (even empty). |
 | **Skills not loading in Genie Code** | Open a **new chat** after running the installer (do not reuse the same thread). Hard-refresh the browser if skills still do not appear. Verify skills landed under `/Users/<username>/.assistant/skills/` in the workspace file browser. Note: `databricks aitools` does NOT support Genie Code and is not used here. |
 | **Attendees skip pre-workshop setup** | Send reminder 24h before; reserve 10 min at session start for stragglers (cuts into Module 1). |
-| **Attendee app SP lacks catalog access** | `clone_app.py` binds the SP via app resources and runs GRANT USE CATALOG / USE SCHEMA / SELECT ON SCHEMA automatically. If the attendee group lacks grant authority on the shared facilitator-owned catalog, `clone_app.py` prints the exact GRANT statements with the SP id; the facilitator pastes them into a SQL warehouse as catalog owner. The SELECT ON SCHEMA grant covers all 8 tables AND the `command_center_metrics` metric view in a single statement. |
+| **Attendee app SP lacks catalog access** | `clone_app.py` binds the warehouse and grants the SP USE CATALOG / USE SCHEMA / SELECT ON SCHEMA automatically. If the attendee group lacks grant authority on the shared facilitator-owned catalog, `clone_app.py` prints the exact GRANT statements with the SP id; the facilitator pastes them into a SQL warehouse as catalog owner. The SELECT ON SCHEMA grant covers all 8 tables AND the `command_center_metrics` metric view in a single statement. |
 | **`notebooks/00-setup` fails: `command-center-dev` not found** | The template app must be deployed before attendees run setup. Verify `command-center-dev` is running (T-1-week smoke test) and that attendees have workspace access to its source path. |
 | **AI Gateway endpoint not granted to attendees** | Test 1 week before; confirm `CAN_USE` on the endpoint for the attendee group; have a facilitator-owned backup endpoint identified. |
 
