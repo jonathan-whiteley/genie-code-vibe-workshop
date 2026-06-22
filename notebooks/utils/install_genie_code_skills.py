@@ -123,5 +123,4 @@ except Exception as e:
 # MAGIC ## After this step
 # MAGIC Skills load when you open a **new chat thread**. Once setup finishes,
 # MAGIC open Genie Code, start a new chat, and hard refresh the browser if the
-# MAGIC skills do not appear. Verify with the smoke-test prompt in the lab
-# MAGIC companion guide (list the 8 tables in the schema).
+# MAGIC skills do not appear.
