@@ -77,8 +77,7 @@ print(session_setup_prompt)
 # MAGIC - Measures: revenue, forecast revenue, traffic, labor cost,
 # MAGIC   forecast labor cost, labor % of sales.
 # MAGIC - Dimensions: store, region, date, day-of-week.
-# MAGIC - Then run the pattern's verification SELECT to confirm it returns rows
-# MAGIC   and labor % of sales is realistic (20-35%, not ~200%).
+# MAGIC - Then run the pattern's verification SELECT.
 # MAGIC ```
 
 # COMMAND ----------

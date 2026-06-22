@@ -119,8 +119,7 @@ the pattern in docs/patterns/metric-view-pattern.md.
 - Measures: revenue, forecast revenue, traffic, labor cost,
   forecast labor cost, labor % of sales.
 - Dimensions: store, region, date, day-of-week.
-- Then run the pattern's verification SELECT to confirm it returns rows
-  and labor % of sales is realistic (20-35%, not ~200%).
+- Then run the pattern's verification SELECT.
 ```
 
 ---
